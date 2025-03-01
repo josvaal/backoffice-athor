@@ -16,10 +16,10 @@ export class AuthService {
     const user: User | null = await this.usersService.findByEmail(email);
 
     const isMatch = await bcrypt.compare(pass, user?.password as string);
-
     if (!isMatch) {
       throw new UnauthorizedException();
     }
+
     const payload = { sub: user?.id, email: user?.email };
 
     return {

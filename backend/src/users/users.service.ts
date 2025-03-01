@@ -42,7 +42,6 @@ export class UsersService {
         `El usuario con el correo ${userFound.email} ya se encuentra registrado`,
       );
     }
-
     const hashPass: string = await bcrypt.hash(userDto.password, saltOrRounds);
 
     return this.prismaService.user.create({
