@@ -14,10 +14,121 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  name     String
-  lastname String
-  username String?
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  password   String
+  name       String
+  lastname   String
+  username   String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  userType   UserType     @relation(fields: [userTypeId], references: [id])
+  userTypeId Int
+  devices    UserDevice[]
+  Device     Device[]
+  UserRole   UserRole[]
+}
+
+model UserType {
+  id        Int      @id @default(autoincrement())
+  typeUser  String   @unique
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Device {
+  id            Int             @id @default(autoincrement())
+  superAdmin    User            @relation(fields: [superAdminId], references: [id])
+  superAdminId  Int
+  macESP32      String
+  macBluetooth  String
+  model         DeviceModel     @relation(fields: [modelId], references: [id])
+  modelId       Int
+  serialNumber  String          @unique
+  batch         String
+  version       String
+  relayQuantity Int
+  status        DeviceStatus    @relation(fields: [statusId], references: [id])
+  statusId      Int
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  users         UserDevice[]
+  DeviceHistory DeviceHistory[]
+}
+
+model DeviceModel {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  devices     Device[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DeviceStatus {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  devices     Device[]
+}
+
+model UserDevice {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId    Int
+  device    Device   @relation(fields: [deviceId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  deviceId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DeviceHistory {
+  id        Int      @id @default(autoincrement())
+  device    Device   @relation(fields: [deviceId], references: [id])
+  deviceId  Int
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   Int
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  description   String
+  eventType     EventType       @relation(fields: [eventTypeId], references: [id])
+  eventTypeId   Int
+  DeviceHistory DeviceHistory[]
+  data          String
+  status        Boolean
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model EventType {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String
+  Event       Event[]
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String
+  UserRole    UserRole[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId    Int
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

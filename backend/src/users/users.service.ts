@@ -51,6 +51,7 @@ export class UsersService {
         name: userDto.name,
         lastname: userDto.lastname,
         username: userDto.username,
+        userTypeId: userDto.userTypeId,
       },
       select: {
         id: true,
@@ -59,7 +60,14 @@ export class UsersService {
         lastname: true,
         username: true,
         password: true,
+        createdAt: true,
+        updatedAt: true,
+        userTypeId: true,
       },
     });
+  }
+
+  async findAll() {
+    return this.prismaService.user.findMany;
   }
 }
