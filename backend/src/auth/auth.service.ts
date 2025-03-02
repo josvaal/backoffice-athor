@@ -4,9 +4,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { UserDto } from 'src/users/dto/user.dto';
+import { UserSignupDto } from 'src/users/dto/user-signup.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { UserUpdateDto } from 'src/users/dto/user-update.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +31,7 @@ export class AuthService {
     };
   }
 
-  async signUp(userDto: UserDto): Promise<any> {
+  async signUp(userDto: UserSignupDto): Promise<any> {
     const user: User | null = await this.usersService.create(userDto);
     const payload = { sub: user?.id, email: user?.email };
 

@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserDto } from './dto/user.dto';
+import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
+import { UserUpdateDto } from './dto/user-update.dto';
 
 const saltOrRounds: number = Number(process.env.SALTROUNDS);
 
@@ -30,7 +31,7 @@ export class UsersService {
     return userFound;
   }
 
-  async create(userDto: UserDto): Promise<User | null> {
+  async create(userDto: UserSignupDto): Promise<User | null> {
     const userFound: User | null = await this.prismaService.user.findUnique({
       where: {
         email: userDto.email,
@@ -69,5 +70,20 @@ export class UsersService {
 
   async findAll() {
     return this.prismaService.user.findMany;
+  }
+
+  async update(id: number, userUpdateDto: UserUpdateDto): Promise<User | null> {
+    const userFound = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: userUpdateDto,
+    });
+
+    if (!userFound) {
+      throw new NotFoundException(`El usuario con el #${id} no se encontró`);
+    }
+
+    return userFound;
   }
 }
