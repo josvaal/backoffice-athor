@@ -14,17 +14,13 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
 import { SignUpDto } from './dto/signup.dto';
 import { AuthGuard } from './auth.guard';
-import { UserUpdateDto } from 'src/users/dto/user-update.dto';
 import { UsersService } from 'src/users/users.service';
 import { ApiResponse, JwtRequestPayload, JwtToken } from 'src/custom.types';
 import { UserView } from 'src/users/dto/user-view.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private userService: UsersService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
