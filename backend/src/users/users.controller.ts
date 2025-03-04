@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Put,
   UseGuards,
@@ -11,6 +13,13 @@ import {
 import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserUpdateDto } from './dto/user-update.dto';
+import { ApiResponse } from 'src/custom.types';
+import { User } from '@prisma/client';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
+import { UserView } from './dto/user-view.dto';
 
 @Controller('users')
 export class UsersController {
@@ -19,13 +28,68 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  listAll() {
-    return this.userService.findAll();
+  async listAll(): Promise<ApiResponse<UserView[]>> {
+    try {
+      return {
+        data: await this.userService.findAll(),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
   }
 
   @UseGuards(AuthGuard)
   @Put('update/:id')
-  updateProfile(@Param('id') id: number, @Body() userUpdateDto: UserUpdateDto) {
-    return this.userService.update(id, userUpdateDto);
+  async updateProfile(
+    @Param('id') id: number,
+    @Body() userUpdateDto: UserUpdateDto,
+  ): Promise<ApiResponse<User>> {
+    try {
+      return {
+        data: await this.userService.update(id, userUpdateDto),
+        error: null,
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientValidationError) {
+        return {
+          error: new BadRequestException('Error en los datos enviados'),
+          data: null,
+        };
+      }
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        return {
+          error: new NotFoundException(`El usuario con ID #${id} no existe`),
+          data: null,
+        };
+      }
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('/:id')
+  async listById(@Param('id') id: number): Promise<ApiResponse<User>> {
+    try {
+      return {
+        data: await this.userService.findById(id),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
   }
 }

@@ -23,10 +23,16 @@ const saltOrRounds: number = Number(process.env.SALTROUNDS);
 export class UsersService {
   constructor(private prismaService: PrismaService) {}
 
-  async findById(id: number): Promise<User | null> {
+  async findById(id: number | string): Promise<User | null> {
+    const userId = Number(id);
+
+    if (isNaN(userId)) {
+      throw new BadRequestException(`El ID proporcionado no es válido`);
+    }
+
     const user: User | null = await this.prismaService.user.findUnique({
       where: {
-        id,
+        id: userId,
       },
     });
 
@@ -78,82 +84,50 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<ApiResponse<UserView[]>> {
-    try {
-      const users: UserView[] = await this.prismaService.user.findMany({
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          lastname: true,
-          username: true,
-          userTypeId: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      });
-      return {
-        data: users,
-        error: null,
-      };
-    } catch (error) {
-      return {
-        error: error,
-        data: null,
-      };
-    }
+  async findAll(): Promise<UserView[]> {
+    return await this.prismaService.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        lastname: true,
+        username: true,
+        userTypeId: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 
   async update(
     id: number | string,
     userUpdateDto: UserUpdateDto,
-  ): Promise<ApiResponse<User>> {
-    try {
-      const userId = Number(id);
+  ): Promise<User> {
+    const userId = Number(id);
 
-      if (isNaN(userId)) {
-        throw new BadRequestException(`El ID proporcionado no es válido`);
-      }
-
-      if (userUpdateDto['password']) {
-        throw new BadRequestException('No se permite actualizar la contraseña');
-      }
-
-      const user: User = await this.prismaService.user.update({
-        where: {
-          id: userId,
-        },
-        data: userUpdateDto as UserUpdateDto,
-      });
-
-      if (!user) {
-        throw new NotFoundException(`El usuario con el id #${id} no existe`);
-      }
-
-      return {
-        error: null,
-        data: user,
-      };
-    } catch (error) {
-      if (error instanceof PrismaClientValidationError) {
-        return {
-          error: new BadRequestException('Error en los datos enviados'),
-          data: null,
-        };
-      }
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        return {
-          error: new NotFoundException(`El usuario con ID #${id} no existe`),
-          data: null,
-        };
-      }
-      return {
-        error: error,
-        data: null,
-      };
+    if (isNaN(userId)) {
+      throw new BadRequestException(`El ID proporcionado no es válido`);
     }
+
+    if (userUpdateDto['password']) {
+      throw new BadRequestException('No se permite actualizar la contraseña');
+    }
+
+    if (userUpdateDto['email']) {
+      throw new BadRequestException('No se permite actualizar el correo');
+    }
+
+    const user: User = await this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: userUpdateDto as UserUpdateDto,
+    });
+
+    if (!user) {
+      throw new NotFoundException(`El usuario con el id #${id} no existe`);
+    }
+
+    return user;
   }
 }

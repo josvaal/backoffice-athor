@@ -4,7 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { Request } from 'express';
 
@@ -26,6 +26,11 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request['user'] = payload;
     } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException(
+          'La sesión ya expiró, inicie sesión nuevamente',
+        );
+      }
       throw new UnauthorizedException(
         'No tienes acceso a esto, consulta a un administrador o de rol más alto',
       );

@@ -16,7 +16,8 @@ import { SignUpDto } from './dto/signup.dto';
 import { AuthGuard } from './auth.guard';
 import { UserUpdateDto } from 'src/users/dto/user-update.dto';
 import { UsersService } from 'src/users/users.service';
-import { JwtRequestPayload } from 'src/custom.types';
+import { ApiResponse, JwtRequestPayload, JwtToken } from 'src/custom.types';
+import { UserView } from 'src/users/dto/user-view.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,19 +28,54 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Body() signInDto: SignInDto): Promise<ApiResponse<JwtToken>> {
+    try {
+      return {
+        data: await this.authService.signIn(
+          signInDto.email,
+          signInDto.password,
+        ),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error,
+        data: null,
+      };
+    }
   }
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  register(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto);
+  async register(@Body() signUpDto: SignUpDto): Promise<ApiResponse<JwtToken>> {
+    try {
+      return {
+        data: await this.authService.signUp(signUpDto),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error,
+      };
+    }
   }
 
   @UseGuards(AuthGuard)
   @Get('me')
-  getProfile(@Request() req: JwtRequestPayload) {
-    return this.authService.profile(req);
+  async getProfile(
+    @Request() req: JwtRequestPayload,
+  ): Promise<ApiResponse<UserView>> {
+    try {
+      return {
+        data: await this.authService.profile(req),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error,
+        data: null,
+      };
+    }
   }
 }
