@@ -16,6 +16,7 @@ import { SignUpDto } from './dto/signup.dto';
 import { AuthGuard } from './auth.guard';
 import { UserUpdateDto } from 'src/users/dto/user-update.dto';
 import { UsersService } from 'src/users/users.service';
+import { JwtRequestPayload } from 'src/custom.types';
 
 @Controller('auth')
 export class AuthController {
@@ -38,13 +39,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('me')
-  getProfile(@Request() req) {
-    return req.user;
-  }
-
-  @UseGuards(AuthGuard)
-  @Put('me:id')
-  updateProfile(@Param('id') id: number, @Body() userUpdateDto: UserUpdateDto) {
-    return this.userService.update(id, userUpdateDto);
+  getProfile(@Request() req: JwtRequestPayload) {
+    return this.authService.profile(req);
   }
 }
