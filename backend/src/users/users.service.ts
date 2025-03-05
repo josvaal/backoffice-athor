@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -10,13 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
 import { UserUpdateDto } from './dto/user-update.dto';
-import { ApiResponse } from 'src/custom.types';
 import { UserView } from './dto/user-view.dto';
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from '@prisma/client/runtime/library';
-
 const saltOrRounds: number = Number(process.env.SALTROUNDS);
 
 @Injectable()

@@ -20,12 +20,15 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { UserView } from './dto/user-view.dto';
+import { RoleGuard } from 'src/auth/role/role.guard';
+import { Roles } from 'decorators/roles.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @UseGuards(AuthGuard)
+  // @Roles('superadmin', 'admin')
+  @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(): Promise<ApiResponse<UserView[]>> {
