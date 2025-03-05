@@ -88,6 +88,13 @@ export class UsersService {
         userTypeId: true,
         createdAt: true,
         updatedAt: true,
+        devices: true,
+        UserRole: {
+          include: {
+            role: true,
+          },
+        },
+        userType: true
       },
     });
   }

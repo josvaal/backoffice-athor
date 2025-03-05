@@ -82,7 +82,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
-  async listById(@Param('id') id: number): Promise<ApiResponse<User>> {
+  async listById(@Param('id') id: number): Promise<ApiResponse<any>> {
     try {
       return {
         data: await this.userService.findById(id),
