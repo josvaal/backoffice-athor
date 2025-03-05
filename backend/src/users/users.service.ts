@@ -16,16 +16,25 @@ const saltOrRounds: number = Number(process.env.SALTROUNDS);
 export class UsersService {
   constructor(private prismaService: PrismaService) {}
 
-  async findById(id: number | string): Promise<User | null> {
+  async findById(id: number | string) {
     const userId = Number(id);
 
     if (isNaN(userId)) {
       throw new BadRequestException(`El ID proporcionado no es válido`);
     }
 
-    const user: User | null = await this.prismaService.user.findUnique({
+    //TODO: Arreglar el tipado
+    const user = await this.prismaService.user.findUnique({
       where: {
         id: userId,
+      },
+      include: {
+        UserRole: {
+          include: {
+            role: true,
+          },
+        },
+        userType: true,
       },
     });
 
@@ -39,10 +48,18 @@ export class UsersService {
   }
 
   //TODO: Dependiente de auth service (register y login)
-  async findByEmail(email: string): Promise<User | null> {
-    const userFound: User | null = await this.prismaService.user.findUnique({
+  async findByEmail(email: string) {
+    const userFound = await this.prismaService.user.findUnique({
       where: {
         email,
+      },
+      include: {
+        UserRole: {
+          include: {
+            role: true,
+          },
+        },
+        userType: true,
       },
     });
 
@@ -77,32 +94,20 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<UserView[]> {
+  async findAll() {
     return await this.prismaService.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        lastname: true,
-        username: true,
-        userTypeId: true,
-        createdAt: true,
-        updatedAt: true,
-        devices: true,
+      include: {
         UserRole: {
           include: {
             role: true,
           },
         },
-        userType: true
+        userType: true,
       },
     });
   }
 
-  async update(
-    id: number | string,
-    userUpdateDto: UserUpdateDto,
-  ): Promise<User> {
+  async update(id: number | string, userUpdateDto: UserUpdateDto) {
     const userId = Number(id);
 
     if (isNaN(userId)) {
@@ -117,9 +122,17 @@ export class UsersService {
       throw new BadRequestException('No se permite actualizar el correo');
     }
 
-    const user: User = await this.prismaService.user.update({
+    const user = await this.prismaService.user.update({
       where: {
         id: userId,
+      },
+      include: {
+        UserRole: {
+          include: {
+            role: true,
+          },
+        },
+        userType: true,
       },
       data: userUpdateDto as UserUpdateDto,
     });

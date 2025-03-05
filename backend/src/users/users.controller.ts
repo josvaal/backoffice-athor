@@ -31,7 +31,7 @@ export class UsersController {
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse<UserView[]>> {
+  async listAll(): Promise<ApiResponse> {
     try {
       return {
         data: await this.userService.findAll(),
@@ -50,7 +50,7 @@ export class UsersController {
   async updateProfile(
     @Param('id') id: number,
     @Body() userUpdateDto: UserUpdateDto,
-  ): Promise<ApiResponse<User>> {
+  ): Promise<ApiResponse> {
     try {
       return {
         data: await this.userService.update(id, userUpdateDto),
@@ -82,7 +82,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
-  async listById(@Param('id') id: number): Promise<ApiResponse<any>> {
+  async listById(@Param('id') id: number): Promise<ApiResponse> {
     try {
       return {
         data: await this.userService.findById(id),

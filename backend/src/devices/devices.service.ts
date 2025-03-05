@@ -12,7 +12,7 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 export class DevicesService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll(): Promise<Device[]> {
+  async findAll() {
     return await this.prismaService.device.findMany({
       include: {
         superAdmin: true,
@@ -23,7 +23,7 @@ export class DevicesService {
     });
   }
 
-  async findById(id: number | string): Promise<Device> {
+  async findById(id: number | string) {
     const deviceId = Number(id);
 
     if (isNaN(deviceId)) {
@@ -33,6 +33,12 @@ export class DevicesService {
     const device = await this.prismaService.device.findUnique({
       where: {
         id: deviceId,
+      },
+      include: {
+        superAdmin: true,
+        status: true,
+        model: true,
+        users: true,
       },
     });
 
@@ -45,16 +51,19 @@ export class DevicesService {
     return device;
   }
 
-  async create(createDeviceDto: CreateDeviceDto): Promise<Device> {
+  async create(createDeviceDto: CreateDeviceDto) {
     return await this.prismaService.device.create({
       data: createDeviceDto,
+      include: {
+        superAdmin: true,
+        status: true,
+        model: true,
+        users: true,
+      },
     });
   }
 
-  async update(
-    id: number | string,
-    updateDeviceDto: UpdateDeviceDto,
-  ): Promise<Device> {
+  async update(id: number | string, updateDeviceDto: UpdateDeviceDto) {
     const deviceId = Number(id);
 
     if (isNaN(deviceId)) {
@@ -72,6 +81,12 @@ export class DevicesService {
       where: {
         id: deviceId,
       },
+      include: {
+        superAdmin: true,
+        status: true,
+        model: true,
+        users: true,
+      },
     });
 
     if (!device) {
@@ -81,7 +96,7 @@ export class DevicesService {
     return device;
   }
 
-  async deleteById(id: number | string): Promise<Device> {
+  async deleteById(id: number | string) {
     const deviceId = Number(id);
 
     if (isNaN(deviceId)) {

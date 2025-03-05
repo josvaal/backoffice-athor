@@ -1,7 +1,7 @@
 import { User } from '@prisma/client';
 
-export interface ApiResponse<T> {
-  data: T | null;
+export interface ApiResponse {
+  data: any | null;
   error: Error | null;
 }
 

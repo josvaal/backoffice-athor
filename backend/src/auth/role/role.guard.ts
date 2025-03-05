@@ -6,16 +6,16 @@ import {
 } from '@nestjs/common';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UserRoleService } from 'src/user-role/user-role.service';
 import { jwtConstants } from '../constants';
 import { User } from '@prisma/client';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'decorators/roles.decorator';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
   constructor(
-    private userRoleService: UserRoleService,
+    private usersService: UsersService,
     private jwtService: JwtService,
     private reflector: Reflector,
   ) {}
@@ -34,7 +34,9 @@ export class RoleGuard implements CanActivate {
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       const user = payload['user'] as User;
-      const roles = await this.userRoleService.findRolesByUserId(user.id);
+      const userDb = await this.usersService.findById(user.id);
+
+      const roles = userDb?.UserRole
 
       const requiredRoles = this.reflector.get<string[]>(
         ROLES_KEY,
@@ -46,8 +48,8 @@ export class RoleGuard implements CanActivate {
         return true;
       }
 
-      const hasRequiredRole = roles.some((role) =>
-        requiredRoles.includes(role.name),
+      const hasRequiredRole = roles?.some((role) =>
+        requiredRoles.includes(role.role.name),
       );
 
       if (!hasRequiredRole) {

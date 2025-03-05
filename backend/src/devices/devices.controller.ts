@@ -33,7 +33,7 @@ export class DevicesController {
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse<Device[]>> {
+  async listAll(): Promise<ApiResponse> {
     try {
       return {
         data: await this.devicesService.findAll(),
@@ -53,7 +53,7 @@ export class DevicesController {
   @Post('create')
   async create(
     @Body() createDeviceDto: CreateDeviceDto,
-  ): Promise<ApiResponse<Device>> {
+  ): Promise<ApiResponse> {
     try {
       return {
         data: await this.devicesService.create(createDeviceDto),
@@ -101,7 +101,7 @@ export class DevicesController {
   async update(
     @Param('id') id: number,
     @Body() updateDeviceDto: UpdateDeviceDto,
-  ): Promise<ApiResponse<Device>> {
+  ): Promise<ApiResponse> {
     try {
       return {
         data: await this.devicesService.update(id, updateDeviceDto),
@@ -137,7 +137,7 @@ export class DevicesController {
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
-  async delete(@Param('id') id: number): Promise<ApiResponse<Device>> {
+  async delete(@Param('id') id: number): Promise<ApiResponse> {
     try {
       return {
         data: await this.devicesService.deleteById(id),

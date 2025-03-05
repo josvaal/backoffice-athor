@@ -24,7 +24,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async signIn(@Body() signInDto: SignInDto): Promise<ApiResponse<JwtToken>> {
+  async signIn(@Body() signInDto: SignInDto): Promise<ApiResponse> {
     try {
       return {
         data: await this.authService.signIn(
@@ -43,7 +43,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  async register(@Body() signUpDto: SignUpDto): Promise<ApiResponse<JwtToken>> {
+  async register(@Body() signUpDto: SignUpDto): Promise<ApiResponse> {
     try {
       return {
         data: await this.authService.signUp(signUpDto),
@@ -61,7 +61,7 @@ export class AuthController {
   @Get('me')
   async getProfile(
     @Request() req: JwtRequestPayload,
-  ): Promise<ApiResponse<UserView>> {
+  ): Promise<ApiResponse> {
     try {
       return {
         data: await this.authService.profile(req),
