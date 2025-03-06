@@ -109,4 +109,70 @@ export class DevicesService {
       },
     });
   }
+
+  async assign(userId: number | string, deviceId: number | string) {
+    const userID = Number(userId);
+
+    if (isNaN(userID)) {
+      throw new BadRequestException(
+        `El ID de usuario proporcionado no es válido`,
+      );
+    }
+
+    const deviceID = Number(deviceId);
+
+    if (isNaN(deviceID)) {
+      throw new BadRequestException(`El ID de rol proporcionado no es válido`);
+    }
+
+    return await this.prismaService.userDevice.create({
+      data: {
+        userId: userID,
+        deviceId: deviceID,
+      },
+      include: {
+        device: true,
+        user: true,
+      },
+    });
+  }
+
+  async deassign(userId: number | string, deviceId: number | string){
+    const userID = Number(userId);
+
+    if (isNaN(userID)) {
+      throw new BadRequestException(
+        `El ID de usuario proporcionado no es válido`,
+      );
+    }
+
+    const deviceID = Number(deviceId);
+
+    if (isNaN(deviceID)) {
+      throw new BadRequestException(`El ID de rol proporcionado no es válido`);
+    }
+
+    const userDevice = await this.prismaService.userDevice.findFirst({
+      where: {
+        userId: userID,
+        deviceId: deviceID,
+      }
+    })
+
+    if(!userDevice){
+      throw new NotFoundException(
+        `El dispositivo con el ID #${deviceID} no está asignado al usuario con el ID #${userID}`,
+      );
+    }
+
+    return await this.prismaService.userDevice.delete({
+      where: {
+        id: userDevice.id,
+      },
+      include: {
+        device: true,
+        user: true,
+      },
+    });
+  }
 }

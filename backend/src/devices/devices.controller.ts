@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   Post,
@@ -51,9 +52,7 @@ export class DevicesController {
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
-  async create(
-    @Body() createDeviceDto: CreateDeviceDto,
-  ): Promise<ApiResponse> {
+  async create(@Body() createDeviceDto: CreateDeviceDto): Promise<ApiResponse> {
     try {
       return {
         data: await this.devicesService.create(createDeviceDto),
@@ -152,6 +151,92 @@ export class DevicesController {
           error: new NotFoundException(
             `El dispositivo con ID #${id} no existe`,
           ),
+          data: null,
+        };
+      }
+      return {
+        error,
+        data: null,
+      };
+    }
+  }
+
+  @Roles('admin', 'superadmin')
+  @UseGuards(AuthGuard, RoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Post('assign/user/:userId/device/:deviceId')
+  async assign(
+    @Param('userId') userId: number,
+    @Param('deviceId') deviceId: number,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.devicesService.assign(userId, deviceId),
+        error: null,
+      };
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof PrismaClientValidationError) {
+        return {
+          error: new BadRequestException('Error en los datos enviados'),
+          data: null,
+        };
+      }
+
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code == '3002') {
+          return {
+            error: new BadRequestException(
+              'Este usuario o dispositivo no existe',
+            ),
+            data: null,
+          };
+        }
+        return {
+          error: new InternalServerErrorException(error.message),
+          data: null,
+        };
+      }
+      return {
+        error,
+        data: null,
+      };
+    }
+  }
+
+  @Roles('admin', 'superadmin')
+  @UseGuards(AuthGuard, RoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Delete('deassign/user/:userId/device/:deviceId')
+  async deassign(
+    @Param('userId') userId: number,
+    @Param('deviceId') deviceId: number,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.devicesService.deassign(userId, deviceId),
+        error: null,
+      };
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof PrismaClientValidationError) {
+        return {
+          error: new BadRequestException('Error en los datos enviados'),
+          data: null,
+        };
+      }
+
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code == '3002') {
+          return {
+            error: new BadRequestException(
+              'Este usuario o dispositivo no existe',
+            ),
+            data: null,
+          };
+        }
+        return {
+          error: new InternalServerErrorException(error.message),
           data: null,
         };
       }

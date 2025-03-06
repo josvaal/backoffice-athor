@@ -85,6 +85,7 @@ export class RolesService {
       },
       include: {
         role: true,
+        user: true,
       },
     });
   }
@@ -123,6 +124,7 @@ export class RolesService {
       },
       include: {
         role: true,
+        user: true,
       },
     });
   }
