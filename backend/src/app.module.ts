@@ -11,6 +11,7 @@ import { RolesModule } from './roles/roles.module';
 import { DevicesService } from './devices/devices.service';
 import { DevicesModule } from './devices/devices.module';
 import { EventTypeModule } from './event-type/event-type.module';
+import { DeviceModelModule } from './device-model/device-model.module';
 
 @Module({
   // TODO: QUITAR EL 'ConfigModule.forRoot()' EN PRODUCCIÓN
@@ -23,6 +24,7 @@ import { EventTypeModule } from './event-type/event-type.module';
     RolesModule,
     DevicesModule,
     EventTypeModule,
+    DeviceModelModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, DevicesService],
