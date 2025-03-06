@@ -8,6 +8,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
@@ -64,7 +65,7 @@ export class RolesController {
   @Roles('superadmin')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
-  @Post('assign/user/:userId/role/:roleId')
+  @Put('assign/user/:userId/role/:roleId')
   async assign(
     @Param('userId') userId: number,
     @Param('roleId') roleId: number,
@@ -105,7 +106,7 @@ export class RolesController {
   @Roles('superadmin')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
-  @Post('deassign/user/:userId/role/:roleId')
+  @Delete('deassign/user/:userId/role/:roleId')
   async deassign(
     @Param('userId') userId: number,
     @Param('roleId') roleId: number,
