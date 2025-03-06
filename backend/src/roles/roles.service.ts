@@ -11,11 +11,11 @@ import { CreateRoleDto } from './dto/create-role.dto';
 export class RolesService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll(): Promise<Role[]> {
+  async findAll() {
     return await this.prismaService.role.findMany();
   }
 
-  async findById(id: number | string): Promise<Role | null> {
+  async findById(id: number | string) {
     const roleId = Number(id);
 
     if (isNaN(roleId)) {
@@ -61,6 +61,9 @@ export class RolesService {
         userId: userID,
         roleId: roleID,
       },
+      include: {
+        role: true,
+      },
     });
   }
 
@@ -95,6 +98,9 @@ export class RolesService {
     return await this.prismaService.userRole.delete({
       where: {
         id: userRole.id,
+      },
+      include: {
+        role: true,
       },
     });
   }

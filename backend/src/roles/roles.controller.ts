@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
@@ -26,6 +27,24 @@ import { AssignRoleDto } from './dto/assign-role.dto';
 @Controller('roles')
 export class RolesController {
   constructor(private rolesService: RolesService) {}
+
+  @Roles('superadmin')
+  @UseGuards(AuthGuard, RoleGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('list')
+  async listAll(): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.rolesService.findAll(),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error,
+        data: null,
+      };
+    }
+  }
 
   @Roles('superadmin')
   @UseGuards(AuthGuard, RoleGuard)
@@ -105,7 +124,7 @@ export class RolesController {
 
   @Roles('superadmin')
   @UseGuards(AuthGuard, RoleGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   @Delete('deassign/user/:userId/role/:roleId')
   async deassign(
     @Param('userId') userId: number,
