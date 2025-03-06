@@ -19,6 +19,8 @@ export class DevicesService {
         status: true,
         model: true,
         users: true,
+        //TODO: Array de historial del dispositivo
+        DeviceHistory: true,
       },
     });
   }
@@ -39,6 +41,8 @@ export class DevicesService {
         status: true,
         model: true,
         users: true,
+        //TODO: Array de historial del dispositivo
+        DeviceHistory: true,
       },
     });
 
@@ -137,7 +141,7 @@ export class DevicesService {
     });
   }
 
-  async deassign(userId: number | string, deviceId: number | string){
+  async deassign(userId: number | string, deviceId: number | string) {
     const userID = Number(userId);
 
     if (isNaN(userID)) {
@@ -156,10 +160,10 @@ export class DevicesService {
       where: {
         userId: userID,
         deviceId: deviceID,
-      }
-    })
+      },
+    });
 
-    if(!userDevice){
+    if (!userDevice) {
       throw new NotFoundException(
         `El dispositivo con el ID #${deviceID} no está asignado al usuario con el ID #${userID}`,
       );
