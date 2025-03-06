@@ -6,6 +6,7 @@ import {
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Injectable()
 export class RolesService {
@@ -39,6 +40,27 @@ export class RolesService {
     return await this.prismaService.role.create({
       data: createRoleDto,
     });
+  }
+
+  async update(id: number | string, updateRoleDto: UpdateRoleDto) {
+    const roleID = Number(id);
+
+    if (isNaN(roleID)) {
+      throw new BadRequestException(`El ID de rol proporcionado no es válido`);
+    }
+
+    const role = await this.prismaService.role.update({
+      where: {
+        id: roleID,
+      },
+      data: updateRoleDto,
+    });
+
+    if (!role) {
+      throw new NotFoundException(`El rol con el id #${id} no existe`);
+    }
+
+    return role;
   }
 
   async assignRole(userId: number | string, roleId: number | string) {

@@ -7,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   InternalServerErrorException,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -22,7 +23,7 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
-import { AssignRoleDto } from './dto/assign-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Controller('roles')
 export class RolesController {
@@ -84,7 +85,44 @@ export class RolesController {
   @Roles('superadmin')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
-  @Put('assign/user/:userId/role/:roleId')
+  @Put('update/:id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateRoleDto: UpdateRoleDto,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.rolesService.update(id, updateRoleDto),
+        error: null,
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientValidationError) {
+        return {
+          error: new BadRequestException('Error en los datos enviados'),
+          data: null,
+        };
+      }
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        return {
+          error: new NotFoundException(`El rol con ID #${id} no existe`),
+          data: null,
+        };
+      }
+
+      return {
+        error,
+        data: null,
+      };
+    }
+  }
+
+  @Roles('superadmin')
+  @UseGuards(AuthGuard, RoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Post('assign/user/:userId/role/:roleId')
   async assign(
     @Param('userId') userId: number,
     @Param('roleId') roleId: number,
