@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateRoleDto } from './dto/create-role.dto';
 
 @Injectable()
 export class RolesService {
@@ -32,5 +33,11 @@ export class RolesService {
     }
 
     return role;
+  }
+
+  async create(createRoleDto: CreateRoleDto) {
+    return await this.prismaService.role.create({
+      data: createRoleDto,
+    });
   }
 }
