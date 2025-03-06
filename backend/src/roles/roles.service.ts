@@ -49,6 +49,10 @@ export class RolesService {
       throw new BadRequestException(`El ID de rol proporcionado no es válido`);
     }
 
+    if (updateRoleDto['name']) {
+      throw new BadRequestException('El nombre no se puede actualizar');
+    }
+
     const role = await this.prismaService.role.update({
       where: {
         id: roleID,
