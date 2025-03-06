@@ -8,7 +8,7 @@ import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
-import { UserUpdateDto } from './dto/user-update.dto';
+import { UpdateUserDto } from './dto/update-user';
 import { UserView } from './dto/user-view.dto';
 const saltOrRounds: number = Number(process.env.SALTROUNDS);
 
@@ -34,7 +34,6 @@ export class UsersService {
             role: true,
           },
         },
-        userType: true,
       },
     });
 
@@ -59,7 +58,6 @@ export class UsersService {
             role: true,
           },
         },
-        userType: true,
       },
     });
 
@@ -80,11 +78,6 @@ export class UsersService {
     } catch (error) {
       console.log({ error });
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2003') {
-          throw new NotFoundException(
-            `El tipo de usuario con el id #${userSignupDto.userTypeId} no existe`,
-          );
-        }
         throw new InternalServerErrorException(error.message);
       }
       if (error instanceof Prisma.PrismaClientValidationError) {
@@ -102,12 +95,11 @@ export class UsersService {
             role: true,
           },
         },
-        userType: true,
       },
     });
   }
 
-  async update(id: number | string, userUpdateDto: UserUpdateDto) {
+  async update(id: number | string, userUpdateDto: UpdateUserDto) {
     const userId = Number(id);
 
     if (isNaN(userId)) {
@@ -132,9 +124,8 @@ export class UsersService {
             role: true,
           },
         },
-        userType: true,
       },
-      data: userUpdateDto as UserUpdateDto,
+      data: userUpdateDto,
     });
 
     if (!user) {

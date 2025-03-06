@@ -23,9 +23,6 @@ export class UserBaseDto implements User {
   @ApiProperty()
   lastname: string;
 
-  @ApiProperty()
-  userTypeId: number;
-
   @ApiProperty({
     description: "puede ser string o nulo"
   })

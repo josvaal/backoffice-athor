@@ -1,7 +1,7 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
 import { UserBaseDto } from './user-base.dto';
 
-export class UserUpdateDto extends PartialType(
+export class UpdateUserDto extends PartialType(
   OmitType(UserBaseDto, [
     'id',
     'password',

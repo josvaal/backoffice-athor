@@ -12,16 +12,13 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { UserUpdateDto } from './dto/user-update.dto';
+import { UpdateUserDto } from './dto/update-user';
 import { ApiResponse } from 'src/custom.types';
-import { User } from '@prisma/client';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
-import { UserView } from './dto/user-view.dto';
 import { RoleGuard } from 'src/auth/role/role.guard';
-import { Roles } from 'decorators/roles.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -49,7 +46,7 @@ export class UsersController {
   @Put('update/:id')
   async updateProfile(
     @Param('id') id: number,
-    @Body() userUpdateDto: UserUpdateDto,
+    @Body() userUpdateDto: UpdateUserDto,
   ): Promise<ApiResponse> {
     try {
       return {

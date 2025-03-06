@@ -22,20 +22,11 @@ model User {
   username   String?
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  userType   UserType     @relation(fields: [userTypeId], references: [id])
-  userTypeId Int
   devices    UserDevice[]
   Device     Device[]
   UserRole   UserRole[]
 }
 
-model UserType {
-  id        Int      @id @default(autoincrement())
-  typeUser  String   @unique
-  users     User[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model Device {
   id            Int             @id @default(autoincrement())
