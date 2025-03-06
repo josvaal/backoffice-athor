@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { SwaggerTheme, SwaggerThemeNameEnum } from 'swagger-themes';
@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('Backoffice Athor')
     .setDescription('API del backoffice de Athor')
     .setVersion('1.0')
+    .addBearerAuth()
     // .addTag('cats')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);

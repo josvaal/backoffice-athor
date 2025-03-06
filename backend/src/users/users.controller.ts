@@ -18,14 +18,14 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
-import { RoleGuard } from 'src/auth/role/role.guard';
+import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  // @Roles('superadmin', 'admin')
-  @UseGuards(AuthGuard, RoleGuard)
+  @RolesWithDescription(['admin', 'superadmin'], '')
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(): Promise<ApiResponse> {
@@ -42,6 +42,7 @@ export class UsersController {
     }
   }
 
+  @RolesWithDescription(['admin', 'superadmin'], '')
   @UseGuards(AuthGuard)
   @Put('update/:id')
   async updateProfile(
@@ -76,6 +77,7 @@ export class UsersController {
     }
   }
 
+  @RolesWithDescription(['admin', 'superadmin'], '')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')

@@ -11,6 +11,7 @@ import { User } from '@prisma/client';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'decorators/roles.decorator';
 import { UsersService } from 'src/users/users.service';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -36,7 +37,9 @@ export class RoleGuard implements CanActivate {
       const user = payload['user'] as User;
       const userDb = await this.usersService.findById(user.id);
 
-      const roles = userDb?.UserRole
+      const roles = userDb?.UserRole;
+
+      console.log(roles);
 
       const requiredRoles = this.reflector.get<string[]>(
         ROLES_KEY,
@@ -57,6 +60,7 @@ export class RoleGuard implements CanActivate {
           'No tienes acceso a este recurso, consulta con un administrador o de rol más alto.',
         );
       }
+      return true;
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException(
@@ -67,7 +71,7 @@ export class RoleGuard implements CanActivate {
         'No tienes acceso a esto, consulta a un administrador o de rol más alto',
       );
     }
-    return true;
+    // return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {

@@ -24,12 +24,13 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 
 @Controller('roles')
 export class RolesController {
   constructor(private rolesService: RolesService) {}
 
-  @Roles('superadmin')
+  @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
@@ -47,7 +48,7 @@ export class RolesController {
     }
   }
 
-  @Roles('superadmin')
+  @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
@@ -82,7 +83,7 @@ export class RolesController {
     }
   }
 
-  @Roles('superadmin')
+  @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Put('update/:id')
@@ -119,7 +120,7 @@ export class RolesController {
     }
   }
 
-  @Roles('superadmin')
+  @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('assign/user/:userId/role/:roleId')
@@ -160,7 +161,7 @@ export class RolesController {
     }
   }
 
-  @Roles('superadmin')
+  @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('deassign/user/:userId/role/:roleId')
@@ -201,7 +202,7 @@ export class RolesController {
     }
   }
 
-  @Roles('superadmin')
+  @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')

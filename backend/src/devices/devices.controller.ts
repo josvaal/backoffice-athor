@@ -16,21 +16,20 @@ import {
 import { DevicesService } from './devices.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RoleGuard } from 'src/auth/role/role.guard';
-import { Roles } from 'decorators/roles.decorator';
 import { ApiResponse } from 'src/custom.types';
-import { Device } from '@prisma/client';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { UpdateDeviceDto } from './dto/update-device.dto';
+import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 
 @Controller('devices')
 export class DevicesController {
   constructor(private devicesService: DevicesService) {}
 
-  @Roles('superadmin', 'admin')
+  @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
@@ -48,7 +47,7 @@ export class DevicesController {
     }
   }
 
-  @Roles('superadmin', 'admin')
+  @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
@@ -93,7 +92,7 @@ export class DevicesController {
     }
   }
 
-  @Roles('superadmin', 'admin')
+  @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Put('update/:id')
@@ -132,7 +131,7 @@ export class DevicesController {
     }
   }
 
-  @Roles('superadmin')
+  @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
@@ -161,7 +160,7 @@ export class DevicesController {
     }
   }
 
-  @Roles('admin', 'superadmin')
+  @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('assign/user/:userId/device/:deviceId')
@@ -204,7 +203,7 @@ export class DevicesController {
     }
   }
 
-  @Roles('admin', 'superadmin')
+  @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Delete('deassign/user/:userId/device/:deviceId')
