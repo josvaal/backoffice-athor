@@ -247,6 +247,7 @@ export class DevicesController {
     }
   }
 
+  @RolesWithDescription(['superadmin', 'admin', 'usuario'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('/:deviceId/event/:eventTypeId')
