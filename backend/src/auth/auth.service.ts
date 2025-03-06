@@ -1,5 +1,6 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -58,10 +59,28 @@ export class AuthService {
   }
 
   async signUp(userDto: UserSignupDto): Promise<JwtToken> {
-    const user = await this.usersService.create(userDto);
+    const user = await this.prismaService.$transaction(async (prisma) => {
+      const userCreated = await this.usersService.create(userDto);
+      if (!userCreated) {
+        throw new InternalServerErrorException('Error al crear el usuario');
+      }
+      const roleUser = await this.prismaService.userRole.create({
+        data: {
+          //TODO: El rol de usuario siempre tiene que tener el ID "1"
+          roleId: 1,
+          userId: userCreated.id,
+        },
+      });
+
+      if (!roleUser) {
+        throw new InternalServerErrorException('Error al asignar el rol');
+      }
+      return userCreated;
+    });
+
     const payload: JwtPayload = {
-      sub: user?.id.toString() as string,
-      user: user as User,
+      sub: user.id.toString() as string,
+      user: user,
     };
 
     return {
