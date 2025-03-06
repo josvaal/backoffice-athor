@@ -12,19 +12,8 @@ CREATE TABLE [dbo].[User] (
     [username] NVARCHAR(1000),
     [createdAt] DATETIME2 NOT NULL CONSTRAINT [User_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2 NOT NULL,
-    [userTypeId] INT NOT NULL,
     CONSTRAINT [User_pkey] PRIMARY KEY CLUSTERED ([id]),
     CONSTRAINT [User_email_key] UNIQUE NONCLUSTERED ([email])
-);
-
--- CreateTable
-CREATE TABLE [dbo].[UserType] (
-    [id] INT NOT NULL IDENTITY(1,1),
-    [typeUser] NVARCHAR(1000) NOT NULL,
-    [createdAt] DATETIME2 NOT NULL CONSTRAINT [UserType_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
-    [updatedAt] DATETIME2 NOT NULL,
-    CONSTRAINT [UserType_pkey] PRIMARY KEY CLUSTERED ([id]),
-    CONSTRAINT [UserType_typeUser_key] UNIQUE NONCLUSTERED ([typeUser])
 );
 
 -- CreateTable
@@ -80,7 +69,7 @@ CREATE TABLE [dbo].[DeviceHistory] (
     [id] INT NOT NULL IDENTITY(1,1),
     [deviceId] INT NOT NULL,
     [eventId] INT NOT NULL,
-    [date] DATETIME2 NOT NULL,
+    [triggered] DATETIME2 NOT NULL,
     [createdAt] DATETIME2 NOT NULL CONSTRAINT [DeviceHistory_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2 NOT NULL,
     CONSTRAINT [DeviceHistory_pkey] PRIMARY KEY CLUSTERED ([id])
@@ -89,15 +78,11 @@ CREATE TABLE [dbo].[DeviceHistory] (
 -- CreateTable
 CREATE TABLE [dbo].[Event] (
     [id] INT NOT NULL IDENTITY(1,1),
-    [name] NVARCHAR(1000) NOT NULL,
-    [description] NVARCHAR(1000) NOT NULL,
     [eventTypeId] INT NOT NULL,
-    [data] NVARCHAR(1000) NOT NULL,
     [status] BIT NOT NULL,
     [createdAt] DATETIME2 NOT NULL CONSTRAINT [Event_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2 NOT NULL,
-    CONSTRAINT [Event_pkey] PRIMARY KEY CLUSTERED ([id]),
-    CONSTRAINT [Event_name_key] UNIQUE NONCLUSTERED ([name])
+    CONSTRAINT [Event_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
 -- CreateTable
@@ -129,9 +114,6 @@ CREATE TABLE [dbo].[UserRole] (
     [updatedAt] DATETIME2 NOT NULL,
     CONSTRAINT [UserRole_pkey] PRIMARY KEY CLUSTERED ([id])
 );
-
--- AddForeignKey
-ALTER TABLE [dbo].[User] ADD CONSTRAINT [User_userTypeId_fkey] FOREIGN KEY ([userTypeId]) REFERENCES [dbo].[UserType]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[Device] ADD CONSTRAINT [Device_superAdminId_fkey] FOREIGN KEY ([superAdminId]) REFERENCES [dbo].[User]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
@@ -175,3 +157,9 @@ END;
 THROW
 
 END CATCH
+
+-- Insertar roles predeterminados
+INSERT INTO [Role] (name, description, createdAt, updatedAt) VALUES
+  ('usuario', 'Rol de usuario común', GETDATE(), GETDATE()),
+  ('admin', 'Rol de administrador con privilegios completos', GETDATE(), GETDATE()),
+  ('superadmin', 'Rol con privilegios más altos que el admin', GETDATE(), GETDATE());
