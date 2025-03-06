@@ -10,6 +10,7 @@ import { TokenModule } from './token/token.module';
 import { RolesModule } from './roles/roles.module';
 import { DevicesService } from './devices/devices.service';
 import { DevicesModule } from './devices/devices.module';
+import { EventTypeModule } from './event-type/event-type.module';
 
 @Module({
   // TODO: QUITAR EL 'ConfigModule.forRoot()' EN PRODUCCIÓN
@@ -21,6 +22,7 @@ import { DevicesModule } from './devices/devices.module';
     TokenModule,
     RolesModule,
     DevicesModule,
+    EventTypeModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, DevicesService],
