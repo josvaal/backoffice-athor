@@ -39,8 +39,6 @@ export class RoleGuard implements CanActivate {
 
       const roles = userDb?.UserRole;
 
-      console.log(roles);
-
       const requiredRoles = this.reflector.get<string[]>(
         ROLES_KEY,
         context.getHandler(),

@@ -73,7 +73,7 @@ export class EventTypeService {
       throw new BadRequestException(`El ID proporcionado no es válido`);
     }
 
-    await this.prismaService.eventType.delete({
+    return await this.prismaService.eventType.delete({
       where: {
         id: eventTypeId,
       },
