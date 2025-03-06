@@ -15,16 +15,28 @@ import {
   JwtToken,
 } from 'src/custom.types';
 import { UserView } from 'src/users/dto/user-view.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private prismaService: PrismaService,
     private jwtService: JwtService,
   ) {}
 
   async signIn(email: string, pass: string): Promise<JwtToken> {
-    const user: User | null = await this.usersService.findByEmail(email);
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        'El usuario con este correo no se encuentra registrado',
+      );
+    }
 
     const isMatch = await bcrypt.compare(pass, user?.password as string);
     if (!isMatch) {
