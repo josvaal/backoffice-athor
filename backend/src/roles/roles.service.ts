@@ -40,4 +40,76 @@ export class RolesService {
       data: createRoleDto,
     });
   }
+
+  async assignRole(userId: number | string, roleId: number | string) {
+    const userID = Number(userId);
+
+    if (isNaN(userID)) {
+      throw new BadRequestException(
+        `El ID de usuario proporcionado no es válido`,
+      );
+    }
+
+    const roleID = Number(roleId);
+
+    if (isNaN(roleID)) {
+      throw new BadRequestException(`El ID de rol proporcionado no es válido`);
+    }
+
+    return await this.prismaService.userRole.create({
+      data: {
+        userId: userID,
+        roleId: roleID,
+      },
+    });
+  }
+
+  async deassignRole(userId: number | string, roleId: number | string) {
+    const userID = Number(userId);
+
+    if (isNaN(userID)) {
+      throw new BadRequestException(
+        `El ID de usuario proporcionado no es válido`,
+      );
+    }
+
+    const roleID = Number(roleId);
+
+    if (isNaN(roleID)) {
+      throw new BadRequestException(`El ID de rol proporcionado no es válido`);
+    }
+
+    const userRole = await this.prismaService.userRole.findFirst({
+      where: {
+        userId: userID,
+        roleId: roleID,
+      },
+    });
+
+    if (!userRole) {
+      throw new NotFoundException(
+        `El rol con el ID #${roleID} no está asignado al usuario con el ID #${userID}`,
+      );
+    }
+
+    return await this.prismaService.userRole.delete({
+      where: {
+        id: userRole.id,
+      },
+    });
+  }
+
+  async deleteRole(id: number | string) {
+    const roleID = Number(id);
+
+    if (isNaN(roleID)) {
+      throw new BadRequestException(`El ID de rol proporcionado no es válido`);
+    }
+
+    await this.prismaService.role.delete({
+      where: {
+        id: roleID,
+      },
+    });
+  }
 }
