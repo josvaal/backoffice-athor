@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Device } from '@prisma/client';
@@ -178,5 +179,59 @@ export class DevicesService {
         user: true,
       },
     });
+  }
+
+  async regiterEvent(
+    status: boolean,
+    eventTypeId: number | string,
+    deviceId: number | string,
+  ) {
+    const eventTypeID = Number(eventTypeId);
+
+    if (isNaN(eventTypeID)) {
+      throw new BadRequestException(`El ID proporcionado no es válido`);
+    }
+
+    const deviceID = Number(deviceId);
+
+    if (isNaN(deviceID)) {
+      throw new BadRequestException(`El ID proporcionado no es válido`);
+    }
+
+    const deviceHistory = await this.prismaService.$transaction(
+      async (prisma) => {
+        const eventCreated = await this.prismaService.event.create({
+          data: {
+            status,
+            eventTypeId: eventTypeID,
+          },
+        });
+        if (!eventCreated) {
+          throw new InternalServerErrorException('Error al crear el evento');
+        }
+        const deviceHistory = await this.prismaService.deviceHistory.create({
+          data: {
+            triggered: new Date(),
+            deviceId: deviceID,
+            eventId: eventCreated.id,
+          },
+          include: {
+            event: {
+              include: {
+                eventType: true,
+              },
+            },
+          },
+        });
+        if (!deviceHistory) {
+          throw new InternalServerErrorException(
+            'Error al registrar el evento',
+          );
+        }
+        return deviceHistory;
+      },
+    );
+
+    return deviceHistory;
   }
 }

@@ -24,6 +24,7 @@ import {
 } from '@prisma/client/runtime/library';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
+import { RegisterEventDto } from './dto/register-event.dto';
 
 @Controller('devices')
 export class DevicesController {
@@ -236,6 +237,39 @@ export class DevicesController {
         }
         return {
           error: new InternalServerErrorException(error.message),
+          data: null,
+        };
+      }
+      return {
+        error,
+        data: null,
+      };
+    }
+  }
+
+  @UseGuards(AuthGuard, RoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Post('/:deviceId/event/:eventTypeId')
+  async registerEvent(
+    @Param('deviceId') deviceId: number,
+    @Param('eventTypeId') eventTypeId: number,
+    @Body() registerEventDtop: RegisterEventDto,
+  ): Promise<ApiResponse> {
+    try {
+      const status = registerEventDtop.status;
+      return {
+        data: await this.devicesService.regiterEvent(
+          status,
+          eventTypeId,
+          deviceId,
+        ),
+        error: null,
+      };
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof PrismaClientValidationError) {
+        return {
+          error: new BadRequestException('Error en los datos enviados'),
           data: null,
         };
       }
