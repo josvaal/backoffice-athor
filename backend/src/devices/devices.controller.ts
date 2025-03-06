@@ -48,6 +48,24 @@ export class DevicesController {
     }
   }
 
+  @RolesWithDescription(['admin', 'superadmin'], '')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('/:id')
+  async listById(@Param('id') id: number): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.devicesService.findById(id),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
   @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
