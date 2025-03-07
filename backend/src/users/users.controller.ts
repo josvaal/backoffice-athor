@@ -2,9 +2,11 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   Put,
@@ -19,13 +21,14 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
+import { RoleGuard } from 'src/auth/role/role.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
   @RolesWithDescription(['admin', 'superadmin'], '')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(): Promise<ApiResponse> {
@@ -43,7 +46,7 @@ export class UsersController {
   }
 
   @RolesWithDescription(['admin', 'superadmin'], '')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @Put('update/:id')
   async updateProfile(
     @Param('id') id: number,
@@ -78,7 +81,7 @@ export class UsersController {
   }
 
   @RolesWithDescription(['admin', 'superadmin'], '')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   async listById(@Param('id') id: number): Promise<ApiResponse> {
@@ -90,6 +93,38 @@ export class UsersController {
     } catch (error) {
       return {
         error: error,
+        data: null,
+      };
+    }
+  }
+
+  @RolesWithDescription(['superadmin'], '')
+  @UseGuards(AuthGuard, RoleGuard)
+  @HttpCode(HttpStatus.OK)
+  @Delete('delete/:id')
+  async delete(@Param('id') id: number): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.userService.delete(id),
+        error: null,
+      };
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof PrismaClientValidationError) {
+        return {
+          error: new BadRequestException('Error en los datos enviados'),
+          data: null,
+        };
+      }
+
+      if (error instanceof PrismaClientKnownRequestError) {
+        return {
+          error: new InternalServerErrorException(error.message),
+          data: null,
+        };
+      }
+      return {
+        error,
         data: null,
       };
     }

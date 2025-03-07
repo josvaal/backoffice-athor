@@ -134,4 +134,18 @@ export class UsersService {
 
     return user;
   }
+
+  async delete(id: number | string) {
+    const userId = Number(id);
+
+    if (isNaN(userId)) {
+      throw new BadRequestException(`El ID proporcionado no es válido`);
+    }
+
+    return await this.prismaService.user.delete({
+      where: {
+        id: userId,
+      },
+    });
+  }
 }
