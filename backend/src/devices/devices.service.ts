@@ -56,6 +56,78 @@ export class DevicesService {
     return device;
   }
 
+  async searchByMacESP32(mac: string) {
+    const device = await this.prismaService.device.findMany({
+      where: {
+        macESP32: mac,
+      },
+      include: {
+        superAdmin: true,
+        status: true,
+        model: true,
+        users: true,
+        //TODO: Array de historial del dispositivo
+        DeviceHistory: true,
+      },
+    });
+
+    if (!device) {
+      throw new NotFoundException(
+        `Los dispositivos con la mac ${mac} no existe`,
+      );
+    }
+
+    return device;
+  }
+
+  async searchBySerialNumber(serial: string) {
+    const device = await this.prismaService.device.findUnique({
+      where: {
+        serialNumber: serial,
+      },
+      include: {
+        superAdmin: true,
+        status: true,
+        model: true,
+        users: true,
+        //TODO: Array de historial del dispositivo
+        DeviceHistory: true,
+      },
+    });
+
+    if (!device) {
+      throw new NotFoundException(
+        `El dispositivo con el numero de serie ${serial} no existe`,
+      );
+    }
+
+    return device;
+  }
+
+  async searchByBatch(batch: string) {
+    const device = await this.prismaService.device.findMany({
+      where: {
+        batch,
+      },
+      include: {
+        superAdmin: true,
+        status: true,
+        model: true,
+        users: true,
+        //TODO: Array de historial del dispositivo
+        DeviceHistory: true,
+      },
+    });
+
+    if (!device) {
+      throw new NotFoundException(
+        `Los dispositivos con el lote ${batch} no existe`,
+      );
+    }
+
+    return device;
+  }
+
   async create(createDeviceDto: CreateDeviceDto) {
     return await this.prismaService.device.create({
       data: createDeviceDto,

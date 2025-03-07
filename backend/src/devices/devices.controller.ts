@@ -66,6 +66,62 @@ export class DevicesController {
     }
   }
 
+  @RolesWithDescription(['admin', 'superadmin'], '')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('macESP32/:mac')
+  async listByMacESP32(@Param('mac') mac: string): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.devicesService.searchByMacESP32(mac),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
+  @RolesWithDescription(['admin', 'superadmin'], '')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('serial/:serial')
+  async findBySerialNumber(
+    @Param('serial') serial: string,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.devicesService.searchBySerialNumber(serial),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
+  @RolesWithDescription(['admin', 'superadmin'], '')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('batch/:batch')
+  async listByBatch(@Param('batch') batch: string): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.devicesService.searchByBatch(batch),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
   @RolesWithDescription(['superadmin', 'admin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
