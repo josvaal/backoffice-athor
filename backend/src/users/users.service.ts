@@ -34,6 +34,11 @@ export class UsersService {
             role: true,
           },
         },
+        devices: {
+          include: {
+            device: true,
+          },
+        },
       },
     });
 
