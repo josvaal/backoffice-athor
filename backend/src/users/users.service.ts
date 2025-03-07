@@ -9,7 +9,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user';
-import { UserView } from './dto/user-view.dto';
 const saltOrRounds: number = Number(process.env.SALTROUNDS);
 
 @Injectable()
