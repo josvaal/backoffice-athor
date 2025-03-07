@@ -49,6 +49,24 @@ export class RolesController {
   }
 
   @RolesWithDescription(['superadmin'], '')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('/:id')
+  async listById(@Param('id') id: number): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.rolesService.findById(id),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
+  @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')

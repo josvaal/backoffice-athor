@@ -27,6 +27,13 @@ export class RolesService {
       where: {
         id: roleId,
       },
+      include: {
+        UserRole: {
+          include: {
+            user: true,
+          }
+        }
+      }
     });
 
     if (!role) {
