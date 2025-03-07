@@ -24,6 +24,10 @@ import { ApiOperation } from '@nestjs/swagger';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiOperation({
+    description:
+      'Esta operación de API permite el inicio de sesión de un usuario, validando su correo y contraseña. Si la autenticación es exitosa, genera y devuelve dos tokens JWT (de acceso y de actualización). Si hay algún error, devuelve un mensaje de error correspondiente.',
+  })
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async signIn(@Body() signInDto: SignInDto): Promise<ApiResponse> {
@@ -43,6 +47,10 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({
+    description:
+      'Esta operación de API permite el registro de un nuevo usuario, creando primero al usuario y asignándole el rol de "usuario" en una transacción. Si todo es exitoso, genera y devuelve dos tokens JWT (de acceso y de actualización). Si ocurre algún error durante la creación o asignación del rol, devuelve un mensaje de error.',
+  })
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
   async register(@Body() signUpDto: SignUpDto): Promise<ApiResponse> {
@@ -59,6 +67,10 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({
+    description:
+      'Esta operación de API permite obtener el perfil del usuario autenticado. Al recibir una solicitud con un token JWT válido, busca al usuario en la base de datos. Si el usuario no existe, retorna un error; de lo contrario, devuelve los detalles del perfil, excluyendo la contraseña.',
+  })
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('me')
@@ -80,6 +92,8 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Solo se puede actualizar perfil cada 15 dias',
+    description:
+      'Esta operación de API permite actualizar el perfil del usuario autenticado, pero solo si han pasado al menos 15 días desde su última actualización. No se permite modificar el correo electrónico ni la contraseña. Si el usuario intenta actualizar el perfil antes de ese tiempo o con campos no permitidos, se devuelve un error. Si la actualización es exitosa, se devuelve la información del usuario actualizada.',
   })
   @Put('me')
   async updateProfile(

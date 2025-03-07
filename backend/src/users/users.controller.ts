@@ -27,7 +27,10 @@ import { RoleGuard } from 'src/auth/role/role.guard';
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @RolesWithDescription(['admin', 'superadmin'], '')
+  @RolesWithDescription(
+    ['admin', 'superadmin'],
+    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" obtener una lista de todos los usuarios. Se asegura de que el solicitante esté autenticado y tenga el rol adecuado mediante los guardias de autenticación y roles. Si la solicitud es exitosa, devuelve la lista de usuarios; de lo contrario, devuelve un mensaje de error.',
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
@@ -45,7 +48,10 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(['admin', 'superadmin'], '')
+  @RolesWithDescription(
+    ['admin', 'superadmin'],
+    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" actualizar los datos de un usuario específico, pero no se permite modificar la contraseña ni el correo electrónico. Valida que el ID proporcionado sea correcto y que el usuario exista en la base de datos. Si ocurre algún error en los datos enviados o el usuario no se encuentra, devuelve un mensaje de error correspondiente. Si la actualización es exitosa, devuelve la información del usuario actualizada.',
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @Put('update/:id')
   async updateProfile(
@@ -80,7 +86,10 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(['admin', 'superadmin'], '')
+  @RolesWithDescription(
+    ['admin', 'superadmin'],
+    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" obtener los detalles de un usuario específico por su ID. Valida que el ID proporcionado sea correcto y busca al usuario en la base de datos, incluyendo sus roles y dispositivos asociados. Si el usuario no existe o el ID es inválido, se devuelve un mensaje de error. Si la consulta es exitosa, se devuelve la información del usuario.',
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
@@ -98,7 +107,9 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], '')
+  @RolesWithDescription(['superadmin'],
+    'Esta operación de API permite a los usuarios con el rol de "superadmin" eliminar un usuario por su ID. Valida que el ID proporcionado sea correcto y, si el usuario existe, lo elimina de la base de datos. Si ocurre algún error en los datos enviados o durante la eliminación, se devuelve un mensaje de error adecuado.'
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
