@@ -47,6 +47,24 @@ export class EventTypeController {
     }
   }
 
+  @RolesWithDescription(['superadmin'], '')
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('/:id')
+  async listById(@Param('id') id: number): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.eventTypeService.findById(id),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
   @RolesWithDescription(['admin', 'superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
