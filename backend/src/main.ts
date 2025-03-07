@@ -17,6 +17,8 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory, {
     customCss: theme.getBuffer(SwaggerThemeNameEnum.DARK),
+    //TODO: Esto genera el JSON crudo para asi poder importarlo desde donde quiera o imprimir la documentacion
+    // jsonDocumentUrl: "/docs.json"
   });
 
   await app.listen(process.env.PORT ?? 3000);
