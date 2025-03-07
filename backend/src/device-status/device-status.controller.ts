@@ -12,21 +12,21 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { DeviceModelService } from './device-model.service';
+import { DeviceStatusService } from './device-status.service';
 import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { ApiResponse } from 'src/custom.types';
-import { CreateModelDeviceDto } from './dto/create-model-device.dto';
+import { CreateDeviceStatusDto } from './dto/create-device-status.dto';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
-import { UpdateModelDeviceDto } from './dto/update-model-device.dto';
+import { UpdateDeviceStatusDto } from './dto/update-device-status.dto';
 
-@Controller('device-model')
-export class DeviceModelController {
-  constructor(private deviceModelService: DeviceModelService) {}
+@Controller('device-status')
+export class DeviceStatusController {
+  constructor(private deviceStatusService: DeviceStatusService) {}
 
   @RolesWithDescription(['superadmin'], '')
   @UseGuards(AuthGuard, RoleGuard)
@@ -35,7 +35,7 @@ export class DeviceModelController {
   async listAll(): Promise<ApiResponse> {
     try {
       return {
-        data: await this.deviceModelService.findAll(),
+        data: await this.deviceStatusService.findAll(),
         error: null,
       };
     } catch (error) {
@@ -53,7 +53,7 @@ export class DeviceModelController {
   async listById(@Param('id') id: number): Promise<ApiResponse> {
     try {
       return {
-        data: await this.deviceModelService.findById(id),
+        data: await this.deviceStatusService.findById(id),
         error: null,
       };
     } catch (error) {
@@ -69,11 +69,11 @@ export class DeviceModelController {
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   async create(
-    @Body() createModelDeviceDto: CreateModelDeviceDto,
+    @Body() createDeviceStatusDto: CreateDeviceStatusDto,
   ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.deviceModelService.create(createModelDeviceDto),
+        data: await this.deviceStatusService.create(createDeviceStatusDto),
         error: null,
       };
     } catch (error) {
@@ -106,11 +106,11 @@ export class DeviceModelController {
   @Put('update/:id')
   async update(
     @Param('id') id: number,
-    @Body() updateModelDeviceDto: UpdateModelDeviceDto,
+    @Body() updateDeviceStatusDto: UpdateDeviceStatusDto,
   ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.deviceModelService.update(id, updateModelDeviceDto),
+        data: await this.deviceStatusService.update(id, updateDeviceStatusDto),
         error: null,
       };
     } catch (error) {
@@ -126,7 +126,7 @@ export class DeviceModelController {
       ) {
         return {
           error: new NotFoundException(
-            `El modelo de dispositivo con ID #${id} no existe`,
+            `El estado de dispositivo con ID #${id} no existe`,
           ),
           data: null,
         };
@@ -146,7 +146,7 @@ export class DeviceModelController {
   async delete(@Param('id') id: number): Promise<ApiResponse> {
     try {
       return {
-        data: await this.deviceModelService.delete(id),
+        data: await this.deviceStatusService.delete(id),
         error: null,
       };
     } catch (error) {
@@ -156,7 +156,7 @@ export class DeviceModelController {
       ) {
         return {
           error: new NotFoundException(
-            `El modelo de dispositivo con ID #${id} no existe`,
+            `El estado de dispositivo con ID #${id} no existe`,
           ),
           data: null,
         };

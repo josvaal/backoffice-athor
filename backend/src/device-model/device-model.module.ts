@@ -5,6 +5,7 @@ import { UsersModule } from 'src/users/users.module';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { PrismaModule } from 'src/prisma/prisma.module';
 
+//TODO: Hacer el CRUD de estado de dispositivos
 @Module({
   imports: [PrismaModule, UsersModule],
   providers: [DeviceModelService, RoleGuard],
