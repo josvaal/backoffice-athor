@@ -15,6 +15,7 @@ import { DeviceModelModule } from './device-model/device-model.module';
 import { DeviceStatusModule } from './device-status/device-status.module';
 import { EventsModule } from './events/events.module';
 import { UserDevicesModule } from './user-devices/user-devices.module';
+import { DeviceHistoryModule } from './device-history/device-history.module';
 
 @Module({
   // TODO: QUITAR EL 'ConfigModule.forRoot()' EN PRODUCCIÓN
@@ -31,6 +32,7 @@ import { UserDevicesModule } from './user-devices/user-devices.module';
     DeviceStatusModule,
     EventsModule,
     UserDevicesModule,
+    DeviceHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, DevicesService],
