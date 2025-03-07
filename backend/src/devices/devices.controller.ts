@@ -179,7 +179,10 @@ export class DevicesController {
     }
   }
 
-  @RolesWithDescription(['superadmin', 'admin'], '')
+  @RolesWithDescription(
+    ['superadmin', 'admin'],
+    'Esta operación asigna el dispositivo a un usuario y crea un nuevo registro en UserDevice',
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('assign/user/:userId/device/:deviceId')
@@ -222,7 +225,10 @@ export class DevicesController {
     }
   }
 
-  @RolesWithDescription(['superadmin', 'admin'], '')
+  @RolesWithDescription(
+    ['superadmin', 'admin'],
+    'Esta operación des-asigna el dispositivo de un usuario y elimina un registro en UserDevice',
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Delete('deassign/user/:userId/device/:deviceId')
@@ -265,7 +271,10 @@ export class DevicesController {
     }
   }
 
-  @RolesWithDescription(['superadmin', 'admin', 'usuario'], '')
+  @RolesWithDescription(
+    ['superadmin', 'admin', 'usuario'],
+    'Con esta operación se registra un nuevo evento en el dispositivo creando un nuevo registro en Event y DeviceHistory',
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('/:deviceId/event/:eventTypeId')
