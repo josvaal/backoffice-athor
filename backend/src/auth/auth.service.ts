@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -17,6 +18,7 @@ import {
 } from 'src/custom.types';
 import { UserView } from 'src/users/dto/user-view.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -93,7 +95,6 @@ export class AuthService {
   }
 
   async profile(request: JwtRequestPayload): Promise<UserView> {
-    console.log(request);
     const userJwt: User = request.user.user;
     const userDb: User | null = await this.usersService.findById(userJwt.id);
 
@@ -106,4 +107,77 @@ export class AuthService {
 
     return userView;
   }
+
+  async update(request: JwtRequestPayload, updateUserDto: UpdateUserDto) {
+    const userJwt: User = request.user.user;
+    const userDb: User | null = await this.usersService.findById(userJwt.id);
+
+    if (!hasPassed15Days(userDb.updatedAt)) {
+      throw new BadRequestException(
+        `Debes esperar ${daysUntil15Days(userDb.updatedAt)} días para poder actualizar tu perfil`,
+      );
+    }
+
+    if (!userDb) {
+      throw new NotFoundException(
+        `El usuario con el id #${userJwt.id} no existe`,
+      );
+    }
+
+    if (updateUserDto['password']) {
+      throw new BadRequestException('No se permite actualizar la contraseña');
+    }
+
+    if (updateUserDto['email']) {
+      throw new BadRequestException('No se permite actualizar el correo');
+    }
+
+    const user = await this.prismaService.user.update({
+      where: {
+        id: userJwt.id,
+      },
+      data: updateUserDto,
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        `El usuario con el id #${userJwt.id} no existe`,
+      );
+    }
+
+    return user;
+  }
+}
+
+function hasPassed15Days(date1: Date): boolean {
+  const today: Date = new Date();
+  // Normalizamos ambas fechas para comparar solo las fechas, sin la hora
+  const normalizedToday = new Date(today.setHours(0, 0, 0, 0));
+  const normalizedDate1 = new Date(date1.setHours(0, 0, 0, 0));
+
+  const diffInMilliseconds = Math.abs(
+    normalizedToday.getTime() - normalizedDate1.getTime(),
+  );
+  const daysInMilliseconds = 15 * 24 * 60 * 60 * 1000; // 15 días en milisegundos
+
+  return diffInMilliseconds >= daysInMilliseconds;
+}
+
+function daysUntil15Days(date1: Date): number {
+  const today: Date = new Date(); // Fecha de hoy
+  const normalizedToday = new Date(today.setHours(0, 0, 0, 0));
+  const normalizedDate1 = new Date(date1.setHours(0, 0, 0, 0));
+
+  const diffInMilliseconds =
+    normalizedToday.getTime() - normalizedDate1.getTime();
+  const daysPassed = diffInMilliseconds / (24 * 60 * 60 * 1000); // Convertimos de milisegundos a días
+
+  // Si ya han pasado 15 días o más, retornamos 0 (no se necesita esperar más)
+  if (daysPassed >= 15) {
+    return 0;
+  }
+
+  // Si no han pasado 15 días, calculamos cuántos días faltan
+  const daysToWait = 15 - daysPassed;
+  return Math.ceil(daysToWait); // Usamos Math.ceil para redondear hacia arriba
 }

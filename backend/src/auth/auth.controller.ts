@@ -17,6 +17,7 @@ import { AuthGuard } from './auth.guard';
 import { UsersService } from 'src/users/users.service';
 import { ApiResponse, JwtRequestPayload, JwtToken } from 'src/custom.types';
 import { UserView } from 'src/users/dto/user-view.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -57,14 +58,33 @@ export class AuthController {
     }
   }
 
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('me')
-  async getProfile(
-    @Request() req: JwtRequestPayload,
-  ): Promise<ApiResponse> {
+  async getProfile(@Request() req: JwtRequestPayload): Promise<ApiResponse> {
     try {
       return {
         data: await this.authService.profile(req),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error,
+        data: null,
+      };
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Put('me')
+  async updateProfile(
+    @Request() req: JwtRequestPayload,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.authService.update(req, updateUserDto),
         error: null,
       };
     } catch (error) {
