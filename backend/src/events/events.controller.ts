@@ -23,7 +23,10 @@ import {
 export class EventsController {
   constructor(private eventsService: EventsService) {}
 
-  @RolesWithDescription(['superadmin', 'admin'], '')
+  @RolesWithDescription(
+    ['superadmin', 'admin'],
+    "Esta operación de API permite obtener una lista de todos los eventos registrados. Solo los usuarios con los roles de 'superadmin' o 'admin' pueden acceder a esta información. Si la solicitud es exitosa, se devuelve la lista de eventos, mientras que si ocurre un error, se maneja y se retorna el error correspondiente.",
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
@@ -41,7 +44,10 @@ export class EventsController {
     }
   }
 
-  @RolesWithDescription(['superadmin', 'admin'], '')
+  @RolesWithDescription(
+    ['superadmin', 'admin'],
+    "Esta operación de API permite obtener los detalles de un evento específico a través de su ID. Los usuarios con roles de 'superadmin' o 'admin' pueden acceder a la información. Si el ID proporcionado es válido, se retorna la información del evento, incluyendo el tipo de evento asociado. Si ocurre un error, se maneja y se devuelve el mensaje de error correspondiente.",
+  )
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
@@ -59,7 +65,10 @@ export class EventsController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], '')
+  @RolesWithDescription(
+    ['superadmin'],
+    "Esta operación de API permite eliminar un evento a través de su ID. Solo los usuarios con el rol de 'superadmin' pueden realizar esta acción. Si el ID proporcionado es válido, el evento será eliminado. Si el evento está relacionado con un historial de eventos y no puede ser eliminado, se devuelve un mensaje de error específico. Si ocurre cualquier otro tipo de error, también se maneja y se retorna el mensaje adecuado.",
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
