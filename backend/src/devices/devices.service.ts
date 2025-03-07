@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Device } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
@@ -16,12 +15,12 @@ export class DevicesService {
   async findAll() {
     return await this.prismaService.device.findMany({
       include: {
-        superAdmin: true,
+        // superAdmin: true,
         status: true,
         model: true,
-        users: true,
+        // users: true,
         //TODO: Array de historial del dispositivo
-        DeviceHistory: true,
+        // DeviceHistory: true,
       },
     });
   }
