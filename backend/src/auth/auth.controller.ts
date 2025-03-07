@@ -18,6 +18,7 @@ import { UsersService } from 'src/users/users.service';
 import { ApiResponse, JwtRequestPayload, JwtToken } from 'src/custom.types';
 import { UserView } from 'src/users/dto/user-view.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -77,6 +78,9 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Solo se puede actualizar perfil cada 15 dias',
+  })
   @Put('me')
   async updateProfile(
     @Request() req: JwtRequestPayload,
