@@ -29,7 +29,10 @@ import { UpdateEventTypeDto } from './dto/update-event-type.dto';
 export class EventTypeController {
   constructor(private eventTypeService: EventTypeService) {}
 
-  @RolesWithDescription(['admin', 'superadmin'], '')
+  @RolesWithDescription(
+    ['admin', 'superadmin'],
+    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" obtener una lista de todos los tipos de eventos disponibles. Si la solicitud es exitosa, devuelve la información solicitada; si ocurre algún error, lo captura y lo devuelve en la respuesta.',
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
@@ -47,7 +50,10 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], '')
+  @RolesWithDescription(
+    ['superadmin'],
+    'Esta operación de API permite obtener un tipo de evento específico a partir de su ID. Si el ID proporcionado no es válido o el tipo de evento no se encuentra en la base de datos, se lanzan errores adecuados. Si se encuentra el tipo de evento, se devuelve la información correspondiente.',
+  )
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
@@ -65,7 +71,10 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(['admin', 'superadmin'], '')
+  @RolesWithDescription(
+    ['admin', 'superadmin'],
+    "Esta operación de API permite crear un nuevo tipo de evento en el sistema. Si los datos proporcionados son incorrectos o el nombre del tipo de evento ya existe, se devuelve un error. Si todo está correcto, se crea el tipo de evento y se devuelve la información correspondiente. Solo los usuarios con roles de 'admin' o 'superadmin' pueden realizar esta operación.",
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
@@ -102,7 +111,10 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(['admin', 'superadmin'], '')
+  @RolesWithDescription(
+    ['admin', 'superadmin'],
+    "Esta operación de API permite actualizar un tipo de evento existente en el sistema, identificando el tipo de evento por su ID. Si el ID proporcionado es inválido o el tipo de evento no se encuentra, se devuelve un error. Solo los usuarios con roles de 'admin' o 'superadmin' pueden realizar esta operación. Si todo es correcto, el tipo de evento se actualiza con los nuevos datos proporcionados.",
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.CREATED)
   @Put('update/:id')
@@ -141,7 +153,10 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(['admin', 'superadmin'], '')
+  @RolesWithDescription(
+    ['admin', 'superadmin'],
+    "Esta operación de API permite eliminar un tipo de evento del sistema utilizando su ID. Solo los usuarios con roles de 'admin' o 'superadmin' pueden realizar esta acción. Si el ID proporcionado no es válido o el tipo de evento no se encuentra, se devuelve un error adecuado. Si la eliminación es exitosa, se responde con el tipo de evento eliminado, mientras que si ocurre algún error, se maneja de acuerdo con el tipo de problema encontrado, como errores en los datos enviados o problemas internos del servidor.",
+  )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
