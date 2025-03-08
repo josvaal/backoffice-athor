@@ -18,12 +18,13 @@ import { UserDevicesModule } from './user-devices/user-devices.module';
 import { DeviceHistoryModule } from './device-history/device-history.module';
 
 @Module({
-  // TODO: QUITAR EL 'ConfigModule.forRoot()' EN PRODUCCIÓN
   imports: [
     AuthModule,
     UsersModule,
     PrismaModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TokenModule,
     RolesModule,
     DevicesModule,

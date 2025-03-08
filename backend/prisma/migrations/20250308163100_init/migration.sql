@@ -157,9 +157,3 @@ END;
 THROW
 
 END CATCH
-
--- Insertar roles predeterminados
-INSERT INTO [Role] (name, description, createdAt, updatedAt) VALUES
-  ('usuario', 'Rol de usuario común', GETDATE(), GETDATE()),
-  ('admin', 'Rol de administrador con privilegios completos', GETDATE(), GETDATE()),
-  ('superadmin', 'Rol con privilegios más altos que el admin', GETDATE(), GETDATE());

@@ -1,0 +1,55 @@
+volumes:
+  bo_db_data:
+
+services:
+  bo_athor_backend:
+    build:
+      context: .
+      args:
+        - DATABASE_URL=sqlserver://bo_athor_db:1433;database=bo_athor_db;user=sa;password=${SA_PASSWORD};encrypt=true;trustServerCertificate=true
+    container_name: bo_athor_api
+    depends_on:
+      - bo_athor_db
+    environment:
+      - JWTKEY=${JWTKEY}
+      - SALTROUNDS=${SALTROUNDS}
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "3000:3000"
+    volumes:
+      - bo_db_data:/var/opt/mssql
+    networks:
+      - backend-network
+  bo_athor_db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    restart: always
+    container_name: bo_athor_db
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -C -Q 'SELECT 1' || exit 1" ]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+      timeout: 3s
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    networks:
+      - backend-network
+  bo_athor_db.configurator:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    depends_on:
+      bo_athor_db:
+        condition: service_healthy
+    environment:
+      - SA_PASSWORD=${SA_PASSWORD}
+    command: >
+      bash -c ' /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P ${SA_PASSWORD} -C -d master -i docker-entrypoint-initdb.d/setup.sql; echo "All done!"; '
+
+networks:
+  backend-network:
+    driver: bridge
