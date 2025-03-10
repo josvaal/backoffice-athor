@@ -77,6 +77,16 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
+  bo_athor_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${FE_PORT}:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - backend-network
 
 networks:
   backend-network:
