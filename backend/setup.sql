@@ -1,2 +1,0 @@
-CREATE DATABASE bo_athor_db;
-GO

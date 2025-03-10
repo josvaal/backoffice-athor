@@ -1,0 +1,41 @@
+services:
+  bo_athor_db:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: bo_athor_db
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    networks:
+      - backend-network
+    volumes:
+      - ./database/entrypoint.sh:/entrypoint.sh
+      - ./database/db-init.sh:/db-init.sh
+      - ./database/db-init.sql:/db-init.sql
+  bo_athor_api:
+    build:
+      context: ./backend
+      args:
+        - DATABASE_URL=${BA_DATABASE_URL}
+      dockerfile: Dockerfile
+    container_name: bo_athor_api
+    restart: on-failure
+    environment:
+      - SALTROUNDS=${BA_SALTROUNDS}
+      - JWTKEY=${BA_JWTKEY}
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - bo_athor_db
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
