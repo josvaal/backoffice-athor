@@ -62,23 +62,23 @@ export class AuthService {
 
 	async signUp(userDto: UserSignupDto): Promise<JwtToken> {
 		const user = await this.prismaService.$transaction(async (prisma) => {
-			if (
-				!userDto.email ||
-				!userDto.name ||
-				!userDto.lastname ||
-				!userDto.password
-			) {
-				throw new BadRequestException(
-					"No proporcionaste toda la información necesaria",
-				);
-			}
+			// if (
+			// 	!userDto.email?.trim() ||
+			// 	!userDto.name?.trim() ||
+			// 	!userDto.lastname?.trim() ||
+			// 	!userDto.password?.trim()
+			// ) {
+			// 	throw new BadRequestException(
+			// 		"No proporcionaste toda la información necesaria",
+			// 	);
+			// }
 			const userMail = await this.prismaService.user.findUnique({
 				where: {
 					email: userDto.email,
 				},
 			});
 
-			if (!userMail) {
+			if (userMail) {
 				throw new InternalServerErrorException(
 					"Este usuario ya se encuentra registrado",
 				);
