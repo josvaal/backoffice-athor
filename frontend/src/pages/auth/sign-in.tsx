@@ -1,9 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
@@ -12,12 +10,13 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import ForgotPassword from "./components/forgot-password";
-import {
-	GoogleIcon,
-	FacebookIcon,
-	SitemarkIcon,
-} from "./components/custom-icons";
+import { SitemarkIcon } from "./components/custom-icons";
+import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
+import { useAuthStore } from "../../global/IsAuthenticated";
+import { Alert, CircularProgress } from "@mui/material";
 
 const Card = styled(MuiCard)(({ theme }) => ({
 	display: "flex",
@@ -62,58 +61,72 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
-	const [emailError, setEmailError] = React.useState(false);
-	const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-	const [passwordError, setPasswordError] = React.useState(false);
-	const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-	const [open, setOpen] = React.useState(false);
+	const {
+		register,
+		handleSubmit,
+		watch,
+		formState: { errors },
+	} = useForm({
+		shouldUseNativeValidation: true,
+	});
+	const [formData, setFormData] = React.useState();
+	const navigate = useNavigate();
+	const { isAuthenticated, setAuthenticated } = useAuthStore();
 
-	const handleClickOpen = () => {
-		setOpen(true);
+	const ba_url = import.meta.env.VITE_BA_URL;
+	const { isLoading, isError, error, data, refetch } = useQuery(
+		"auth",
+		() =>
+			fetch(`${ba_url}/auth/login`, {
+				method: "POST",
+				body: JSON.stringify(formData),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.error) {
+						throw data.error;
+					}
+					localStorage.setItem("access_token", data.data.access_token);
+					localStorage.setItem("refresh_token", data.data.refresh_token);
+					// console.log(data);
+
+					toast.success("Éxito al registrarte");
+					setAuthenticated(true);
+					navigate("/");
+				})
+				.catch((err) => {
+					throw err;
+				}),
+		{
+			enabled: false,
+		},
+	);
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const onSubmit = async (formDataProp: any) => {
+		console.log(formDataProp);
+		setFormData(formDataProp);
+		setTimeout(async () => {
+			await refetch();
+		}, 60);
 	};
 
-	const handleClose = () => {
-		setOpen(false);
-	};
-
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		if (emailError || passwordError) {
-			event.preventDefault();
-			return;
-		}
-		const data = new FormData(event.currentTarget);
-		console.log({
-			email: data.get("email"),
-			password: data.get("password"),
-		});
-	};
-
-	const validateInputs = () => {
-		const email = document.getElementById("email") as HTMLInputElement;
-		const password = document.getElementById("password") as HTMLInputElement;
-
-		let isValid = true;
-
-		if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-			setEmailError(true);
-			setEmailErrorMessage("Please enter a valid email address.");
-			isValid = false;
-		} else {
-			setEmailError(false);
-			setEmailErrorMessage("");
-		}
-
-		if (!password.value || password.value.length < 6) {
-			setPasswordError(true);
-			setPasswordErrorMessage("Password must be at least 6 characters long.");
-			isValid = false;
-		} else {
-			setPasswordError(false);
-			setPasswordErrorMessage("");
-		}
-
-		return isValid;
-	};
+	if (isLoading) {
+		return (
+			<Box
+				display="flex"
+				justifyContent="center"
+				alignItems="center"
+				width="100%"
+				height="100vh"
+			>
+				<CircularProgress />
+			</Box>
+		);
+	}
 
 	return (
 		<>
@@ -126,11 +139,11 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 						variant="h4"
 						sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
 					>
-						Sign in
+						Inicio de sesión
 					</Typography>
 					<Box
 						component="form"
-						onSubmit={handleSubmit}
+						onSubmit={handleSubmit(onSubmit)}
 						noValidate
 						sx={{
 							display: "flex",
@@ -140,27 +153,40 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 						}}
 					>
 						<FormControl>
-							<FormLabel htmlFor="email">Email</FormLabel>
+							<FormLabel htmlFor="email">Correo</FormLabel>
 							<TextField
-								error={emailError}
-								helperText={emailErrorMessage}
+								{...register("email", {
+									required: "Ingrese su correo",
+									validate: (value) =>
+										value.includes("@") ||
+										'Un correo incluye un "@" como simbolo',
+								})}
+								error={!!errors.email}
+								helperText={errors.email?.message as React.ReactNode}
 								id="email"
 								type="email"
 								name="email"
-								placeholder="your@email.com"
+								placeholder="tu@correo.com"
 								autoComplete="email"
 								autoFocus
 								required
 								fullWidth
 								variant="outlined"
-								color={emailError ? "error" : "primary"}
+								color={errors.email ? "error" : "primary"}
 							/>
 						</FormControl>
 						<FormControl>
-							<FormLabel htmlFor="password">Password</FormLabel>
+							<FormLabel htmlFor="password">Contraseña</FormLabel>
 							<TextField
-								error={passwordError}
-								helperText={passwordErrorMessage}
+								{...register("password", {
+									required: "Ingrese su contraseña",
+									minLength: {
+										value: 8,
+										message: "Mínimo 8 carácteres",
+									},
+								})}
+								error={!!errors.password}
+								helperText={errors.password?.message as React.ReactNode}
 								name="password"
 								placeholder="••••••"
 								type="password"
@@ -170,32 +196,20 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 								required
 								fullWidth
 								variant="outlined"
-								color={passwordError ? "error" : "primary"}
+								color={errors.password ? "error" : "primary"}
 							/>
 						</FormControl>
-						<FormControlLabel
-							control={<Checkbox value="remember" color="primary" />}
-							label="Remember me"
-						/>
-						<ForgotPassword open={open} handleClose={handleClose} />
+						{isError ? <Alert severity="error">{error.message}</Alert> : null}
 						<Button
+							disabled={isLoading}
+							style={{ marginTop: 5 }}
 							type="submit"
 							fullWidth
 							variant="contained"
-							onClick={validateInputs}
+							formNoValidate
 						>
-							Sign in
+							Iniciar Sesión
 						</Button>
-						<Link
-							disabled
-							component="button"
-							type="button"
-							onClick={handleClickOpen}
-							variant="body2"
-							sx={{ alignSelf: "center" }}
-						>
-							Forgot your password?
-						</Link>
 						<Link
 							href="/auth/sign-up"
 							sx={{ alignSelf: "center" }}
