@@ -17,25 +17,25 @@ services:
       - ./database/entrypoint.sh:/entrypoint.sh
       - ./database/db-init.sh:/db-init.sh
       - ./database/db-init.sql:/db-init.sql
-  bo_athor_api:
-    build:
-      context: ./backend
-      args:
-        - DATABASE_URL=${BA_DATABASE_URL}
-      dockerfile: Dockerfile
-    container_name: bo_athor_api
-    restart: on-failure
-    environment:
-      - SALTROUNDS=${BA_SALTROUNDS}
-      - JWTKEY=${BA_JWTKEY}
-    env_file:
-      - .env
-    ports:
-      - "${BA_PORT}:3000"
-    depends_on:
-      - bo_athor_db
-    networks:
-      - backend-network
+  # bo_athor_api:
+  #   build:
+  #     context: ./backend
+  #     args:
+  #       - DATABASE_URL=${BA_DATABASE_URL}
+  #     dockerfile: Dockerfile
+  #   container_name: bo_athor_api
+  #   restart: on-failure
+  #   environment:
+  #     - SALTROUNDS=${BA_SALTROUNDS}
+  #     - JWTKEY=${BA_JWTKEY}
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "${BA_PORT}:3000"
+  #   depends_on:
+  #     - bo_athor_db
+  #   networks:
+  #     - backend-network
   metabase_db:
     container_name: metabase_db
     build:
@@ -57,7 +57,7 @@ services:
     hostname: metabase
     depends_on:
       - metabase_db
-      - bo_athor_api
+      # - bo_athor_api
       - bo_athor_db
     volumes:
       - /dev/urandom:/dev/random:ro
