@@ -11,8 +11,11 @@ import { styled } from "@mui/material/styles";
 import { SitemarkIcon } from "./components/custom-icons";
 import { useForm } from "react-hook-form";
 import { useState, type ReactNode } from "react";
-import { Grid2 as Grid } from "@mui/material";
+import { Alert, CircularProgress, Grid2 as Grid } from "@mui/material";
 import { useQuery } from "react-query";
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
+import { useAuthStore } from "../../global/IsAuthenticated";
 
 const Card = styled(MuiCard)(({ theme }) => ({
 	display: "flex",
@@ -66,18 +69,35 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 		shouldUseNativeValidation: true,
 	});
 	const [formData, setFormData] = useState();
+	const navigate = useNavigate();
+	const { isAuthenticated, setAuthenticated } = useAuthStore();
 
 	const ba_url = import.meta.env.VITE_BA_URL;
-	const { isLoading, error, data, refetch } = useQuery(
+	const { isLoading, isError, error, data, refetch } = useQuery(
 		"auth",
 		() =>
 			fetch(`${ba_url}/auth/register`, {
 				method: "POST",
-				body: formData,
+				body: JSON.stringify(formData),
+				headers: {
+					"Content-Type": "application/json",
+				},
 			})
-				.then((res) => res.json())
+				.then((response) => response.json())
 				.then((data) => {
-					console.log(data);
+					if (data.error) {
+						throw data.error;
+					}
+					localStorage.setItem("access_token", data.data.access_token);
+					localStorage.setItem("refresh_token", data.data.refresh_token);
+					// console.log(data);
+
+					toast.success("Éxito al registrarte");
+					setAuthenticated(true);
+					navigate("/");
+				})
+				.catch((err) => {
+					throw err;
 				}),
 		{
 			enabled: false,
@@ -86,10 +106,28 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const onSubmit = async (formDataProp: any) => {
-		console.log(formDataProp);
-		setFormData(formDataProp);
-		await refetch();
+		const { verify_password, ...restData } = formDataProp;
+		console.log(restData);
+		setFormData(restData);
+		// TIMEOUT para que se llegue a actualizar el setFormData
+		setTimeout(async () => {
+			await refetch();
+		}, 60);
 	};
+
+	if (isLoading) {
+		return (
+			<Box
+				display="flex"
+				justifyContent="center"
+				alignItems="center"
+				width="100%"
+				height="100vh"
+			>
+				<CircularProgress />
+			</Box>
+		);
+	}
 
 	return (
 		<>
@@ -189,19 +227,19 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 							</Grid>
 							<Grid size={6}>
 								<FormControl>
-									<FormLabel htmlFor="firstname">Nombres</FormLabel>
+									<FormLabel htmlFor="name">Nombres</FormLabel>
 									<TextField
-										{...register("firstname", {
+										{...register("name", {
 											required: "Ingrese sus nombres",
 										})}
-										error={!!errors.firstname}
-										helperText={errors.firstname?.message as ReactNode}
+										error={!!errors.name}
+										helperText={errors.name?.message as ReactNode}
 										placeholder="Juan"
 										autoFocus
 										required
 										fullWidth
 										variant="outlined"
-										color={errors.firstname ? "error" : "primary"}
+										color={errors.name ? "error" : "primary"}
 									/>
 								</FormControl>
 							</Grid>
@@ -224,7 +262,9 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 								</FormControl>
 							</Grid>
 						</Grid>
+						{isError ? <Alert severity="error">{error.message}</Alert> : null}
 						<Button
+							disabled={isLoading}
 							style={{ marginTop: 5 }}
 							type="submit"
 							fullWidth

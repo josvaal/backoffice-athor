@@ -1,6 +1,7 @@
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-
+import { Toaster } from "react-hot-toast";
+import { notificationProvider } from "./providers/NotificationProvider";
 import {
 	ErrorComponent,
 	RefineSnackbarProvider,
@@ -15,8 +16,14 @@ import routerBindings, {
 	NavigateToResource,
 	UnsavedChangesNotifier,
 } from "@refinedev/react-router";
-import dataProvider from "@refinedev/simple-rest";
-import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router";
+import {
+	BrowserRouter,
+	Navigate,
+	Outlet,
+	Route,
+	Routes,
+	useNavigate,
+} from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import {
@@ -33,35 +40,54 @@ import {
 } from "./pages/categories";
 import SignIn from "./pages/auth/sign-in";
 import { checkAccessToken } from "./utils/token";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SignUp from "./pages/auth/sign-up";
+import { useAuthStore } from "./global/IsAuthenticated";
 
 function App() {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const { isAuthenticated, setAuthenticated } = useAuthStore();
 
-	if (checkAccessToken()) {
-		setIsAuthenticated(true);
-	}
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (checkAccessToken()) {
+			setAuthenticated(true);
+		}
+	}, [isAuthenticated]);
 
 	if (!isAuthenticated) {
 		return (
 			<>
 				<BrowserRouter>
-					<ColorModeContextProvider>
-						<CssBaseline />
-						<GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
-						<Routes>
-							<Route path="/" element={<Navigate to="/auth" />} />
-							<Route path="/auth">
-								<Route index element={<Navigate to="/auth/sign-in" />} />
-								<Route path="sign-in" element={<SignIn />} />
-								<Route path="sign-up" element={<SignUp />} />
-							</Route>
-							<Route path="*" element={<ErrorComponent />} />
-						</Routes>
-						<UnsavedChangesNotifier />
-						<DocumentTitleHandler />
-					</ColorModeContextProvider>
+					<RefineSnackbarProvider>
+						<Refine notificationProvider={useNotificationProvider}>
+							<ColorModeContextProvider>
+								<CssBaseline />
+								<GlobalStyles
+									styles={{ html: { WebkitFontSmoothing: "auto" } }}
+								/>
+								<Routes>
+									<Route
+										element={
+											<>
+												<Outlet />
+												<Toaster />
+											</>
+										}
+									>
+										<Route path="*" element={<Navigate to="/auth" />} />
+										<Route path="/auth">
+											<Route index element={<Navigate to="/auth/sign-in" />} />
+											<Route path="sign-in" element={<SignIn />} />
+											<Route path="sign-up" element={<SignUp />} />
+										</Route>
+										<Route path="*" element={<ErrorComponent />} />
+									</Route>
+								</Routes>
+								<UnsavedChangesNotifier />
+								<DocumentTitleHandler />
+							</ColorModeContextProvider>
+						</Refine>
+					</RefineSnackbarProvider>
 				</BrowserRouter>
 			</>
 		);
@@ -75,6 +101,7 @@ function App() {
 					<GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
 					<RefineSnackbarProvider>
 						<Refine
+							notificationProvider={useNotificationProvider}
 							routerProvider={routerBindings}
 							resources={[
 								{
@@ -111,6 +138,8 @@ function App() {
 										index
 										element={<NavigateToResource resource="blog_posts" />}
 									/>
+
+									<Route path="/auth/*" element={<Navigate to="/" />} />
 									<Route path="/blog-posts">
 										<Route index element={<BlogPostList />} />
 										<Route path="create" element={<BlogPostCreate />} />
