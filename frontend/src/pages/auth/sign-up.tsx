@@ -11,7 +11,7 @@ import { styled } from "@mui/material/styles";
 import { SitemarkIcon } from "./components/custom-icons";
 import { useForm } from "react-hook-form";
 import { useState, type ReactNode } from "react";
-import { Alert, CircularProgress, Grid2 as Grid } from "@mui/material";
+import { Alert, CircularProgress, Grid2 as Grid, Link } from "@mui/material";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
@@ -107,7 +107,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const onSubmit = async (formDataProp: any) => {
 		const { verify_password, ...restData } = formDataProp;
-		console.log(restData);
+		// console.log(restData);
 		setFormData(restData);
 		// TIMEOUT para que se llegue a actualizar el setFormData
 		setTimeout(async () => {
@@ -273,6 +273,13 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 						>
 							Registrarme
 						</Button>
+						<Link
+							href="/auth/sign-in"
+							sx={{ alignSelf: "center" }}
+							variant="body2"
+						>
+							¿Ya tienes una cuenta?
+						</Link>
 					</Box>
 				</Card>
 			</SignUpContainer>
