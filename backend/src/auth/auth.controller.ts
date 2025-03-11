@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Request,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -40,6 +41,13 @@ export class AuthController {
         error: null,
       };
     } catch (error) {
+      console.log({error})
+      if(error instanceof UnauthorizedException){
+        return {
+          data: null,
+          error: new UnauthorizedException("Correo o contraseña incorrectos")
+        }
+      }
       return {
         error,
         data: null,
