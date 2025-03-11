@@ -1,183 +1,204 @@
 import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
-import { UserSignupDto } from 'src/users/dto/user-signup.dto';
-import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+	NotFoundException,
+	UnauthorizedException,
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { User } from "@prisma/client";
+import { UserSignupDto } from "src/users/dto/user-signup.dto";
+import { UsersService } from "src/users/users.service";
+import * as bcrypt from "bcrypt";
 import {
-  ApiResponse,
-  JwtPayload,
-  JwtRequestPayload,
-  JwtToken,
-} from 'src/custom.types';
-import { UserView } from 'src/users/dto/user-view.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+	ApiResponse,
+	JwtPayload,
+	JwtRequestPayload,
+	JwtToken,
+} from "src/custom.types";
+import { UserView } from "src/users/dto/user-view.dto";
+import { PrismaService } from "src/prisma/prisma.service";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private prismaService: PrismaService,
-    private jwtService: JwtService,
-  ) {}
+	constructor(
+		private usersService: UsersService,
+		private prismaService: PrismaService,
+		private jwtService: JwtService,
+	) {}
 
-  async signIn(email: string, pass: string): Promise<JwtToken> {
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        email,
-      },
-    });
+	async signIn(email: string, pass: string): Promise<JwtToken> {
+		const user = await this.prismaService.user.findUnique({
+			where: {
+				email,
+			},
+		});
 
-    if (!user) {
-      throw new NotFoundException(
-        'El usuario con este correo no se encuentra registrado',
-      );
-    }
+		if (!user) {
+			throw new NotFoundException(
+				"El usuario con este correo no se encuentra registrado",
+			);
+		}
 
-    const isMatch = await bcrypt.compare(pass, user?.password as string);
-    if (!isMatch) {
-      throw new UnauthorizedException();
-    }
+		const isMatch = await bcrypt.compare(pass, user?.password as string);
+		if (!isMatch) {
+			throw new UnauthorizedException();
+		}
 
-    const payload: JwtPayload = {
-      sub: user?.id.toString() as string,
-      user: user as User,
-    };
+		const payload: JwtPayload = {
+			sub: user?.id.toString() as string,
+			user: user as User,
+		};
 
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-      refresh_token: await this.jwtService.signAsync(
-        { sub: user?.id },
-        { expiresIn: '7d' },
-      ),
-    };
-  }
+		return {
+			access_token: await this.jwtService.signAsync(payload),
+			refresh_token: await this.jwtService.signAsync(
+				{ sub: user?.id },
+				{ expiresIn: "7d" },
+			),
+		};
+	}
 
-  async signUp(userDto: UserSignupDto): Promise<JwtToken> {
-    const user = await this.prismaService.$transaction(async (prisma) => {
-      const userCreated = await this.usersService.create(userDto);
-      if (!userCreated) {
-        throw new InternalServerErrorException('Error al crear el usuario');
-      }
-      const roleUser = await this.prismaService.userRole.create({
-        data: {
-          //TODO: El rol de usuario siempre tiene que tener el ID "1"
-          roleId: 1,
-          userId: userCreated.id,
-        },
-      });
+	async signUp(userDto: UserSignupDto): Promise<JwtToken> {
+		const user = await this.prismaService.$transaction(async (prisma) => {
+			if (
+				!userDto.email ||
+				!userDto.name ||
+				!userDto.lastname ||
+				!userDto.password
+			) {
+				throw new BadRequestException(
+					"No proporcionaste toda la información necesaria",
+				);
+			}
+			const userMail = await this.prismaService.user.findUnique({
+				where: {
+					email: userDto.email,
+				},
+			});
 
-      if (!roleUser) {
-        throw new InternalServerErrorException('Error al asignar el rol');
-      }
-      return userCreated;
-    });
+			if (!userMail) {
+				throw new InternalServerErrorException(
+					"Este usuario ya se encuentra registrado",
+				);
+			}
+			const userCreated = await this.usersService.create(userDto);
+			if (!userCreated) {
+				throw new InternalServerErrorException("Error al crear el usuario");
+			}
+			const roleUser = await this.prismaService.userRole.create({
+				data: {
+					//TODO: El rol de usuario siempre tiene que tener el ID "1"
+					roleId: 1,
+					userId: userCreated.id,
+				},
+			});
 
-    const payload: JwtPayload = {
-      sub: user.id.toString() as string,
-      user: user,
-    };
+			if (!roleUser) {
+				throw new InternalServerErrorException("Error al asignar el rol");
+			}
+			return userCreated;
+		});
 
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-      refresh_token: await this.jwtService.signAsync(
-        { sub: user?.id },
-        { expiresIn: '7d' },
-      ),
-    };
-  }
+		const payload: JwtPayload = {
+			sub: user.id.toString() as string,
+			user: user,
+		};
 
-  async profile(request: JwtRequestPayload): Promise<UserView> {
-    const userJwt: User = request.user.user;
-    const userDb: User | null = await this.usersService.findById(userJwt.id);
+		return {
+			access_token: await this.jwtService.signAsync(payload),
+			refresh_token: await this.jwtService.signAsync(
+				{ sub: user?.id },
+				{ expiresIn: "7d" },
+			),
+		};
+	}
 
-    if (!userDb) {
-      throw new NotFoundException(
-        `El usuario con el id #${userJwt.id} no existe`,
-      );
-    }
-    const { password, ...userView } = userDb;
+	async profile(request: JwtRequestPayload): Promise<UserView> {
+		const userJwt: User = request.user.user;
+		const userDb: User | null = await this.usersService.findById(userJwt.id);
 
-    return userView;
-  }
+		if (!userDb) {
+			throw new NotFoundException(
+				`El usuario con el id #${userJwt.id} no existe`,
+			);
+		}
+		const { password, ...userView } = userDb;
 
-  async update(request: JwtRequestPayload, updateUserDto: UpdateUserDto) {
-    const userJwt: User = request.user.user;
-    const userDb: User | null = await this.usersService.findById(userJwt.id);
+		return userView;
+	}
 
-    if (!hasPassed15Days(userDb.updatedAt)) {
-      throw new BadRequestException(
-        `Debes esperar ${daysUntil15Days(userDb.updatedAt)} días para poder actualizar tu perfil`,
-      );
-    }
+	async update(request: JwtRequestPayload, updateUserDto: UpdateUserDto) {
+		const userJwt: User = request.user.user;
+		const userDb: User | null = await this.usersService.findById(userJwt.id);
 
-    if (!userDb) {
-      throw new NotFoundException(
-        `El usuario con el id #${userJwt.id} no existe`,
-      );
-    }
+		if (!hasPassed15Days(userDb.updatedAt)) {
+			throw new BadRequestException(
+				`Debes esperar ${daysUntil15Days(userDb.updatedAt)} días para poder actualizar tu perfil`,
+			);
+		}
 
-    if (updateUserDto['password']) {
-      throw new BadRequestException('No se permite actualizar la contraseña');
-    }
+		if (!userDb) {
+			throw new NotFoundException(
+				`El usuario con el id #${userJwt.id} no existe`,
+			);
+		}
 
-    if (updateUserDto['email']) {
-      throw new BadRequestException('No se permite actualizar el correo');
-    }
+		if (updateUserDto["password"]) {
+			throw new BadRequestException("No se permite actualizar la contraseña");
+		}
 
-    const user = await this.prismaService.user.update({
-      where: {
-        id: userJwt.id,
-      },
-      data: updateUserDto,
-    });
+		if (updateUserDto["email"]) {
+			throw new BadRequestException("No se permite actualizar el correo");
+		}
 
-    if (!user) {
-      throw new NotFoundException(
-        `El usuario con el id #${userJwt.id} no existe`,
-      );
-    }
+		const user = await this.prismaService.user.update({
+			where: {
+				id: userJwt.id,
+			},
+			data: updateUserDto,
+		});
 
-    return user;
-  }
+		if (!user) {
+			throw new NotFoundException(
+				`El usuario con el id #${userJwt.id} no existe`,
+			);
+		}
+
+		return user;
+	}
 }
 
 function hasPassed15Days(date1: Date): boolean {
-  const today: Date = new Date();
-  // Normalizamos ambas fechas para comparar solo las fechas, sin la hora
-  const normalizedToday = new Date(today.setHours(0, 0, 0, 0));
-  const normalizedDate1 = new Date(date1.setHours(0, 0, 0, 0));
+	const today: Date = new Date();
+	// Normalizamos ambas fechas para comparar solo las fechas, sin la hora
+	const normalizedToday = new Date(today.setHours(0, 0, 0, 0));
+	const normalizedDate1 = new Date(date1.setHours(0, 0, 0, 0));
 
-  const diffInMilliseconds = Math.abs(
-    normalizedToday.getTime() - normalizedDate1.getTime(),
-  );
-  const daysInMilliseconds = 15 * 24 * 60 * 60 * 1000; // 15 días en milisegundos
+	const diffInMilliseconds = Math.abs(
+		normalizedToday.getTime() - normalizedDate1.getTime(),
+	);
+	const daysInMilliseconds = 15 * 24 * 60 * 60 * 1000; // 15 días en milisegundos
 
-  return diffInMilliseconds >= daysInMilliseconds;
+	return diffInMilliseconds >= daysInMilliseconds;
 }
 
 function daysUntil15Days(date1: Date): number {
-  const today: Date = new Date(); // Fecha de hoy
-  const normalizedToday = new Date(today.setHours(0, 0, 0, 0));
-  const normalizedDate1 = new Date(date1.setHours(0, 0, 0, 0));
+	const today: Date = new Date(); // Fecha de hoy
+	const normalizedToday = new Date(today.setHours(0, 0, 0, 0));
+	const normalizedDate1 = new Date(date1.setHours(0, 0, 0, 0));
 
-  const diffInMilliseconds =
-    normalizedToday.getTime() - normalizedDate1.getTime();
-  const daysPassed = diffInMilliseconds / (24 * 60 * 60 * 1000); // Convertimos de milisegundos a días
+	const diffInMilliseconds =
+		normalizedToday.getTime() - normalizedDate1.getTime();
+	const daysPassed = diffInMilliseconds / (24 * 60 * 60 * 1000); // Convertimos de milisegundos a días
 
-  // Si ya han pasado 15 días o más, retornamos 0 (no se necesita esperar más)
-  if (daysPassed >= 15) {
-    return 0;
-  }
+	// Si ya han pasado 15 días o más, retornamos 0 (no se necesita esperar más)
+	if (daysPassed >= 15) {
+		return 0;
+	}
 
-  // Si no han pasado 15 días, calculamos cuántos días faltan
-  const daysToWait = 15 - daysPassed;
-  return Math.ceil(daysToWait); // Usamos Math.ceil para redondear hacia arriba
+	// Si no han pasado 15 días, calculamos cuántos días faltan
+	const daysToWait = 15 - daysPassed;
+	return Math.ceil(daysToWait); // Usamos Math.ceil para redondear hacia arriba
 }
