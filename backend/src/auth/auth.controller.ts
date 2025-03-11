@@ -54,7 +54,6 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
   async register(@Body() signUpDto: SignUpDto): Promise<ApiResponse> {
-    console.log(signUpDto);
     try {
       return {
         data: await this.authService.signUp(signUpDto),
