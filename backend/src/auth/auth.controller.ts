@@ -54,12 +54,20 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
   async register(@Body() signUpDto: SignUpDto): Promise<ApiResponse> {
+    console.log(signUpDto);
     try {
       return {
         data: await this.authService.signUp(signUpDto),
         error: null,
       };
     } catch (error) {
+      console.log({error})
+      if(error instanceof TypeError){
+        return {
+          data: null,
+          error: error
+        }
+      }
       return {
         data: null,
         error,

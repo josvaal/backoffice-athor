@@ -5,7 +5,6 @@ import { SwaggerTheme, SwaggerThemeNameEnum } from "swagger-themes";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-	app.enableCors();
 	const theme = new SwaggerTheme();
 
 	const config = new DocumentBuilder()
@@ -20,6 +19,14 @@ async function bootstrap() {
 		customCss: theme.getBuffer(SwaggerThemeNameEnum.DARK),
 		//TODO: Esto genera el JSON crudo para asi poder importarlo desde donde quiera o imprimir la documentacion
 		// jsonDocumentUrl: "/docs.json"
+	});
+
+	app.enableCors({
+		origin: "*",
+		methods: ["GET", "POST", "PUT", "DLETE"],
+		allowedHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
+		maxAge: 86400,
 	});
 
 	await app.listen(process.env.PORT ?? 3000);
