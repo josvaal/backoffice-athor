@@ -57,6 +57,7 @@ export class TokenController {
         error: null,
       };
     } catch (error) {
+      console.log({error});
       return {
         error: error,
         data: null,
