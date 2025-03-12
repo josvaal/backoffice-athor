@@ -1,7 +1,6 @@
 import { Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { Toaster } from "react-hot-toast";
-import { notificationProvider } from "./providers/NotificationProvider";
 import {
 	ErrorComponent,
 	RefineSnackbarProvider,
@@ -43,6 +42,8 @@ import { checkAccessToken } from "./utils/token";
 import { useEffect, useState } from "react";
 import SignUp from "./pages/auth/sign-up";
 import { useAuthStore } from "./global/IsAuthenticated";
+import { ProfileShow } from "./pages/profile";
+import { AccountCircle } from "@mui/icons-material";
 
 function App() {
 	const { isAuthenticated, setAuthenticated } = useAuthStore();
@@ -104,24 +105,34 @@ function App() {
 							notificationProvider={useNotificationProvider}
 							routerProvider={routerBindings}
 							resources={[
+								// {
+								// 	name: "blog_posts",
+								// 	list: "/blog-posts",
+								// 	create: "/blog-posts/create",
+								// 	edit: "/blog-posts/edit/:id",
+								// 	show: "/blog-posts/show/:id",
+								// 	meta: {
+								// 		canDelete: true,
+								// 	},
+								// },
+								// {
+								// 	name: "categories",
+								// 	list: "/categories",
+								// 	create: "/categories/create",
+								// 	edit: "/categories/edit/:id",
+								// 	show: "/categories/show/:id",
+								// 	meta: {
+								// 		canDelete: true,
+								// 	},
+								// },
 								{
-									name: "blog_posts",
-									list: "/blog-posts",
-									create: "/blog-posts/create",
-									edit: "/blog-posts/edit/:id",
-									show: "/blog-posts/show/:id",
+									name: "profile",
+									edit: "/profile/edit:id",
+									list: "/profile",
 									meta: {
-										canDelete: true,
-									},
-								},
-								{
-									name: "categories",
-									list: "/categories",
-									create: "/categories/create",
-									edit: "/categories/edit/:id",
-									show: "/categories/show/:id",
-									meta: {
-										canDelete: true,
+										canDelete: false,
+										label: "Perfil",
+										icon: <AccountCircle />,
 									},
 								},
 							]}
@@ -140,6 +151,9 @@ function App() {
 									/>
 
 									<Route path="/auth/*" element={<Navigate to="/" />} />
+									<Route path="/profile">
+										<Route index element={<ProfileShow />} />
+									</Route>
 									<Route path="/blog-posts">
 										<Route index element={<BlogPostList />} />
 										<Route path="create" element={<BlogPostCreate />} />
