@@ -11,7 +11,7 @@ export const customDataProvider: DataProvider = {
   create: ({ resource, variables, meta }) => Promise,
   update: ({ resource, id, variables, meta }) => Promise,
   deleteOne: ({ resource, id, variables, meta }) => Promise,
-  getOne: ({ resource, id, meta }) => Promise,
+  getOne: ({ resource, id, meta }) => getOneProvider({ resource, id, meta }),
   getApiUrl: () => "",
 };
 
@@ -58,5 +58,39 @@ const getListProvider = async ({
   return {
     data: response.data,
     total,
+  };
+};
+
+const getOneProvider = async ({ resource, id, meta }) => {
+  // You can handle the request according to your API requirements.
+  const handleLogout = () => {
+    console.log("Cerrando sesión...");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    toast.success("Cerrando sesión...");
+    window.location.reload();
+  };
+
+  const ba_url = import.meta.env.VITE_BA_URL;
+  const token = retrieveAccesToken();
+  if (
+    !token ||
+    token.trim() === "" ||
+    token === undefined ||
+    token === "undefined"
+  ) {
+    handleLogout();
+    return;
+  }
+
+  // Adjust request parameters to meet the requirements of your API
+  const response = await axios.get(`${ba_url}/${resource}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return {
+    data: response.data,
   };
 };

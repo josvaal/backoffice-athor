@@ -45,7 +45,7 @@ import { useAuthStore } from "./global/IsAuthenticated";
 import { ProfileShow } from "./pages/profile";
 import { AccountCircle } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
-import { UserList } from "./pages/users";
+import { UserList, UserShow } from "./pages/users";
 import dataProvider from "@refinedev/simple-rest";
 function App() {
   const { isAuthenticated, setAuthenticated } = useAuthStore();
@@ -106,7 +106,7 @@ function App() {
             <Refine
               notificationProvider={useNotificationProvider}
               routerProvider={routerBindings}
-              dataProvider={dataProvider("https://api.fake-rest.refine.dev")}
+              dataProvider={customDataProvider}
               resources={[
                 {
                   name: "profile",
@@ -123,21 +123,21 @@ function App() {
                   list: "/users",
                   create: () => null,
                   edit: () => null,
-                  show: () => null,
+                  show: "/users/show/:id",
                   meta: {
                     canDelete: true,
                   },
                 },
-                {
-                  name: "blog_posts",
-                  list: "/blog-posts",
-                  show: "/blog-posts/show/:id",
-                  create: "/blog-posts/create",
-                  edit: "/blog-posts/edit/:id",
-                  meta: {
-                    canDelete: true,
-                  },
-                },
+                // {
+                //   name: "blog_posts",
+                //   list: "/blog-posts",
+                //   show: "/blog-posts/show/:id",
+                //   create: "/blog-posts/create",
+                //   edit: "/blog-posts/edit/:id",
+                //   meta: {
+                //     canDelete: true,
+                //   },
+                // },
               ]}
             >
               <Routes>
@@ -161,8 +161,8 @@ function App() {
                   <Route path="/users">
                     <Route index element={<UserList />} />
                     {/* <Route path="create" element={<BlogPostCreate />} />
-                    <Route path="edit/:id" element={<BlogPostEdit />} />
-                    <Route path="show/:id" element={<BlogPostShow />} /> */}
+                    <Route path="edit/:id" element={<BlogPostEdit />} /> */}
+                    <Route path="show/:id" element={<UserShow />} />
                   </Route>
                   <Route path="/blog-posts">
                     <Route index element={<BlogPostList />} />
