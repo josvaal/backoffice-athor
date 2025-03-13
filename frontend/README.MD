@@ -1,48 +1,141 @@
 # frontend
 
-<div align="center" style="margin: 30px;">
-    <a href="https://refine.dev">
-    <img alt="refine logo" src="https://refine.ams3.cdn.digitaloceanspaces.com/readme/refine-readme-banner.png">
-    </a>
-</div>
-<br/>
+Based on the API provided, here's a suggested structure for the dashboard views organized into modules and submodules, considering roles and functionalities:
 
-This [Refine](https://github.com/refinedev/refine) project was generated with [create refine-app](https://github.com/refinedev/refine/tree/master/packages/create-refine-app).
+### 1. **Authentication Module (Auth)**
+**Access:** All users
+- **Login** (`/auth/login`)
+- **Registration** (`/auth/register`)
+- **My Profile** (`/auth/me`)
+  - View profile
+  - Update profile (with 15-day restriction) (`/auth/me [PUT]`)
+- **Token Management**
+  - Verify Token (`/token/verify`)
+  - Refresh Token (`/token/refresh`)
 
-## Getting Started
+---
 
-A React Framework for building internal tools, admin panels, dashboards & B2B apps with unmatched flexibility ✨
+### 2. **User Management Module (Users)**
+**Access:** Admin/SuperAdmin
+- **User List** (`/users/list`)
+  - Search and filter
+  - Bulk actions
+- **User Details** (`/users/{id}`)
+  - Personal information
+  - Associated devices
+  - Role assignments
+- **User Operations**
+  - Update User (`/users/update/{id}`)
+  - Delete User (`/users/delete/{id}`) [SuperAdmin only]
 
-Refine's hooks and components simplifies the development process and eliminates the repetitive tasks by providing industry-standard solutions for crucial aspects of a project, including authentication, access control, routing, networking, state management, and i18n.
+---
 
-## Available Scripts
+### 3. **Roles and Permissions Module**
+**Access:** SuperAdmin only
+- **Roles List** (`/roles/list`)
+- **Role Details** (`/roles/{id}`)
+  - Associated users
+  - Permissions
+- **Role Operations**
+  - Create Role (`/roles/create`)
+  - Update Role (`/roles/update/{id}`)
+  - Assign Role to User (`/roles/assign/user/{userId}/role/{roleId}`)
+  - Remove Role from User (`/roles/deassign/user/{userId}/role/{roleId}`)
+  - Delete Role (`/roles/delete/{id}`)
 
-### Running the development server.
+---
 
-```bash
-    npm run dev
+### 4. **Device Management Module**
+**Access:** Admin/SuperAdmin
+- **Device Inventory** (`/devices/list`)
+  - Advanced filters (status, model, batch)
+  - Quick actions (assign/deassign)
+- **Device Details** (`/devices/{id}`)
+  - Technical specifications
+  - Assignment history
+  - Event log (`/device-history/list`)
+- **Device Operations**
+  - Create Device (`/devices/create`)
+  - Update Device (`/devices/update/{id}`)
+  - Delete Device (`/devices/delete/{id}`)
+  - Assign to User (`/devices/assign/user/{userId}/device/{deviceId}`)
+  - Deassign from User (`/devices/deassign/user/{userId}/device/{deviceId}`)
+  - Register Event (`/devices/{deviceId}/event/{eventTypeId}`)
+
+---
+
+### 5. **Event Management Module**
+**Access:** Admin/SuperAdmin/User (limited)
+- **Event Types** (`/event-type/list`)
+  - Create/Update Event Types (`/event-type/create`, `/event-type/update/{id}`)
+- **Event Logs** (`/events/list`)
+  - Filter by device/user/type
+  - Export functionality
+
+---
+
+### 6. **Configuration Module**
+**Access:** SuperAdmin only
+- **Device Models** (`/device-model/list`)
+  - Create/Update Models
+- **Device Statuses** (`/device-status/list`)
+  - Configure status types
+- **System Parameters**
+  - API Configuration
+  - Security Settings
+
+---
+
+### 7. **Reports and Analytics**
+**Access:** Admin/SuperAdmin
+- **Device History** (`/device-history/list`)
+  - Timeline visualization
+  - Pattern detection
+- **User Activity**
+  - Login history
+  - Actions log
+- **System Metrics**
+  - API usage statistics
+  - Error monitoring
+
+---
+
+### Navigation Structure (Sidebar)
+```markdown
+- Dashboard (Home)
+- Authentication
+  - Login
+  - My Profile
+- User Management
+  - User List
+  - Create User
+- Device Management
+  - Device Inventory
+  - Register Device
+  - Assignments
+- Roles & Permissions
+- Event Management
+  - Event Types
+  - Event Logs
+- Configuration
+  - Device Models
+  - Status Types
+- Reports
+  - Device History
+  - User Activity
 ```
 
-### Building for production.
+---
 
-```bash
-    npm run build
-```
+### Role-Based Access Matrix
+| Functionality               | User | Admin | SuperAdmin |
+|-----------------------------|------|-------|------------|
+| Profile Management          | ✔️   | ✔️    | ✔️         |
+| User Management             | ❌   | ✔️    | ✔️         |
+| Device Operations           | ❌   | ✔️    | ✔️         |
+| Role Management             | ❌   | ❌    | ✔️         |
+| System Configuration        | ❌   | ❌    | ✔️         |
+| Event Registration          | ✔️   | ✔️    | ✔️         |
+| Advanced Reports            | ❌   | ✔️    | ✔️         |
 
-### Running the production server.
-
-```bash
-    npm run start
-```
-
-## Learn More
-
-To learn more about **Refine**, please check out the [Documentation](https://refine.dev/docs)
-
-- **REST Data Provider** [Docs](https://refine.dev/docs/core/providers/data-provider/#overview)
-- **Material UI** [Docs](https://refine.dev/docs/ui-frameworks/mui/tutorial/)
-- **React Router** [Docs](https://refine.dev/docs/core/providers/router-provider/)
-
-## License
-
-MIT
+This structure maintains a clear hierarchy, follows API capabilities, and respects role-based permissions. Each view should include contextual help based on the API descriptions for user guidance.
