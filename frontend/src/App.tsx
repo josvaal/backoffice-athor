@@ -39,12 +39,11 @@ import {
 } from "./pages/categories";
 import SignIn from "./pages/auth/sign-in";
 import { checkAccessToken } from "./utils/token";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SignUp from "./pages/auth/sign-up";
 import { useAuthStore } from "./global/IsAuthenticated";
 import { ProfileShow } from "./pages/profile";
 import { AccountCircle } from "@mui/icons-material";
-
 function App() {
 	const { isAuthenticated, setAuthenticated } = useAuthStore();
 
@@ -127,8 +126,8 @@ function App() {
 								// },
 								{
 									name: "profile",
-									edit: "/profile/edit:id",
-									list: "/profile",
+									edit: () => null,
+									list: () => null,
 									meta: {
 										canDelete: false,
 										label: "Perfil",
@@ -142,6 +141,7 @@ function App() {
 									element={
 										<ThemedLayoutV2 Header={() => <Header sticky />}>
 											<Outlet />
+											<Toaster />
 										</ThemedLayoutV2>
 									}
 								>

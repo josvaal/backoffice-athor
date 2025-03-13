@@ -47,6 +47,7 @@ export async function refreshToken(): Promise<boolean> {
 		toast.error(data.error.message);
 		return false;
 	}
+
 	localStorage.setItem("access_token", data.data.access_token);
 	localStorage.setItem("refresh_token", data.data.refresh_token);
 	return true;
