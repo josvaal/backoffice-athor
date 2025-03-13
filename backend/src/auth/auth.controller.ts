@@ -116,11 +116,13 @@ export class AuthController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<ApiResponse> {
     try {
+      console.log(updateUserDto)
       return {
         data: await this.authService.update(req, updateUserDto),
         error: null,
       };
     } catch (error) {
+      console.log({error})
       return {
         error,
         data: null,

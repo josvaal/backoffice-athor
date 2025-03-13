@@ -124,7 +124,11 @@ export class AuthService {
 
 	async update(request: JwtRequestPayload, updateUserDto: UpdateUserDto) {
 		const userJwt: User = request.user.user;
-		const userDb: User | null = await this.usersService.findById(userJwt.id);
+
+		const userJwtId = Number(userJwt.id);
+
+		// EL ID LO TOMA COMO STRING, HAZLO NUMBER
+		const userDb: User | null = await this.usersService.findById(userJwtId);
 
 		if (!hasPassed15Days(userDb.updatedAt)) {
 			throw new BadRequestException(
@@ -134,21 +138,12 @@ export class AuthService {
 
 		if (!userDb) {
 			throw new NotFoundException(
-				`El usuario con el id #${userJwt.id} no existe`,
+				`El usuario con el id #${userJwtId} no existe`,
 			);
 		}
-
-		if (updateUserDto["password"]) {
-			throw new BadRequestException("No se permite actualizar la contraseña");
-		}
-
-		if (updateUserDto["email"]) {
-			throw new BadRequestException("No se permite actualizar el correo");
-		}
-
 		const user = await this.prismaService.user.update({
 			where: {
-				id: userJwt.id,
+				id: userJwtId,
 			},
 			data: updateUserDto,
 		});
