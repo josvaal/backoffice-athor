@@ -10,6 +10,8 @@ import {
   NotFoundException,
   Param,
   Put,
+  Query,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -22,6 +24,7 @@ import {
 } from '@prisma/client/runtime/library';
 import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 import { RoleGuard } from 'src/auth/role/role.guard';
+import { Response as Res } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -34,10 +37,14 @@ export class UsersController {
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.userService.findAll(),
+        data: await this.userService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {
@@ -107,8 +114,9 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(['superadmin'],
-    'Esta operación de API permite a los usuarios con el rol de "superadmin" eliminar un usuario por su ID. Valida que el ID proporcionado sea correcto y, si el usuario existe, lo elimina de la base de datos. Si ocurre algún error en los datos enviados o durante la eliminación, se devuelve un mensaje de error adecuado.'
+  @RolesWithDescription(
+    ['superadmin'],
+    'Esta operación de API permite a los usuarios con el rol de "superadmin" eliminar un usuario por su ID. Valida que el ID proporcionado sea correcto y, si el usuario existe, lo elimina de la base de datos. Si ocurre algún error en los datos enviados o durante la eliminación, se devuelve un mensaje de error adecuado.',
   )
   @UseGuards(AuthGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
