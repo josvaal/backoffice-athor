@@ -5,7 +5,7 @@ import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { SitemarkIcon } from "./components/custom-icons";
+import { AthorSlogan } from "./components/custom-icons";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Alert, CircularProgress, Link } from "@mui/material";
@@ -56,7 +56,7 @@ export default function SignIn() {
       <CssBaseline enableColorScheme />
       <AuthContainer direction="column" justifyContent="space-between">
         <StyledCard variant="outlined">
-          <SitemarkIcon />
+          <AthorSlogan />
           <Typography
             component="h1"
             variant="h4"

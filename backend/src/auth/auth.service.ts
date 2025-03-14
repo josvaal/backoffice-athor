@@ -65,10 +65,22 @@ export class AuthService {
 
   async signUp(userDto: UserSignupDto): Promise<JwtToken> {
     const user = await this.prismaService.$transaction(async (prisma) => {
+      const userDb = await this.prismaService.user.findUnique({
+        where: {
+          email: userDto.email,
+        },
+      });
+
+      if (userDb) {
+        throw new BadRequestException('Este correo ya se encuentra registrado');
+      }
+
       const userCreated = await this.usersService.create(userDto);
+
       if (!userCreated) {
         throw new InternalServerErrorException('Error al crear el usuario');
       }
+
       const roleUser = await this.prismaService.userRole.create({
         data: {
           //TODO: El rol de usuario siempre tiene que tener el ID "1"

@@ -5,24 +5,16 @@ import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import MuiCard from "@mui/material/Card";
-import { styled } from "@mui/material/styles";
-import { SitemarkIcon } from "./components/custom-icons";
+import { AthorSlogan, SitemarkIcon } from "./components/custom-icons";
 import { useForm } from "react-hook-form";
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Alert, CircularProgress, Grid2 as Grid, Link } from "@mui/material";
-import { useQuery } from "react-query";
-import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import { AuthContainer } from "./components/auth-container";
 import { StyledCard } from "./components/styled-card";
+import { useRegister } from "@refinedev/core";
 
-interface SignUpProps {
-  handleSetSignIn: () => void;
-}
-
-export default function SignUp({ handleSetSignIn }: SignUpProps) {
+export default function SignUp() {
   const {
     register,
     handleSubmit,
@@ -31,48 +23,20 @@ export default function SignUp({ handleSetSignIn }: SignUpProps) {
   } = useForm({
     shouldUseNativeValidation: true,
   });
-  const [formData, setFormData] = useState();
-  const navigate = useNavigate();
 
-  const ba_url = import.meta.env.VITE_BA_URL;
-  const { isLoading, isError, error, data, refetch } = useQuery(
-    "auth",
-    () =>
-      fetch(`${ba_url}/auth/register`, {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            throw data.error;
-          }
-          localStorage.setItem("access_token", data.data.access_token);
-          // console.log(data);
-
-          toast.success("Éxito al registrarte");
-          navigate("/");
-        })
-        .catch((err) => {
-          throw err;
-        }),
-    {
-      enabled: false,
-    }
-  );
+  const { mutate, isLoading, isError, error } = useRegister();
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const onSubmit = async (formDataProp: any) => {
-    const { verify_password, ...restData } = formDataProp;
-    // console.log(restData);
-    setFormData(restData);
-    // TIMEOUT para que se llegue a actualizar el setFormData
-    setTimeout(async () => {
-      await refetch();
-    }, 60);
+    mutate(formDataProp, {
+      onSuccess: (data) => {
+        console.log(data);
+        toast.success("Éxito al iniciar sesión");
+      },
+      onError: (data) => {
+        console.log(data);
+      },
+    });
   };
 
   if (isLoading) {
@@ -94,7 +58,7 @@ export default function SignUp({ handleSetSignIn }: SignUpProps) {
       <CssBaseline enableColorScheme />
       <AuthContainer direction="column" justifyContent="space-between">
         <StyledCard variant="outlined">
-          <SitemarkIcon />
+          <AthorSlogan />
           <Typography
             component="h1"
             variant="h4"
@@ -222,7 +186,7 @@ export default function SignUp({ handleSetSignIn }: SignUpProps) {
                 </FormControl>
               </Grid>
             </Grid>
-            {isError ? <Alert severity="error">{error.message}</Alert> : null}
+            {isError && <Alert severity="error">{error.message}</Alert>}
             <Button
               disabled={isLoading}
               style={{ marginTop: 5 }}
@@ -233,9 +197,9 @@ export default function SignUp({ handleSetSignIn }: SignUpProps) {
             >
               Registrarme
             </Button>
-            <Button sx={{ alignSelf: "center" }} onClick={handleSetSignIn}>
+            <Link href="/login" sx={{ alignSelf: "center" }}>
               ¿Ya tienes una cuenta?
-            </Button>
+            </Link>
           </Box>
         </StyledCard>
       </AuthContainer>
