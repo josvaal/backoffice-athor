@@ -1,5 +1,4 @@
 import { Alert, Box, CircularProgress, Grid2 } from "@mui/material";
-import { useAuthStore } from "../../global/IsAuthenticated";
 import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import { useState } from "react";
@@ -13,7 +12,6 @@ import Cookie from "universal-cookie";
 const cookies = new Cookie();
 
 export const ProfileShow = () => {
-  const { setAuthenticated } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"view" | "edit">("view");
 
@@ -28,7 +26,6 @@ export const ProfileShow = () => {
     console.log("Cerrando sesión...");
     cookies.remove("access_token");
     toast.error("Cerrando sesión...");
-    setAuthenticated(false);
   };
 
   const handleEdit = () => {

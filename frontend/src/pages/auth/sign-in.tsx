@@ -12,13 +12,17 @@ import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { useAuthStore } from "../../global/IsAuthenticated";
 import { Alert, CircularProgress } from "@mui/material";
 import Cookies from "universal-cookie";
 import { StyledCard } from "./components/styled-card";
-import { SignInContainer } from "./components/sign-in-container";
+import { AuthContainer } from "./components/auth-container";
+import { useLogin } from "@refinedev/core";
 
-export default function SignIn() {
+interface SignInProps {
+  handleSetSignUp: () => void;
+}
+
+export default function SignIn({ handleSetSignUp }: SignInProps) {
   const {
     register,
     handleSubmit,
@@ -26,57 +30,20 @@ export default function SignIn() {
   } = useForm({
     shouldUseNativeValidation: true,
   });
-  const [formData, setFormData] = React.useState();
-  const navigate = useNavigate();
-  const { isAuthenticated, setAuthenticated } = useAuthStore();
-  const cookies = new Cookies();
 
-  const ba_url = import.meta.env.VITE_BA_URL;
-  const { isLoading, isError, error, data, refetch } = useQuery(
-    "auth",
-    () =>
-      fetch(`${ba_url}/auth/login`, {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            throw data.error;
-          }
-          const cookieDate = new Date();
-          cookieDate.setHours(cookieDate.getHours() + 1);
-          // localStorage.setItem("access_token", data.data.access_token);
-          cookies.set("access_token", data.data.access_token, {
-            path: "/",
-            expires: cookieDate,
-            secure: window.location.protocol === "https:",
-            sameSite: "strict",
-          });
-          // console.log(data);
-
-          toast.success("Éxito al iniciar sesión");
-          setAuthenticated(true);
-          navigate("/");
-        })
-        .catch((err) => {
-          throw err;
-        }),
-    {
-      enabled: false,
-    }
-  );
+  const { mutate, isLoading, isError, error } = useLogin();
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const onSubmit = async (formDataProp: any) => {
-    // console.log(formDataProp);
-    setFormData(formDataProp);
-    setTimeout(async () => {
-      await refetch();
-    }, 60);
+    mutate(formDataProp, {
+      onSuccess: (data) => {
+        console.log(data);
+        toast.success("Éxito al iniciar sesión");
+      },
+      onError: (data) => {
+        console.log(data);
+      },
+    });
   };
 
   if (isLoading) {
@@ -96,7 +63,7 @@ export default function SignIn() {
   return (
     <>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
+      <AuthContainer direction="column" justifyContent="space-between">
         <StyledCard variant="outlined">
           <SitemarkIcon />
           <Typography
@@ -127,7 +94,7 @@ export default function SignIn() {
                     'Un correo incluye un "@" como simbolo',
                 })}
                 error={!!errors.email}
-                helperText={errors.email?.message as React.ReactNode}
+                helperText={errors.email?.message?.toString()}
                 id="email"
                 type="email"
                 name="email"
@@ -151,7 +118,7 @@ export default function SignIn() {
                   },
                 })}
                 error={!!errors.password}
-                helperText={errors.password?.message as React.ReactNode}
+                helperText={errors.password?.message?.toString()}
                 name="password"
                 placeholder="••••••"
                 type="password"
@@ -164,7 +131,6 @@ export default function SignIn() {
                 color={errors.password ? "error" : "primary"}
               />
             </FormControl>
-            {isError ? <Alert severity="error">{error.message}</Alert> : null}
             <Button
               disabled={isLoading}
               style={{ marginTop: 5 }}
@@ -175,16 +141,13 @@ export default function SignIn() {
             >
               Iniciar Sesión
             </Button>
-            <Link
-              href="/auth/sign-up"
-              sx={{ alignSelf: "center" }}
-              variant="body2"
-            >
+            {isError && <Alert severity="error">{error.message}</Alert>}
+            <Button sx={{ alignSelf: "center" }} onClick={handleSetSignUp}>
               ¿No tienes una cuenta?
-            </Link>
+            </Button>
           </Box>
         </StyledCard>
-      </SignInContainer>
+      </AuthContainer>
     </>
   );
 }

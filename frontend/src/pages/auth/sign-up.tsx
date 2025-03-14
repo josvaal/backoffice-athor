@@ -15,51 +15,14 @@ import { Alert, CircularProgress, Grid2 as Grid, Link } from "@mui/material";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import { useAuthStore } from "../../global/IsAuthenticated";
+import { AuthContainer } from "./components/auth-container";
+import { StyledCard } from "./components/styled-card";
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "550px",
-  },
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  ...theme.applyStyles("dark", {
-    boxShadow:
-      "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  }),
-}));
+interface SignUpProps {
+  handleSetSignIn: () => void;
+}
 
-const SignUpContainer = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
-  minHeight: "100%",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-    ...theme.applyStyles("dark", {
-      backgroundImage:
-        "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-    }),
-  },
-}));
-
-export default function SignUp(props: { disableCustomTheme?: boolean }) {
+export default function SignUp({ handleSetSignIn }: SignUpProps) {
   const {
     register,
     handleSubmit,
@@ -70,7 +33,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   });
   const [formData, setFormData] = useState();
   const navigate = useNavigate();
-  const { isAuthenticated, setAuthenticated } = useAuthStore();
 
   const ba_url = import.meta.env.VITE_BA_URL;
   const { isLoading, isError, error, data, refetch } = useQuery(
@@ -92,7 +54,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           // console.log(data);
 
           toast.success("Éxito al registrarte");
-          setAuthenticated(true);
           navigate("/");
         })
         .catch((err) => {
@@ -131,8 +92,8 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   return (
     <>
       <CssBaseline enableColorScheme />
-      <SignUpContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
+      <AuthContainer direction="column" justifyContent="space-between">
+        <StyledCard variant="outlined">
           <SitemarkIcon />
           <Typography
             component="h1"
@@ -272,16 +233,12 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
             >
               Registrarme
             </Button>
-            <Link
-              href="/auth/sign-in"
-              sx={{ alignSelf: "center" }}
-              variant="body2"
-            >
+            <Button sx={{ alignSelf: "center" }} onClick={handleSetSignIn}>
               ¿Ya tienes una cuenta?
-            </Link>
+            </Button>
           </Box>
-        </Card>
-      </SignUpContainer>
+        </StyledCard>
+      </AuthContainer>
     </>
   );
 }

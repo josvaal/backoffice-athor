@@ -1,4 +1,4 @@
-import { Refine } from "@refinedev/core";
+import { Authenticated, Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { Toaster } from "react-hot-toast";
 import {
@@ -40,85 +40,14 @@ import {
 import SignIn from "./pages/auth/sign-in";
 import { checkAccessToken } from "./utils/token";
 import { useEffect, useState } from "react";
-import SignUp from "./pages/auth/sign-up";
-import { useAuthStore } from "./global/IsAuthenticated";
 import { ProfileShow } from "./pages/profile";
 import { AccountCircle } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserList, UserShow } from "./pages/users";
 import { Box, CircularProgress } from "@mui/material";
+import { customAuthProvider } from "./providers/BackendAuthProvider";
+import AuthModule from "./pages/auth/auth";
 function App() {
-  const { isAuthenticated, setAuthenticated } = useAuthStore();
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const check = await checkAccessToken();
-      setLoading(false);
-
-      if (check) {
-        setAuthenticated(true);
-      } else {
-        setAuthenticated(false);
-      }
-    };
-
-    checkAuth();
-  }, [isAuthenticated]);
-
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        width="100%"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <>
-        <BrowserRouter>
-          <RefineSnackbarProvider>
-            <Refine notificationProvider={useNotificationProvider}>
-              <ColorModeContextProvider>
-                <CssBaseline />
-                <GlobalStyles
-                  styles={{ html: { WebkitFontSmoothing: "auto" } }}
-                />
-                <Routes>
-                  <Route
-                    element={
-                      <>
-                        <Outlet />
-                        <Toaster />
-                      </>
-                    }
-                  >
-                    <Route path="*" element={<Navigate to="/auth" />} />
-                    <Route path="/auth">
-                      <Route index element={<Navigate to="/auth/sign-in" />} />
-                      <Route path="sign-in" element={<SignIn />} />
-                      <Route path="sign-up" element={<SignUp />} />
-                    </Route>
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
-                </Routes>
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
-              </ColorModeContextProvider>
-            </Refine>
-          </RefineSnackbarProvider>
-        </BrowserRouter>
-      </>
-    );
-  }
-
   return (
     <BrowserRouter>
       <RefineKbarProvider>
@@ -130,6 +59,7 @@ function App() {
               notificationProvider={useNotificationProvider}
               routerProvider={routerBindings}
               dataProvider={customDataProvider}
+              authProvider={customAuthProvider}
               resources={[
                 {
                   name: "profile",
@@ -163,49 +93,51 @@ function App() {
                 // },
               ]}
             >
-              <Routes>
-                <Route
-                  element={
-                    <ThemedLayoutV2 Header={() => <Header sticky />}>
-                      <Outlet />
-                      <Toaster />
-                    </ThemedLayoutV2>
-                  }
-                >
+              <Authenticated key="protected" fallback={<AuthModule />}>
+                <Routes>
                   <Route
-                    index
-                    element={<NavigateToResource resource="blog_posts" />}
-                  />
+                    element={
+                      <ThemedLayoutV2 Header={() => <Header sticky />}>
+                        <Outlet />
+                        <Toaster />
+                      </ThemedLayoutV2>
+                    }
+                  >
+                    <Route
+                      index
+                      element={<NavigateToResource resource="blog_posts" />}
+                    />
 
-                  <Route path="/auth/*" element={<Navigate to="/" />} />
-                  <Route path="/profile">
-                    <Route index element={<ProfileShow />} />
-                  </Route>
-                  <Route path="/users">
-                    <Route index element={<UserList />} />
-                    {/* <Route path="create" element={<BlogPostCreate />} />
+                    <Route path="/auth/*" element={<Navigate to="/" />} />
+                    <Route path="/profile">
+                      <Route index element={<ProfileShow />} />
+                    </Route>
+                    <Route path="/users">
+                      <Route index element={<UserList />} />
+                      {/* <Route path="create" element={<BlogPostCreate />} />
                     <Route path="edit/:id" element={<BlogPostEdit />} /> */}
-                    <Route path="show/:id" element={<UserShow />} />
+                      <Route path="show/:id" element={<UserShow />} />
+                    </Route>
+                    <Route path="/blog-posts">
+                      <Route index element={<BlogPostList />} />
+                      <Route path="create" element={<BlogPostCreate />} />
+                      <Route path="edit/:id" element={<BlogPostEdit />} />
+                      <Route path="show/:id" element={<BlogPostShow />} />
+                    </Route>
+                    <Route path="/categories">
+                      <Route index element={<CategoryList />} />
+                      <Route path="create" element={<CategoryCreate />} />
+                      <Route path="edit/:id" element={<CategoryEdit />} />
+                      <Route path="show/:id" element={<CategoryShow />} />
+                    </Route>
+                    <Route path="*" element={<ErrorComponent />} />
                   </Route>
-                  <Route path="/blog-posts">
-                    <Route index element={<BlogPostList />} />
-                    <Route path="create" element={<BlogPostCreate />} />
-                    <Route path="edit/:id" element={<BlogPostEdit />} />
-                    <Route path="show/:id" element={<BlogPostShow />} />
-                  </Route>
-                  <Route path="/categories">
-                    <Route index element={<CategoryList />} />
-                    <Route path="create" element={<CategoryCreate />} />
-                    <Route path="edit/:id" element={<CategoryEdit />} />
-                    <Route path="show/:id" element={<CategoryShow />} />
-                  </Route>
-                  <Route path="*" element={<ErrorComponent />} />
-                </Route>
-              </Routes>
+                </Routes>
 
-              <RefineKbar />
-              <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
+                <RefineKbar />
+                <UnsavedChangesNotifier />
+                <DocumentTitleHandler />
+              </Authenticated>
             </Refine>
           </RefineSnackbarProvider>
         </ColorModeContextProvider>

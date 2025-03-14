@@ -18,7 +18,6 @@ import { useNavigate } from "react-router";
 import { profilePutData } from "./api/profileFetchData";
 import { useQuery } from "react-query";
 import toast from "react-hot-toast";
-import { useAuthStore } from "../../global/IsAuthenticated";
 
 interface ProfileEditParams {
   name: string;
@@ -49,14 +48,11 @@ export default function ProfileEdit({
     username,
   });
 
-  const { setAuthenticated } = useAuthStore();
-
   const handleLogout = () => {
     console.log("Cerrando sesión...");
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     toast.success("Cerrando sesión...");
-    setAuthenticated(false);
   };
 
   const { isLoading, isError, error, refetch } = useQuery(

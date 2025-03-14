@@ -7,13 +7,11 @@ export async function getAccessToken(): Promise<[string | null, boolean]> {
   const token = cookies.get("access_token");
 
   if (!token) {
-    console.log("profileFetchData.ts: ", "No existe el token");
     return [null, true];
   }
 
   const isValid = await validateTokenWithBackend(token);
   if (!isValid) {
-    console.log("profileFetchData.ts: ", "El token no es valido");
     return [null, true];
   }
 
@@ -36,15 +34,14 @@ export async function validateTokenWithBackend(
 
     const data = await response.json();
     if (data.error) {
-      console.log("retrieve_token.ts: ", "data tiene un error");
-      console.log(data.error);
+      // console.log(data.error);
       throw new Error(data.error.message);
     }
 
     return true;
   } catch (error) {
-    console.log("retrieve_token.ts: ", { error });
-    console.log({ error });
+    // console.log("retrieve_token.ts: ", { error });
+    // console.log({ error });
     if (error instanceof Error) {
       toast.error(error.message);
       return false;
