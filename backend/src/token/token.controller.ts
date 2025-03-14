@@ -43,25 +43,25 @@ export class TokenController {
     }
   }
 
-  @ApiOperation({
-    description:
-      'Esta operación de API permite refrescar los tokens de acceso y actualización. Al recibir un token de actualización válido, lo verifica y, si el usuario existe, genera nuevos tokens JWT (de acceso y de actualización). Si ocurre algún error, como un token inválido o un usuario no encontrado, se devuelve un error de autorización. Si la operación es exitosa, se devuelven los nuevos tokens.',
-  })
-  @HttpCode(HttpStatus.OK)
-  @Post('refresh')
-  async refresh(@Headers('Authorization') auth: string): Promise<ApiResponse> {
-    try {
-      const token = auth.split(' ')[1];
-      return {
-        data: await this.tokenService.refreshToken(token),
-        error: null,
-      };
-    } catch (error) {
-      console.log({error});
-      return {
-        error: error,
-        data: null,
-      };
-    }
-  }
+  // @ApiOperation({
+  //   description:
+  //     'Esta operación de API permite refrescar los tokens de acceso y actualización. Al recibir un token de actualización válido, lo verifica y, si el usuario existe, genera nuevos tokens JWT (de acceso y de actualización). Si ocurre algún error, como un token inválido o un usuario no encontrado, se devuelve un error de autorización. Si la operación es exitosa, se devuelven los nuevos tokens.',
+  // })
+  // @HttpCode(HttpStatus.OK)
+  // @Post('refresh')
+  // async refresh(@Headers('Authorization') auth: string): Promise<ApiResponse> {
+  //   try {
+  //     const token = auth.split(' ')[1];
+  //     return {
+  //       data: await this.tokenService.refreshToken(token),
+  //       error: null,
+  //     };
+  //   } catch (error) {
+  //     console.log({error});
+  //     return {
+  //       error: error,
+  //       data: null,
+  //     };
+  //   }
+  // }
 }
