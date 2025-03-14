@@ -1,6 +1,6 @@
 import { DataProvider } from "@refinedev/core";
 import axios from "axios";
-import { retrieveAccesToken } from "../utils/retrieve_token";
+import { getAccessToken } from "../utils/retrieve_token";
 import { useAuthStore } from "../global/IsAuthenticated";
 import toast from "react-hot-toast";
 
@@ -15,6 +15,7 @@ export const customDataProvider: DataProvider = {
   getApiUrl: () => "",
 };
 
+//TODO: Si la sesion expira no funca, haz que haga /token/verify y /token/refresh
 const getListProvider = async ({
   resource,
   pagination,
@@ -33,7 +34,7 @@ const getListProvider = async ({
   };
 
   const ba_url = import.meta.env.VITE_BA_URL;
-  const token = retrieveAccesToken();
+  const token = getAccessToken();
   if (
     !token ||
     token.trim() === "" ||
@@ -72,7 +73,7 @@ const getOneProvider = async ({ resource, id, meta }) => {
   };
 
   const ba_url = import.meta.env.VITE_BA_URL;
-  const token = retrieveAccesToken();
+  const token = getAccessToken();
   if (
     !token ||
     token.trim() === "" ||

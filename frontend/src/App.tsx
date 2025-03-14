@@ -39,23 +39,46 @@ import {
 } from "./pages/categories";
 import SignIn from "./pages/auth/sign-in";
 import { checkAccessToken } from "./utils/token";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SignUp from "./pages/auth/sign-up";
 import { useAuthStore } from "./global/IsAuthenticated";
 import { ProfileShow } from "./pages/profile";
 import { AccountCircle } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserList, UserShow } from "./pages/users";
-import dataProvider from "@refinedev/simple-rest";
+import { Box, CircularProgress } from "@mui/material";
 function App() {
   const { isAuthenticated, setAuthenticated } = useAuthStore();
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (checkAccessToken()) {
-      setAuthenticated(true);
-    }
+    const checkAuth = async () => {
+      const check = await checkAccessToken();
+      setLoading(false);
+
+      if (check) {
+        setAuthenticated(true);
+      } else {
+        setAuthenticated(false);
+      }
+    };
+
+    checkAuth();
   }, [isAuthenticated]);
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        width="100%"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (!isAuthenticated) {
     return (

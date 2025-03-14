@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { retrieveAccesToken } from "../../../utils/retrieve_token";
+import { getAccessToken } from "../../../utils/retrieve_token";
 
 interface profileGetDataProps {
   handleLogout: () => void;
@@ -7,13 +7,11 @@ interface profileGetDataProps {
 
 export const profileGetData = async ({ handleLogout }: profileGetDataProps) => {
   const ba_url = import.meta.env.VITE_BA_URL;
-  const token = retrieveAccesToken();
-  if (
-    !token ||
-    token.trim() === "" ||
-    token === undefined ||
-    token === "undefined"
-  ) {
+  const [token, isError] = await getAccessToken();
+
+  // console.log(token, isError);
+
+  if (isError) {
     handleLogout();
     return;
   }
@@ -25,9 +23,12 @@ export const profileGetData = async ({ handleLogout }: profileGetDataProps) => {
   });
 
   const data = await response.json();
+  // console.log(data);
   if (data.error) {
-    throw new Error(data.message);
+    throw new Error(data.error.message);
   }
+  // console.log(data);
+  // console.log(data.data);
   return data.data;
 };
 
@@ -49,16 +50,13 @@ export const profilePutData = async ({
   bodyData,
 }: profilePutDataProps) => {
   const ba_url = import.meta.env.VITE_BA_URL;
-  const token = retrieveAccesToken();
-  if (
-    !token ||
-    token.trim() === "" ||
-    token === undefined ||
-    token === "undefined"
-  ) {
+  const [token, isError] = await getAccessToken();
+
+  if (isError) {
     handleLogout();
     return;
   }
+
   const response = await fetch(`${ba_url}/auth/me`, {
     method: "PUT",
     body: JSON.stringify(bodyData),
