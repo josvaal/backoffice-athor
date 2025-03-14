@@ -7,22 +7,15 @@ import {
   ThemedLayoutV2,
   useNotificationProvider,
 } from "@refinedev/mui";
-
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import routerBindings, {
+  CatchAllNavigate,
   DocumentTitleHandler,
   NavigateToResource,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router";
-import {
-  BrowserRouter,
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import {
@@ -37,16 +30,13 @@ import {
   CategoryList,
   CategoryShow,
 } from "./pages/categories";
-import SignIn from "./pages/auth/sign-in";
-import { checkAccessToken } from "./utils/token";
-import { useEffect, useState } from "react";
 import { ProfileShow } from "./pages/profile";
 import { AccountCircle } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserList, UserShow } from "./pages/users";
-import { Box, CircularProgress } from "@mui/material";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
-import AuthModule from "./pages/auth/auth";
+import SignIn from "./pages/auth/sign-in";
+import SignUp from "./pages/auth/sign-up";
 function App() {
   return (
     <BrowserRouter>
@@ -93,8 +83,17 @@ function App() {
                 // },
               ]}
             >
-              <Authenticated key="protected" fallback={<AuthModule />}>
-                <Routes>
+              <Routes>
+                <Route
+                  element={
+                    <Authenticated
+                      key="dashboard"
+                      fallback={<CatchAllNavigate to="/login" />}
+                    >
+                      <Outlet />
+                    </Authenticated>
+                  }
+                >
                   <Route
                     element={
                       <ThemedLayoutV2 Header={() => <Header sticky />}>
@@ -132,12 +131,22 @@ function App() {
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>
-                </Routes>
+                </Route>
+                <Route
+                  element={
+                    <Authenticated key="auth" fallback={<Outlet />}>
+                      <NavigateToResource resource="/" />
+                    </Authenticated>
+                  }
+                >
+                  <Route path="/login" element={<SignIn />} />
+                  <Route path="/register" element={<SignUp />} />
+                </Route>
+              </Routes>
 
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
-              </Authenticated>
+              <RefineKbar />
+              <UnsavedChangesNotifier />
+              <DocumentTitleHandler />
             </Refine>
           </RefineSnackbarProvider>
         </ColorModeContextProvider>

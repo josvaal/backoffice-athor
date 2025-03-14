@@ -1,28 +1,19 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { SitemarkIcon } from "./components/custom-icons";
 import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router";
-import { Alert, CircularProgress } from "@mui/material";
-import Cookies from "universal-cookie";
+import { Alert, CircularProgress, Link } from "@mui/material";
 import { StyledCard } from "./components/styled-card";
 import { AuthContainer } from "./components/auth-container";
 import { useLogin } from "@refinedev/core";
 
-interface SignInProps {
-  handleSetSignUp: () => void;
-}
-
-export default function SignIn({ handleSetSignUp }: SignInProps) {
+export default function SignIn() {
   const {
     register,
     handleSubmit,
@@ -142,9 +133,9 @@ export default function SignIn({ handleSetSignUp }: SignInProps) {
               Iniciar Sesión
             </Button>
             {isError && <Alert severity="error">{error.message}</Alert>}
-            <Button sx={{ alignSelf: "center" }} onClick={handleSetSignUp}>
+            <Link href="/register" sx={{ alignSelf: "center" }}>
               ¿No tienes una cuenta?
-            </Button>
+            </Link>
           </Box>
         </StyledCard>
       </AuthContainer>
