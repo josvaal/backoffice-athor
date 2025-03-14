@@ -14,7 +14,6 @@ import {
 import type React from "react";
 import { useContext, useState } from "react";
 import { ColorModeContext } from "../../contexts/color-mode";
-import { MoreVert } from "@mui/icons-material";
 
 type IUser = {
   id: number;
@@ -28,15 +27,6 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
   const { mode, setMode } = useContext(ColorModeContext);
 
   const { data: user } = useGetIdentity<IUser>();
-
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <AppBar position={sticky ? "sticky" : "relative"}>

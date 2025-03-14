@@ -5,6 +5,7 @@ import {
   ErrorComponent,
   RefineSnackbarProvider,
   ThemedLayoutV2,
+  ThemedTitleV2,
   useNotificationProvider,
 } from "@refinedev/mui";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -37,6 +38,7 @@ import { UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
 import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
+import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
 function App() {
   return (
     <BrowserRouter>
@@ -96,7 +98,22 @@ function App() {
                 >
                   <Route
                     element={
-                      <ThemedLayoutV2 Header={() => <Header sticky />}>
+                      <ThemedLayoutV2
+                        Title={({ collapsed }) => (
+                          <ThemedTitleV2
+                            collapsed={collapsed}
+                            icon={
+                              collapsed ? (
+                                <SideSmallAthorIcon />
+                              ) : (
+                                <SideSmallAthorIcon />
+                              )
+                            }
+                            text="Athor Backoffice"
+                          />
+                        )}
+                        Header={() => <Header sticky />}
+                      >
                         <Outlet />
                         <Toaster />
                       </ThemedLayoutV2>
