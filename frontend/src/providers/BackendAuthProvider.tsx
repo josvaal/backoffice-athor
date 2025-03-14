@@ -1,12 +1,13 @@
 import type { AuthProvider } from "@refinedev/core";
 import { getAccessToken } from "../utils/retrieve_token";
 import Cookie from "universal-cookie";
+import { useNavigate } from "react-router";
 
 const cookies = new Cookie();
 
 export const customAuthProvider: AuthProvider = {
   logout: async () => {
-    cookies.remove("access_token");
+    cookies.remove("access_token", { path: "/" });
     return { success: true };
   },
 
@@ -37,16 +38,16 @@ export const customAuthProvider: AuthProvider = {
       path: "/",
       expires: cookieDate,
       secure: window.location.protocol === "https:",
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     return { success: true, redirectTo: "/" };
   },
 
   check: async () => {
-    const [, isError] = await getAccessToken();
+    const [token, isError] = await getAccessToken();
 
-    return { authenticated: !isError };
+    return { authenticated: !isError, logout: Boolean(!token) };
   },
 
   onError: async (error) => {
@@ -80,7 +81,7 @@ export const customAuthProvider: AuthProvider = {
       path: "/",
       expires: cookieDate,
       secure: window.location.protocol === "https:",
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     return { success: true, redirectTo: "/" };
@@ -115,6 +116,8 @@ export const customAuthProvider: AuthProvider = {
     );
 
     const { devices, ...restData } = data;
+
+    // console.log({ devices, ...restData.data });
 
     return { roles, ...restData.data };
   },

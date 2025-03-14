@@ -39,6 +39,7 @@ import { customAuthProvider } from "./providers/BackendAuthProvider";
 import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
 import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
+import ProfileEdit from "./pages/profile/edit";
 function App() {
   return (
     <BrowserRouter>
@@ -121,12 +122,12 @@ function App() {
                   >
                     <Route
                       index
-                      element={<NavigateToResource resource="blog_posts" />}
+                      element={<NavigateToResource resource="/" />}
                     />
 
-                    <Route path="/auth/*" element={<Navigate to="/" />} />
                     <Route path="/profile">
                       <Route index element={<ProfileShow />} />
+                      <Route path="edit" element={<ProfileEdit />} />
                     </Route>
                     <Route path="/users">
                       <Route index element={<UserList />} />
@@ -150,11 +151,7 @@ function App() {
                   </Route>
                 </Route>
                 <Route
-                  element={
-                    <Authenticated key="auth" fallback={<Outlet />}>
-                      <NavigateToResource resource="/" />
-                    </Authenticated>
-                  }
+                  element={<Authenticated key="auth" fallback={<Outlet />} />}
                 >
                   <Route path="/login" element={<SignIn />} />
                   <Route path="/register" element={<SignUp />} />

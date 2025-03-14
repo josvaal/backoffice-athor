@@ -1,49 +1,42 @@
 import { Chip, Tooltip } from "@mui/material";
 
 interface RoleChipProps {
-	role: string;
-	description: string;
+  role: string;
 }
 
-export default function RoleChip({ role, description }: RoleChipProps) {
-	if (role === "usuario") {
-		return (
-			<Tooltip title={description}>
-				<Chip
-					label={role.toUpperCase()}
-					size="small"
-					color="primary"
-					variant="outlined"
-				/>
-			</Tooltip>
-		);
-	}
+export default function RoleChip({ role }: RoleChipProps) {
+  if (role === "usuario") {
+    return (
+      <Chip
+        label={role.toUpperCase()}
+        size="small"
+        color="primary"
+        variant="outlined"
+      />
+    );
+  }
 
-	if (role === "admin") {
-		return (
-			<Tooltip title={description}>
-				<Chip
-					label={role.toUpperCase()}
-					size="small"
-					color="warning"
-					variant="outlined"
-				/>
-			</Tooltip>
-		);
-	}
+  if (role === "admin") {
+    return (
+      <Chip
+        label={role.toUpperCase()}
+        size="small"
+        color="warning"
+        variant="outlined"
+      />
+    );
+  }
 
-	if (role === "superadmin") {
-		return (
-			<Tooltip title={description}>
-				<Chip
-					label={role.toUpperCase()}
-					size="small"
-					color="error"
-					variant="outlined"
-				/>
-			</Tooltip>
-		);
-	}
+  if (role === "superadmin") {
+    return (
+      <Chip
+        label={role.toUpperCase()}
+        size="small"
+        color="error"
+        variant="outlined"
+      />
+    );
+  }
 
-	return <Chip label={role.toUpperCase()} size="small" />;
+  return <Chip label={role.toUpperCase()} size="small" />;
 }

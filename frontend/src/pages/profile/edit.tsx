@@ -12,27 +12,18 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { type ReactNode, useEffect, useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { profilePutData } from "./api/profileFetchData";
-import { useQuery } from "react-query";
 import toast from "react-hot-toast";
+import { useGetIdentity } from "@refinedev/core";
+import Cookie from "universal-cookie";
 
-interface ProfileEditParams {
-  name: string;
-  lastname: string;
-  username: string;
-  handleBackEdit: () => void;
-}
-
-export default function ProfileEdit({
-  name,
-  lastname,
-  username,
-  handleBackEdit,
-}: ProfileEditParams) {
+export default function ProfileEdit() {
   const navigate = useNavigate();
+  const cookies = new Cookie();
+  const [editError, setEditError] = useState<[boolean, string]>([false, ""]);
+
   const {
     register,
     handleSubmit,
@@ -41,12 +32,7 @@ export default function ProfileEdit({
   } = useForm({
     shouldUseNativeValidation: true,
   });
-
-  const [formData, setFormData] = useState({
-    name,
-    lastname,
-    username,
-  });
+  const { data: user, isLoading, isError, error } = useGetIdentity();
 
   const handleLogout = () => {
     console.log("Cerrando sesión...");
@@ -55,50 +41,46 @@ export default function ProfileEdit({
     toast.success("Cerrando sesión...");
   };
 
-  const { isLoading, isError, error, refetch } = useQuery(
-    ["update-profile"],
-    () =>
-      profilePutData({
-        handleLogout,
-        handleBackEdit,
-        bodyData: formData,
-      }),
-    {
-      onError: async (err: Error) => {
-        console.log(err);
-
-        if (err.message.includes("Debes esperar")) {
-          return;
-        }
-
-        toast.error(err.message);
-      },
-      enabled: false,
-      // Para que no haga refetching
-      refetchOnWindowFocus: false,
-      refetchInterval: false,
-    }
-  );
-
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   const onSubmit = async (formDataProp: any) => {
-    setFormData(formDataProp);
-    setTimeout(async () => {
-      await refetch();
-    }, 60);
+    console.log(formDataProp);
+
+    const ba_url = import.meta.env.VITE_BA_URL;
+    const token = cookies.get("access_token");
+
+    if (!token) {
+      setEditError([true, "Error al obtener el token"]);
+      return;
+    }
+
+    const response = await fetch(`${ba_url}/auth/me`, {
+      method: "PUT",
+      body: JSON.stringify(formDataProp),
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      setEditError([true, data.error.message]);
+      return;
+    }
+
+    toast.success("Perfil actualizado con éxito");
+    navigate(-1);
   };
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    setFormData({
-      username: username ?? "",
-      lastname,
-      name,
-    });
-    setValue("name", name);
-    setValue("lastname", lastname);
-    setValue("username", username ?? "");
-  }, []);
+  if (isError) {
+    return (
+      <Alert severity="error">
+        {error instanceof Error
+          ? error.message
+          : "Ha ocurrido un error inesperado"}
+      </Alert>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -114,6 +96,12 @@ export default function ProfileEdit({
     );
   }
 
+  const userData = user as any;
+  if (!userData) window.location.reload();
+  setValue("name", userData.name);
+  setValue("lastname", userData.lastname);
+  setValue("username", userData.username ?? "");
+
   return (
     <Box>
       <Box
@@ -124,17 +112,26 @@ export default function ProfileEdit({
         gap={2}
       >
         <Tooltip title="Regresar">
-          <IconButton aria-label="back" onClick={handleBackEdit} size="large">
+          <IconButton
+            aria-label="back"
+            onClick={() => {
+              navigate(-1);
+            }}
+            size="large"
+          >
             <ArrowBack />
           </IconButton>
         </Tooltip>
         <Typography variant="h5">Editar perfil</Typography>
       </Box>
-      {isError ? (
-        <Alert severity="error" style={{ marginBottom: 5 }}>
-          {error.message}
+      {editError[0] && (
+        <Alert severity="error">
+          {editError[1].length != 0
+            ? editError[1]
+            : "Ha ocurrido un error inesperado"}
         </Alert>
-      ) : null}
+      )}
+
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Grid2 container spacing={2}>
           <Grid2 size={4}>
