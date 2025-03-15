@@ -34,7 +34,7 @@ import {
 import { ProfileShow } from "./pages/profile";
 import { AccountCircle, Group } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
-import { UserCreate, UserList, UserShow } from "./pages/users";
+import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
 import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
@@ -68,7 +68,7 @@ function App() {
                   name: "users",
                   list: "/users",
                   create: "/users/create",
-                  edit: () => null,
+                  edit: "/users/edit/:id",
                   show: "/users/show/:id",
                   meta: {
                     canDelete: true,
@@ -134,7 +134,7 @@ function App() {
                     <Route path="/users">
                       <Route index element={<UserList />} />
                       <Route path="create" element={<UserCreate />} />
-                      {/* <Route path="edit/:id" element={<BlogPostEdit />} /> */}
+                      <Route path="edit/:id" element={<UserEdit />} />
                       <Route path="show/:id" element={<UserShow />} />
                     </Route>
                     <Route path="/blog-posts">

@@ -1,122 +1,168 @@
-import { Autocomplete, Box, Select, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-import { Edit, useAutocomplete } from "@refinedev/mui";
+import {
+  Edit,
+  ListButton,
+  RefreshButton,
+  SaveButton,
+  useAutocomplete,
+} from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
+import { ReactNode, useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
+import { getAccessToken } from "../../utils/retrieve_token";
 
-export const BlogPostEdit = () => {
+export const UserEdit = () => {
   const {
     saveButtonProps,
     refineCore: { queryResult, formLoading },
     register,
+    setValue,
     control,
     formState: { errors },
   } = useForm({});
 
-  const blogPostsData = queryResult?.data?.data;
+  const userData = queryResult?.data?.data.data;
 
-  const { autocompleteProps: categoryAutocompleteProps } = useAutocomplete({
-    resource: "categories",
-    defaultValue: blogPostsData?.category?.id,
-  });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { disabled, ...restSaveButtonProps } = saveButtonProps;
+
+  const [loadingRoles, setLoadingRoles] = useState(true);
+  const [errorRoles, setErrorRoles] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [roles, setRoles] = useState<any[]>([]);
+
+  const fetchRoles = async () => {
+    const ba_url = import.meta.env.VITE_BA_URL;
+
+    const [token, isError] = await getAccessToken();
+
+    if (isError) {
+      setErrorRoles(true);
+      setLoadingRoles(false);
+    }
+
+    const response = await fetch(`${ba_url}/roles/list`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      setErrorRoles(true);
+      setLoadingRoles(false);
+    }
+
+    setLoadingRoles(false);
+    setRoles(data.data);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchRoles();
+    };
+
+    fetchData();
+    if (!formLoading) {
+      setValue("email", userData.email);
+      setValue("name", userData.name);
+      setValue("lastname", userData.lastname);
+      setValue("username", userData.username ?? "");
+    }
+  }, [formLoading, setValue, userData]);
 
   return (
-    <Edit isLoading={formLoading} saveButtonProps={saveButtonProps}>
+    <Edit
+      resource="users"
+      isLoading={formLoading}
+      saveButtonProps={restSaveButtonProps}
+      title={<Typography variant="h5">Editar usuario</Typography>}
+      footerButtons={
+        <SaveButton
+          disabled={errorRoles}
+          {...restSaveButtonProps}
+          type="submit"
+        >
+          Actualizar
+        </SaveButton>
+      }
+      headerButtons={
+        <>
+          <RefreshButton children="Refrescar" /> <ListButton />
+        </>
+      }
+    >
       <Box
         component="form"
         sx={{ display: "flex", flexDirection: "column" }}
         autoComplete="off"
       >
         <TextField
-          {...register("title", {
-            required: "This field is required",
+          {...register("name", {
+            required: "Nombres requeridos",
           })}
-          error={!!(errors as any)?.title}
-          helperText={(errors as any)?.title?.message}
+          error={!!errors.name}
+          helperText={errors.name?.message as ReactNode}
+          placeholder="Juan"
           margin="normal"
+          required
+          color={errors.name ? "error" : "primary"}
           fullWidth
-          InputLabelProps={{ shrink: true }}
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+          }}
           type="text"
-          label={"Title"}
-          name="title"
+          label="Nombres"
+          name="name"
         />
         <TextField
-          {...register("content", {
-            required: "This field is required",
+          {...register("lastname", {
+            required: "Apellidos requeridos",
           })}
-          error={!!(errors as any)?.content}
-          helperText={(errors as any)?.content?.message}
+          error={!!errors.name}
+          helperText={errors.name?.message as ReactNode}
+          placeholder="Perez"
           margin="normal"
+          required
+          color={errors.lastname ? "error" : "primary"}
           fullWidth
-          InputLabelProps={{ shrink: true }}
-          multiline
-          label={"Content"}
-          name="content"
-          rows={4}
-        />
-        <Controller
-          control={control}
-          name={"category.id"}
-          rules={{ required: "This field is required" }}
-          // eslint-disable-next-line
-          defaultValue={null as any}
-          render={({ field }) => (
-            <Autocomplete
-              {...categoryAutocompleteProps}
-              {...field}
-              onChange={(_, value) => {
-                field.onChange(value.id);
-              }}
-              getOptionLabel={(item) => {
-                return (
-                  categoryAutocompleteProps?.options?.find((p) => {
-                    const itemId =
-                      typeof item === "object"
-                        ? item?.id?.toString()
-                        : item?.toString();
-                    const pId = p?.id?.toString();
-                    return itemId === pId;
-                  })?.title ?? ""
-                );
-              }}
-              isOptionEqualToValue={(option, value) => {
-                const optionId = option?.id?.toString();
-                const valueId =
-                  typeof value === "object"
-                    ? value?.id?.toString()
-                    : value?.toString();
-                return value === undefined || optionId === valueId;
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={"Category"}
-                  margin="normal"
-                  variant="outlined"
-                  error={!!(errors as any)?.category?.id}
-                  helperText={(errors as any)?.category?.id?.message}
-                  required
-                />
-              )}
-            />
-          )}
-        />
-        <Controller
-          name="status"
-          control={control}
-          render={({ field }) => {
-            return (
-              <Select
-                {...field}
-                value={field?.value || "draft"}
-                label={"Status"}
-              >
-                <MenuItem value="draft">Draft</MenuItem>
-                <MenuItem value="published">Published</MenuItem>
-                <MenuItem value="rejected">Rejected</MenuItem>
-              </Select>
-            );
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
           }}
+          type="text"
+          label="Apellidos"
+          name="lastname"
+        />
+
+        <TextField
+          {...register("username")}
+          error={!!errors.username}
+          helperText={errors.username?.message as ReactNode}
+          placeholder="juan123"
+          margin="normal"
+          required
+          color={errors.username ? "error" : "primary"}
+          fullWidth
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+          }}
+          type="text"
+          label="Nombre de usuario"
+          name="username"
         />
       </Box>
     </Edit>
