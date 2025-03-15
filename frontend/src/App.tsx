@@ -32,7 +32,7 @@ import {
   CategoryShow,
 } from "./pages/categories";
 import { ProfileShow } from "./pages/profile";
-import { AccountCircle } from "@mui/icons-material";
+import { AccountCircle, Group } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserCreate, UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
@@ -67,11 +67,13 @@ function App() {
                 {
                   name: "users",
                   list: "/users",
-                  create: () => null,
+                  create: "/users/create",
                   edit: () => null,
                   show: "/users/show/:id",
                   meta: {
                     canDelete: true,
+                    icon: <Group />,
+                    label: "Usuarios",
                   },
                 },
                 {
