@@ -8,6 +8,7 @@ import {
   GetListResponse,
   GetOneResponse,
   MetaQuery,
+  UpdateResponse,
   type Pagination,
 } from "@refinedev/core";
 import axios from "axios";
@@ -22,7 +23,8 @@ export const customDataProvider: DataProvider = {
     getListProvider({ resource, pagination, sorters, filters, meta }),
   create: ({ resource, variables, meta }) =>
     createProvider({ resource, variables, meta }),
-  update: ({ resource, id, variables, meta }) => Promise,
+  update: ({ resource, id, variables, meta }) =>
+    updateProvider({ resource, id, variables, meta }),
   deleteOne: ({ resource, id, variables, meta }) =>
     deleteOneProvider({ resource, id, variables, meta }),
   getOne: ({ resource, id, meta }) => getOneProvider({ resource, id, meta }),
@@ -174,6 +176,49 @@ const deleteOneProvider = async ({
       "Content-Type": "application/json",
     },
   });
+
+  if (response.data.error) {
+    throw new Error(response.data.error.message);
+  }
+
+  return {
+    data: response.data.data,
+  };
+};
+
+const updateProvider = async ({
+  resource,
+  id,
+  variables,
+  meta,
+}: {
+  resource: string;
+  id: BaseKey;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  variables: any;
+  meta: MetaQuery | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): Promise<UpdateResponse<any>> => {
+  const ba_url = import.meta.env.VITE_BA_URL;
+  const [token, isError] = await getAccessToken();
+
+  if (isError) {
+    cookies.remove("access_token", { path: "/" });
+    window.location.reload();
+    throw new Error("Ocurrió un error al intentar crear este registro");
+  }
+
+  // Adjust request parameters to meet the requirements of your API
+  const response = await axios.put(
+    `${ba_url}/${resource}/update/${id}`,
+    JSON.stringify(variables),
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (response.data.error) {
     throw new Error(response.data.error.message);

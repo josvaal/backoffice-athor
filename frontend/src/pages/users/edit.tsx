@@ -72,7 +72,6 @@ export const UserEdit = () => {
 
     fetchData();
     if (!formLoading) {
-      setValue("email", userData.email);
       setValue("name", userData.name);
       setValue("lastname", userData.lastname);
       setValue("username", userData.username ?? "");
