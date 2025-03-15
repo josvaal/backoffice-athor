@@ -228,10 +228,24 @@ export class UsersService {
       throw new BadRequestException(`El ID proporcionado no es válido`);
     }
 
-    return await this.prismaService.user.delete({
-      where: {
-        id: userId,
-      },
+    return await this.prismaService.$transaction(async (prisma) => {
+      const userRolesDeleted = await this.prismaService.userRole.deleteMany({
+        where: {
+          userId: userId,
+        },
+      });
+
+      if (!userRolesDeleted) {
+        throw new InternalServerErrorException(
+          'No se pudo eliminar la relación rol-usuario',
+        );
+      }
+
+      return await this.prismaService.user.delete({
+        where: {
+          id: userId,
+        },
+      });
     });
   }
 }

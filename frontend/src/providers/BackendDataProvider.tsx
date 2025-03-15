@@ -4,6 +4,7 @@ import {
   CrudFilter,
   CrudSort,
   DataProvider,
+  DeleteOneResponse,
   GetListResponse,
   GetOneResponse,
   MetaQuery,
@@ -22,7 +23,8 @@ export const customDataProvider: DataProvider = {
   create: ({ resource, variables, meta }) =>
     createProvider({ resource, variables, meta }),
   update: ({ resource, id, variables, meta }) => Promise,
-  deleteOne: ({ resource, id, variables, meta }) => Promise,
+  deleteOne: ({ resource, id, variables, meta }) =>
+    deleteOneProvider({ resource, id, variables, meta }),
   getOne: ({ resource, id, meta }) => getOneProvider({ resource, id, meta }),
   getApiUrl: () => "",
 };
@@ -133,6 +135,45 @@ const createProvider = async ({
       },
     }
   );
+
+  if (response.data.error) {
+    throw new Error(response.data.error.message);
+  }
+
+  return {
+    data: response.data.data,
+  };
+};
+
+const deleteOneProvider = async ({
+  resource,
+  id,
+  variables,
+  meta,
+}: {
+  resource: string;
+  id: BaseKey;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  variables: any | undefined;
+  meta: MetaQuery | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): Promise<DeleteOneResponse<any>> => {
+  const ba_url = import.meta.env.VITE_BA_URL;
+  const [token, isError] = await getAccessToken();
+
+  if (isError) {
+    cookies.remove("access_token", { path: "/" });
+    window.location.reload();
+    throw new Error("Ocurrió un error al intentar crear este registro");
+  }
+
+  // Adjust request parameters to meet the requirements of your API
+  const response = await axios.delete(`${ba_url}/${resource}/delete/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 
   if (response.data.error) {
     throw new Error(response.data.error.message);

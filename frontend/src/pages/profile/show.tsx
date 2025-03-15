@@ -51,7 +51,6 @@ export const ProfileShow = () => {
     );
   }
 
-  console.log(data);
   return (
     <>
       <Grid2 container spacing={2} columns={24}>
