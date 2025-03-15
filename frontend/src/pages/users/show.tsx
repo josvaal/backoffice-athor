@@ -13,7 +13,10 @@ export const UserShow = () => {
   const record = data?.data.data;
 
   return (
-    <Show isLoading={isLoading}>
+    <Show
+      isLoading={isLoading}
+      title={<Typography variant="h5">Ver usuario</Typography>}
+    >
       <Stack gap={1}>
         <Typography variant="body1" fontWeight="bold">
           {"ID"}

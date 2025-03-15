@@ -1,5 +1,7 @@
+import { Typography } from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import {
+  CreateButton,
   DateField,
   DeleteButton,
   EditButton,
@@ -10,7 +12,12 @@ import {
 import React from "react";
 
 export const UserList = () => {
-  const { dataGridProps } = useDataGrid({});
+  const { dataGridProps } = useDataGrid({
+    filters: {
+      mode: "off",
+      defaultBehavior: "replace",
+    },
+  });
 
   const columns = React.useMemo<GridColDef[]>(
     () => [
@@ -89,7 +96,10 @@ export const UserList = () => {
   );
 
   return (
-    <List>
+    <List
+      title={<Typography variant="h5">Usuarios</Typography>}
+      headerButtons={<CreateButton>Crear usuario</CreateButton>}
+    >
       <DataGrid {...dataGridProps} columns={columns} />
     </List>
   );

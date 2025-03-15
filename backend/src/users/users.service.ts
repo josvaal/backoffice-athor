@@ -10,6 +10,8 @@ import { UserSignupDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDto } from './dto/update-user';
 import { Response } from 'express';
+import { UserCreateDto } from './dto/user-create.dto';
+import { ApiResponse } from 'src/custom.types';
 
 @Injectable()
 export class UsersService {
@@ -80,6 +82,65 @@ export class UsersService {
       return await this.prismaService.user.create({
         data: { ...userSignupDto, password: hashPass },
       });
+    } catch (error) {
+      console.log({ error });
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new InternalServerErrorException(error.message);
+      }
+      if (error instanceof Prisma.PrismaClientValidationError) {
+        throw new InternalServerErrorException(error.message);
+      }
+      throw new InternalServerErrorException('Error desconocido');
+    }
+  }
+
+  async createUser(userCreateDto: UserCreateDto): Promise<ApiResponse> {
+    try {
+      const saltOrRounds: number = Number(process.env.SALTROUNDS);
+      const hashPass = await bcrypt.hash(userCreateDto.password, saltOrRounds);
+      userCreateDto.password = hashPass;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const userDb = await this.prismaService.$transaction(async (prisma) => {
+        const { roleId, ...restUserData } = userCreateDto;
+        const role = await this.prismaService.role.findUnique({
+          where: {
+            id: roleId,
+          },
+        });
+
+        if (!role) {
+          throw new NotFoundException('No existe este rol');
+        }
+
+        const userCreated = await this.prismaService.user.create({
+          data: restUserData,
+        });
+
+        if (!userCreated) {
+          throw new InternalServerErrorException('Error al crear el usuario');
+        }
+
+        const assigned = await this.prismaService.userRole.create({
+          data: {
+            userId: userCreated.id,
+            roleId: roleId,
+          },
+        });
+
+        if (!assigned) {
+          throw new InternalServerErrorException(
+            'Error al asignar el rol al usuario',
+          );
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...restUserCreated } = userCreated;
+        return restUserCreated;
+      });
+      return {
+        data: userDb,
+        error: null,
+      };
     } catch (error) {
       console.log({ error });
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

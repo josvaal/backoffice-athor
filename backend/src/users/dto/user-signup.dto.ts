@@ -1,3 +1,8 @@
-import { User } from '@prisma/client';
+import { OmitType } from '@nestjs/swagger';
+import { UserBaseDto } from './user-base.dto';
 
-export type UserSignupDto = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+export class UserSignupDto extends OmitType(UserBaseDto, [
+  'id',
+  'createdAt',
+  'updatedAt',
+] as const) {}

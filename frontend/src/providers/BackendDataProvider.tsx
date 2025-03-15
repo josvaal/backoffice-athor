@@ -1,15 +1,16 @@
 import {
   BaseKey,
+  CreateResponse,
   CrudFilter,
   CrudSort,
   DataProvider,
   GetListResponse,
+  GetOneResponse,
   MetaQuery,
   type Pagination,
 } from "@refinedev/core";
 import axios from "axios";
 import { getAccessToken } from "../utils/retrieve_token";
-import toast from "react-hot-toast";
 import Cookie from "universal-cookie";
 
 const cookies = new Cookie();
@@ -18,7 +19,8 @@ export const customDataProvider: DataProvider = {
   // required methods
   getList: ({ resource, pagination, sorters, filters, meta }) =>
     getListProvider({ resource, pagination, sorters, filters, meta }),
-  create: ({ resource, variables, meta }) => Promise,
+  create: ({ resource, variables, meta }) =>
+    createProvider({ resource, variables, meta }),
   update: ({ resource, id, variables, meta }) => Promise,
   deleteOne: ({ resource, id, variables, meta }) => Promise,
   getOne: ({ resource, id, meta }) => getOneProvider({ resource, id, meta }),
@@ -76,7 +78,8 @@ const getOneProvider = async ({
   resource: string;
   id: BaseKey;
   meta: MetaQuery | undefined;
-}): Promise<GetListResponse<any>> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): Promise<GetOneResponse<any>> => {
   const ba_url = import.meta.env.VITE_BA_URL;
   const [token, isError] = await getAccessToken();
 
@@ -95,6 +98,47 @@ const getOneProvider = async ({
 
   return {
     data: response.data,
-    total: response.data.length,
+  };
+};
+
+const createProvider = async ({
+  resource,
+  variables,
+  meta,
+}: {
+  resource: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  variables: any | undefined;
+  meta: MetaQuery | undefined;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): Promise<CreateResponse<any>> => {
+  const ba_url = import.meta.env.VITE_BA_URL;
+  const [token, isError] = await getAccessToken();
+
+  if (isError) {
+    cookies.remove("access_token", { path: "/" });
+    window.location.reload();
+    throw new Error("Ocurrió un error al intentar crear este registro");
+  }
+
+  // Adjust request parameters to meet the requirements of your API
+  const response = await axios.post(
+    `${ba_url}/${resource}/create`,
+    JSON.stringify(variables),
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (response.data.error) {
+    throw new Error(response.data.error.message);
+  }
+
+  return {
+    data: response.data.data,
   };
 };

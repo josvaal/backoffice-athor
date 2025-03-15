@@ -5,7 +5,7 @@ import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { AthorSlogan, SitemarkIcon } from "./components/custom-icons";
+import { AthorSlogan } from "./components/custom-icons";
 import { useForm } from "react-hook-form";
 import { type ReactNode } from "react";
 import { Alert, CircularProgress, Grid2 as Grid, Link } from "@mui/material";
@@ -26,7 +26,7 @@ export default function SignUp() {
 
   const { mutate, isLoading, isError, error } = useRegister();
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (formDataProp: any) => {
     mutate(formDataProp, {
       onSuccess: (data) => {
@@ -91,7 +91,7 @@ export default function SignUp() {
                     error={!!errors.email}
                     helperText={errors.email?.message as ReactNode}
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="tu@correo.com"
                     autoFocus
                     required
                     fullWidth

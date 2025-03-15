@@ -9,6 +9,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
+  Post,
   Put,
   Query,
   Response,
@@ -25,6 +26,8 @@ import {
 import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 import { RoleGuard } from 'src/auth/role/role.guard';
 import { Response as Res } from 'express';
+import { UserSignupDto } from './dto/user-signup.dto';
+import { UserCreateDto } from './dto/user-create.dto';
 
 @Controller('users')
 export class UsersController {
@@ -86,6 +89,27 @@ export class UsersController {
           data: null,
         };
       }
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
+  @RolesWithDescription(
+    ['superadmin'],
+    'Operacion restringida por superadmins, esta ruta permite crear usuarios',
+  )
+  @UseGuards(AuthGuard, RoleGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Post('create')
+  async createUser(@Body() userCreateDto: UserCreateDto): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.userService.createUser(userCreateDto),
+        error: null,
+      };
+    } catch (error) {
       return {
         error: error,
         data: null,

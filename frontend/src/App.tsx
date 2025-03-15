@@ -34,7 +34,7 @@ import {
 import { ProfileShow } from "./pages/profile";
 import { AccountCircle } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
-import { UserList, UserShow } from "./pages/users";
+import { UserCreate, UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
 import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
@@ -74,16 +74,16 @@ function App() {
                     canDelete: true,
                   },
                 },
-                // {
-                //   name: "blog_posts",
-                //   list: "/blog-posts",
-                //   show: "/blog-posts/show/:id",
-                //   create: "/blog-posts/create",
-                //   edit: "/blog-posts/edit/:id",
-                //   meta: {
-                //     canDelete: true,
-                //   },
-                // },
+                {
+                  name: "blog_posts",
+                  list: "/blog-posts",
+                  show: "/blog-posts/show/:id",
+                  create: "/blog-posts/create",
+                  edit: "/blog-posts/edit/:id",
+                  meta: {
+                    canDelete: true,
+                  },
+                },
               ]}
             >
               <Routes>
@@ -131,8 +131,8 @@ function App() {
                     </Route>
                     <Route path="/users">
                       <Route index element={<UserList />} />
-                      {/* <Route path="create" element={<BlogPostCreate />} />
-                    <Route path="edit/:id" element={<BlogPostEdit />} /> */}
+                      <Route path="create" element={<UserCreate />} />
+                      {/* <Route path="edit/:id" element={<BlogPostEdit />} /> */}
                       <Route path="show/:id" element={<UserShow />} />
                     </Route>
                     <Route path="/blog-posts">
