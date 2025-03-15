@@ -34,13 +34,7 @@ export default function ProfileEdit() {
   });
   const { data: user, isLoading, isError, error } = useGetIdentity();
 
-  const handleLogout = () => {
-    console.log("Cerrando sesión...");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    toast.success("Cerrando sesión...");
-  };
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (formDataProp: any) => {
     console.log(formDataProp);
 
@@ -69,7 +63,7 @@ export default function ProfileEdit() {
     }
 
     toast.success("Perfil actualizado con éxito");
-    navigate(-1);
+    navigate("/profile");
   };
 
   if (isError) {
@@ -96,6 +90,7 @@ export default function ProfileEdit() {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userData = user as any;
   if (!userData) window.location.reload();
   setValue("name", userData.name);
@@ -115,7 +110,7 @@ export default function ProfileEdit() {
           <IconButton
             aria-label="back"
             onClick={() => {
-              navigate(-1);
+              navigate("/profile");
             }}
             size="large"
           >

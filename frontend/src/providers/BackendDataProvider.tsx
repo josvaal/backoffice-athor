@@ -1,7 +1,6 @@
 import { DataProvider } from "@refinedev/core";
 import axios from "axios";
 import { getAccessToken } from "../utils/retrieve_token";
-import { useAuthStore } from "../global/IsAuthenticated";
 import toast from "react-hot-toast";
 
 export const customDataProvider: DataProvider = {
