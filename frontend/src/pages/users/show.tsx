@@ -1,16 +1,19 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useShow } from "@refinedev/core";
 import {
   DateField,
   Show,
   TextFieldComponent as TextField,
 } from "@refinedev/mui";
+import RoleChip from "../profile/components/RoleChip";
 
 export const UserShow = () => {
   const { query } = useShow({});
   const { data, isLoading } = query;
 
   const record = data?.data.data;
+
+  console.log(record);
 
   return (
     <Show
@@ -39,6 +42,14 @@ export const UserShow = () => {
           {"Nombre de usuario"}
         </Typography>
         <TextField value={record?.username} />
+        <Typography variant="body1" fontWeight="bold">
+          {"Roles"}
+        </Typography>
+        <Box display="flex" gap={1} justifyContent="start">
+          {record.UserRole.map((role, i: number) => (
+            <RoleChip role={role.role.name} key={i} />
+          ))}
+        </Box>
         <Typography variant="body1" fontWeight="bold">
           {"Creado en"}
         </Typography>

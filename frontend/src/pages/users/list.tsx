@@ -1,5 +1,9 @@
-import { Typography } from "@mui/material";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { Box, Typography } from "@mui/material";
+import {
+  DataGrid,
+  GridRenderCellParams,
+  type GridColDef,
+} from "@mui/x-data-grid";
 import {
   CreateButton,
   DateField,
@@ -10,6 +14,7 @@ import {
   useDataGrid,
 } from "@refinedev/mui";
 import React from "react";
+import RoleChip from "../profile/components/RoleChip";
 
 export const UserList = () => {
   const { dataGridProps } = useDataGrid({
@@ -54,6 +59,24 @@ export const UserList = () => {
         headerName: "Nombre de usuario",
         minWidth: 80,
         display: "flex",
+      },
+      {
+        field: "UserRole",
+        headerName: "Roles",
+        display: "flex",
+        minWidth: 300,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        renderCell: (params: GridRenderCellParams<any>) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const value = params.value as any[];
+          return (
+            <Box display="flex" gap={1} justifyContent="center">
+              {value.map((role, i: number) => (
+                <RoleChip role={role.role.name} key={i} />
+              ))}
+            </Box>
+          );
+        },
       },
       {
         field: "createdAt",

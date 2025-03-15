@@ -1,4 +1,4 @@
-import { Chip, Tooltip } from "@mui/material";
+import { Chip } from "@mui/material";
 
 interface RoleChipProps {
   role: string;
