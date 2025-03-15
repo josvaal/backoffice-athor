@@ -99,7 +99,9 @@ export const customAuthProvider: AuthProvider = {
     const token = cookies.get("access_token");
 
     if (!token) {
-      return null;
+      cookies.remove("access_token", { path: "/" });
+      window.location.reload();
+      throw new Error("No hay una sesión activa");
     }
 
     const ba_url = import.meta.env.VITE_BA_URL;

@@ -4,8 +4,6 @@ import { useState } from "react";
 import { LogoutDialog } from "./components/LogoutDialog";
 import { ProfileStaticData } from "./components/ProfileStaticData";
 import { ProfileInteractiveData } from "./components/ProfileInteractiveData";
-import { profileGetData } from "./api/profileFetchData";
-import ProfileEdit from "./edit";
 import Cookie from "universal-cookie";
 import { useGetIdentity } from "@refinedev/core";
 

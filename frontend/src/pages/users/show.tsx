@@ -1,27 +1,16 @@
 import { Stack, Typography } from "@mui/material";
-import { useOne, useShow } from "@refinedev/core";
+import { useShow } from "@refinedev/core";
 import {
   DateField,
-  MarkdownField,
   Show,
   TextFieldComponent as TextField,
 } from "@refinedev/mui";
 
 export const UserShow = () => {
   const { query } = useShow({});
-
   const { data, isLoading } = query;
 
-  const record = data?.data;
-  // console.log(record);
-
-  const { data: userData, isLoading: userIsLoading } = useOne({
-    resource: "users",
-    id: record?.data.id || "",
-    queryOptions: {
-      enabled: !!record,
-    },
-  });
+  const record = data?.data.data;
 
   return (
     <Show isLoading={isLoading}>
@@ -29,34 +18,32 @@ export const UserShow = () => {
         <Typography variant="body1" fontWeight="bold">
           {"ID"}
         </Typography>
-        <TextField value={record?.data.id} />
+        <TextField value={record?.id} />
 
         <Typography variant="body1" fontWeight="bold">
           {"Correo"}
         </Typography>
-        <TextField value={record?.data.email} />
-
+        <TextField value={record?.email} />
         <Typography variant="body1" fontWeight="bold">
           {"Nombres"}
         </Typography>
-        <TextField value={record?.data.name} />
-
+        <TextField value={record?.name} />
         <Typography variant="body1" fontWeight="bold">
           {"Apellidos"}
         </Typography>
-        <TextField value={record?.data.lastname} />
+        <TextField value={record?.lastname} />
         <Typography variant="body1" fontWeight="bold">
           {"Nombre de usuario"}
         </Typography>
-        <TextField value={record?.data.username} />
+        <TextField value={record?.username} />
         <Typography variant="body1" fontWeight="bold">
           {"Creado en"}
         </Typography>
-        <DateField value={record?.data.createdAt} />
+        <DateField value={record?.createdAt} />
         <Typography variant="body1" fontWeight="bold">
           {"Actualizado en"}
         </Typography>
-        <DateField value={record?.data.updatedAt} />
+        <DateField value={record?.updatedAt} />
       </Stack>
     </Show>
   );

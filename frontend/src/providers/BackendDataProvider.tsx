@@ -1,7 +1,18 @@
-import { DataProvider } from "@refinedev/core";
+import {
+  BaseKey,
+  CrudFilter,
+  CrudSort,
+  DataProvider,
+  GetListResponse,
+  MetaQuery,
+  type Pagination,
+} from "@refinedev/core";
 import axios from "axios";
 import { getAccessToken } from "../utils/retrieve_token";
 import toast from "react-hot-toast";
+import Cookie from "universal-cookie";
+
+const cookies = new Cookie();
 
 export const customDataProvider: DataProvider = {
   // required methods
@@ -21,27 +32,23 @@ const getListProvider = async ({
   sorters,
   filters,
   meta,
-}) => {
+}: {
+  resource: string;
+  pagination: Pagination | undefined;
+  sorters: CrudSort[] | undefined;
+  filters: CrudFilter[] | undefined;
+  meta: MetaQuery | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}): Promise<GetListResponse<any>> => {
   const { current, pageSize } = pagination ?? {};
 
-  const handleLogout = () => {
-    console.log("Cerrando sesión...");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    toast.success("Cerrando sesión...");
-    window.location.reload();
-  };
-
   const ba_url = import.meta.env.VITE_BA_URL;
-  const token = getAccessToken();
-  if (
-    !token ||
-    token.trim() === "" ||
-    token === undefined ||
-    token === "undefined"
-  ) {
-    handleLogout();
-    return;
+  const [token, isError] = await getAccessToken();
+
+  if (isError) {
+    cookies.remove("access_token", { path: "/" });
+    window.location.reload();
+    throw new Error("Ocurrió un error al intentar obtener los datos");
   }
 
   // Adjust request parameters to meet the requirements of your API
@@ -61,26 +68,22 @@ const getListProvider = async ({
   };
 };
 
-const getOneProvider = async ({ resource, id, meta }) => {
-  // You can handle the request according to your API requirements.
-  const handleLogout = () => {
-    console.log("Cerrando sesión...");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    toast.success("Cerrando sesión...");
-    window.location.reload();
-  };
-
+const getOneProvider = async ({
+  resource,
+  id,
+  meta,
+}: {
+  resource: string;
+  id: BaseKey;
+  meta: MetaQuery | undefined;
+}): Promise<GetListResponse<any>> => {
   const ba_url = import.meta.env.VITE_BA_URL;
-  const token = getAccessToken();
-  if (
-    !token ||
-    token.trim() === "" ||
-    token === undefined ||
-    token === "undefined"
-  ) {
-    handleLogout();
-    return;
+  const [token, isError] = await getAccessToken();
+
+  if (isError) {
+    cookies.remove("access_token", { path: "/" });
+    window.location.reload();
+    throw new Error("Ocurrió un error al intentar obtener los datos");
   }
 
   // Adjust request parameters to meet the requirements of your API
@@ -92,5 +95,6 @@ const getOneProvider = async ({ resource, id, meta }) => {
 
   return {
     data: response.data,
+    total: response.data.length,
   };
 };

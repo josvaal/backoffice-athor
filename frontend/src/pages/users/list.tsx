@@ -1,5 +1,4 @@
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { useMany } from "@refinedev/core";
 import {
   DateField,
   DeleteButton,
@@ -12,17 +11,6 @@ import React from "react";
 
 export const UserList = () => {
   const { dataGridProps } = useDataGrid({});
-
-  const { data: userData, isLoading: userIsLoading } = useMany({
-    resource: "users",
-    ids:
-      dataGridProps?.rows
-        ?.map((item: any) => item?.category?.id)
-        .filter(Boolean) ?? [],
-    queryOptions: {
-      enabled: !!dataGridProps?.rows,
-    },
-  });
 
   const columns = React.useMemo<GridColDef[]>(
     () => [
@@ -45,7 +33,7 @@ export const UserList = () => {
         field: "name",
         flex: 1,
         headerName: "Nombres",
-        minWidth: 250,
+        minWidth: 160,
         display: "flex",
       },
       {
@@ -63,7 +51,7 @@ export const UserList = () => {
       {
         field: "createdAt",
         headerName: "Creado en",
-        minWidth: 120,
+        minWidth: 100,
         display: "flex",
         renderCell: function render({ value }) {
           return <DateField value={value} />;
@@ -72,7 +60,7 @@ export const UserList = () => {
       {
         field: "updatedAt",
         headerName: "Actualizado en",
-        minWidth: 120,
+        minWidth: 100,
         display: "flex",
         renderCell: function render({ value }) {
           return <DateField value={value} />;
@@ -80,7 +68,7 @@ export const UserList = () => {
       },
       {
         field: "actions",
-        headerName: "Actions",
+        headerName: "Acciones",
         align: "right",
         headerAlign: "right",
         minWidth: 120,
@@ -97,7 +85,7 @@ export const UserList = () => {
         },
       },
     ],
-    [userData, userIsLoading]
+    []
   );
 
   return (
