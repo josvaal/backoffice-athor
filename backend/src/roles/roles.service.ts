@@ -13,7 +13,7 @@ export class RolesService {
   constructor(private prismaService: PrismaService) {}
 
   async findAll() {
-    return await this.prismaService.role.findMany();
+    return await this.prismaService.role.findMany({});
   }
 
   async findById(id: number | string) {
@@ -31,9 +31,14 @@ export class RolesService {
         UserRole: {
           include: {
             user: true,
-          }
-        }
-      }
+          },
+        },
+        RolePermission: {
+          include: {
+            permission: true,
+          },
+        },
+      },
     });
 
     if (!role) {

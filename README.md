@@ -1,217 +1,218 @@
-# BackOffice Athor
+En base a la API proporcionada, los **módulos** que se pueden identificar para el frontend y los **permisos** asociados a cada uno son los siguientes:
 
-**All open**
+---
 
-José Valentino Masías Castillo
+### **Módulos y Permisos**
 
-03/02/2025 07:33 AM
+#### 1. **Auth (Autenticación)**
 
-**All open**
+- **Descripción**: Módulo para gestionar la autenticación de usuarios (inicio de sesión, registro y perfil).
+- **Rutas**:
+  - `/auth/login`
+  - `/auth/register`
+  - `/auth/me` (GET y PUT)
+- **Permisos**:
+  - No se especifican permisos para estas rutas, lo que sugiere que son accesibles sin restricciones.
 
-1. [**Backend Base 2**](#_page2_x0.00_y60.00)
-1. [**Backend Avanzado 3**](#_page3_x0.00_y60.00)
-1. [**Frontend Base (React) 4**](#_page4_x0.00_y60.00)
-1. [**Frontend Avanzado 5**](#_page5_x0.00_y60.00)
-1. [**Integración Final 7**](#_page7_x0.00_y60.00)
-1. [**Despliegue y Documentación 8**](#_page8_x0.00_y60.00)
-1. [**Análisis de la arquitectura del sistema (Frontend y Backend) de Athor 9**](#_page9_x0.00_y605.77)
+---
 
-<a name="_page2_x0.00_y60.00"></a>**1. Backend Base**
+#### 2. **Users (Usuarios)**
 
+- **Descripción**: Módulo para gestionar usuarios (listar, crear, actualizar, eliminar).
+- **Rutas**:
+  - `/users/list`
+  - `/users/update/{id}`
+  - `/users/create`
+  - `/users/{id}`
+  - `/users/delete/{id}`
+- **Permisos**:
+  - `users:all`: Permiso global para todas las operaciones de usuarios.
+  - `users:list`: Permiso para listar usuarios.
+  - `users:create`: Permiso para crear usuarios.
+  - `users:update`: Permiso para actualizar usuarios.
+  - `users:show`: Permiso para ver detalles de un usuario.
+  - `users:delete`: Permiso para eliminar usuarios.
 
+---
 
-|**ID**|[41](http://localhost:8080/work_packages/41)|**TYPE**|Task|
-| - | - | - | - |
-|**STATUS**|New|**ASSIGNEE**|José Valentino Masías Castillo|
-|**PRIORITY**|High|**AUTHOR**|José Valentino Masías Castillo|
-|**DURATION**|11 d|**START DATE**|03/03/2025|
-|**FINISH DATE**|03/17/2025|||
-**Description**
+#### 3. **Roles (Roles)**
 
-**Objetivo:** API funcional con autenticación y CRUD básico
+- **Descripción**: Módulo para gestionar roles (listar, crear, actualizar, asignar, desasignar y eliminar).
+- **Rutas**:
+  - `/roles/list`
+  - `/roles/{id}`
+  - `/roles/create`
+  - `/roles/update/{id}`
+  - `/roles/assign/user/{userId}/role/{roleId}`
+  - `/roles/deassign/user/{userId}/role/{roleId}`
+  - `/roles/delete/{id}`
+- **Permisos**:
+  - `roles:all`: Permiso global para todas las operaciones de roles.
+  - `roles:list`: Permiso para listar roles.
+  - `roles:create`: Permiso para crear roles.
+  - `roles:update`: Permiso para actualizar roles.
+  - `roles:assign`: Permiso para asignar roles a usuarios.
+  - `roles:deassign`: Permiso para desasignar roles de usuarios.
+  - `roles:delete`: Permiso para eliminar roles.
 
-1. **Configuración Inicial**
-- Proyecto Node.js/Express con TypeScript
-- Conexión a SQL Server con Prisma (modelos completos)
-- Variables de entorno y scripts básicos
-2. **Autenticación JWT**
-- Endpoints: /auth/register, /auth/login, /auth/me
-- Middleware de autenticación
-- Sistema de roles básico (User, Admin, SuperAdmin)
-3. **CRUD Esencial**
-- Usuarios: GET/PUT/DELETE /users
-- Dispositivos: POST/GET/PUT/DELETE /devices
-- Relaciones usuario-dispositivo
-4. **Herramientas de Desarrollo**
-- Postman Collection básica
-- Swagger/OpenAPI inicial
-- Docker-compose para SQL Server
+---
 
-![](/assets/Aspose.Words.a0e15626-ba5e-4e53-b264-0afe8bf6a56a.005.png)
+#### 4. **Devices (Dispositivos)**
 
-<a name="_page3_x0.00_y60.00"></a>**2. Backend Avanzado**
+- **Descripción**: Módulo para gestionar dispositivos (listar, crear, actualizar, eliminar, asignar, desasignar y registrar eventos).
+- **Rutas**:
+  - `/devices/list`
+  - `/devices/{id}`
+  - `/devices/macESP32/{mac}`
+  - `/devices/serial/{serial}`
+  - `/devices/batch/{batch}`
+  - `/devices/create`
+  - `/devices/update/{id}`
+  - `/devices/delete/{id}`
+  - `/devices/assign/user/{userId}/device/{deviceId}`
+  - `/devices/deassign/user/{userId}/device/{deviceId}`
+  - `/devices/{deviceId}/event/{eventTypeId}`
+- **Permisos**:
+  - `devices:all`: Permiso global para todas las operaciones de dispositivos.
+  - `devices:list`: Permiso para listar dispositivos.
+  - `devices:create`: Permiso para crear dispositivos.
+  - `devices:update`: Permiso para actualizar dispositivos.
+  - `devices:delete`: Permiso para eliminar dispositivos.
+  - `devices:assign`: Permiso para asignar dispositivos a usuarios.
+  - `devices:deassign`: Permiso para desasignar dispositivos de usuarios.
+  - `devices:register_event`: Permiso para registrar eventos en dispositivos.
+  - `devices:show_mac_esp32`: Permiso para ver dispositivos por MAC del ESP32.
+  - `devices:show_serial`: Permiso para ver dispositivos por número de serie.
+  - `devices:show_batch`: Permiso para ver dispositivos por lote.
 
+---
 
+#### 5. **EventType (Tipos de Evento)**
 
-|**ID**|[42](http://localhost:8080/work_packages/42)|**TYPE**|Task|
-| - | - | - | - |
-|**STATUS**|New|**ASSIGNEE**|José Valentino Masías Castillo|
-|**PRIORITY**|Normal|**AUTHOR**|José Valentino Masías Castillo|
-|**DURATION**|11 d|**START DATE**|03/18/2025|
-|**FINISH DATE**|04/01/2025|||
-**Description**
+- **Descripción**: Módulo para gestionar tipos de eventos (listar, crear, actualizar y eliminar).
+- **Rutas**:
+  - `/event-type/list`
+  - `/event-type/{id}`
+  - `/event-type/create`
+  - `/event-type/update/{id}`
+  - `/event-type/delete/{id}`
+- **Permisos**:
+  - `event_types:all`: Permiso global para todas las operaciones de tipos de eventos.
+  - `event_types:list`: Permiso para listar tipos de eventos.
+  - `event_types:create`: Permiso para crear tipos de eventos.
+  - `event_types:update`: Permiso para actualizar tipos de eventos.
+  - `event_types:delete`: Permiso para eliminar tipos de eventos.
 
-**Objetivo:** Funcionalidades complejas y seguridad
+---
 
-1. **Gestión de Eventos**
-- POST /devices/{id}/events con validación de datos
-- GET /devices/{id}/events con filtros temporales
-- WebSocket para notificaciones en tiempo real
-2. **Seguridad Reforzada**
-- Rate limiting (express-rate-limit)
-- Validación de requests con Zod
-- CORS configurado
-- Helmet para headers de seguridad
-3. **Endpoints Específicos**
-- ATHOR Security: Control de puertas/estados
-- ATHOR Home: Gestión de relays
-- Historiales con paginación
+#### 6. **DeviceModel (Modelos de Dispositivo)**
 
-![](/assets/Aspose.Words.a0e15626-ba5e-4e53-b264-0afe8bf6a56a.006.png)
+- **Descripción**: Módulo para gestionar modelos de dispositivos (listar, crear, actualizar y eliminar).
+- **Rutas**:
+  - `/device-model/list`
+  - `/device-model/{id}`
+  - `/device-model/create`
+  - `/device-model/update/{id}`
+  - `/device-model/delete/{id}`
+- **Permisos**:
+  - `device_models:all`: Permiso global para todas las operaciones de modelos de dispositivos.
+  - `device_models:list`: Permiso para listar modelos de dispositivos.
+  - `device_models:create`: Permiso para crear modelos de dispositivos.
+  - `device_models:update`: Permiso para actualizar modelos de dispositivos.
+  - `device_models:delete`: Permiso para eliminar modelos de dispositivos.
 
-<a name="_page4_x0.00_y60.00"></a>**3. Frontend Base (React)**
+---
 
+#### 7. **DeviceStatus (Estados de Dispositivo)**
 
+- **Descripción**: Módulo para gestionar estados de dispositivos (listar, crear, actualizar y eliminar).
+- **Rutas**:
+  - `/device-status/list`
+  - `/device-status/{id}`
+  - `/device-status/create`
+  - `/device-status/update/{id}`
+  - `/device-status/delete/{id}`
+- **Permisos**:
+  - `device_statuses:all`: Permiso global para todas las operaciones de estados de dispositivos.
+  - `device_statuses:list`: Permiso para listar estados de dispositivos.
+  - `device_statuses:create`: Permiso para crear estados de dispositivos.
+  - `device_statuses:update`: Permiso para actualizar estados de dispositivos.
+  - `device_statuses:delete`: Permiso para eliminar estados de dispositivos.
 
-|**ID**|[43](http://localhost:8080/work_packages/43)|**TYPE**|Task|
-| - | - | - | - |
-|**STATUS**|New|**ASSIGNEE**|José Valentino Masías Castillo|
-|**PRIORITY**|Normal|**AUTHOR**|José Valentino Masías Castillo|
-|**DURATION**|11 d|**START DATE**|04/02/2025|
-|**FINISH DATE**|04/16/2025|||
-**Description**
+---
 
-**Objetivo:** Sistema de autenticación y navegación
+#### 8. **Events (Eventos)**
 
-1. **Configuración Inicial**
-- React + TypeScript + Vite
-- Material UI + React Router
-- Estructura de carpetas (feature-based)
-2. **Autenticación**
-- Páginas de Login/Registro
-- Contexto de autenticación con JWT
-- Protección de rutas
-3. **Vistas Esenciales**
-- Dashboard principal
-- Listado de dispositivos (tabla paginada)
-- Perfil de usuario
-4. **Integración API**
-- Axios Client con interceptores
-- Manejo de errores global
-- Loaders y estados de carga
+- **Descripción**: Módulo para gestionar eventos (listar y eliminar).
+- **Rutas**:
+  - `/events/list`
+  - `/events/{id}`
+  - `/events/delete/{id}`
+- **Permisos**:
+  - `events:all`: Permiso global para todas las operaciones de eventos.
+  - `events:list`: Permiso para listar eventos.
+  - `events:delete`: Permiso para eliminar eventos.
 
-![](/assets/Aspose.Words.a0e15626-ba5e-4e53-b264-0afe8bf6a56a.007.png)
+---
 
-<a name="_page5_x0.00_y60.00"></a>**4. Frontend Avanzado**
+#### 9. **UserDevices (Relaciones Usuario-Dispositivo)**
 
+- **Descripción**: Módulo para gestionar relaciones entre usuarios y dispositivos (listar).
+- **Rutas**:
+  - `/user-devices/list`
+- **Permisos**:
+  - `user_devices:all`: Permiso global para todas las operaciones de relaciones usuario-dispositivo.
+  - `user_devices:list`: Permiso para listar relaciones usuario-dispositivo.
 
+---
 
-|**ID**|[44](http://localhost:8080/work_packages/44)|**TYPE**|Task|
-| - | - | - | - |
-|**STATUS**|New|**ASSIGNEE**|José Valentino Masías Castillo|
-|**PRIORITY**|Normal|**AUTHOR**|José Valentino Masías Castillo|
-|**DURATION**|11 d|**START DATE**|04/17/2025|
-|**FINISH DATE**|05/01/2025|||
-**Description**
+#### 10. **DeviceHistory (Historial de Dispositivos)**
 
-**Objetivo:** Funcionalidades específicas y UI compleja
+- **Descripción**: Módulo para gestionar el historial de dispositivos (listar).
+- **Rutas**:
+  - `/device-history/list`
+- **Permisos**:
+  - `device_histories:all`: Permiso global para todas las operaciones de historial de dispositivos.
+  - `device_histories:list`: Permiso para listar historial de dispositivos.
 
-1. **Gestión de Dispositivos**
-- Formulario CRUD dispositivos
-- Asociación usuarios-dispositivo
-- Tarjetas de estado en tiempo real
-2. **ATHOR Security UI**
-- Panel de control de puertas
-- Gráfico histórico de eventos
-- Detección de movimiento (notificaciones push)
-3. **ATHOR Home UI**
-- Interfaz tipo interruptores para relays
-- Programador horario visual
-- Sistema de alertas por estado
-4. **Optimizaciones**
-- Lazy loading de rutas
-- Memoización de componentes
-- Internacionalización básica (i18n)
+---
 
-![](/assets/Aspose.Words.a0e15626-ba5e-4e53-b264-0afe8bf6a56a.008.png)
+#### 11. **Permission (Permisos)**
 
-5. **Integración<a name="_page7_x0.00_y60.00"></a> Final**
+- **Descripción**: Módulo para gestionar permisos (listar, asignar y desasignar).
+- **Rutas**:
+  - `/module/list`
+  - `/module/{id}`
+  - `/module/assign/permission/{permissionId}/role/{roleId}`
+  - `/module/deassign/permission/{permissionId}/role/{roleId}`
+- **Permisos**:
+  - `permissions:all`: Permiso global para todas las operaciones de permisos.
+  - `permissions:list`: Permiso para listar permisos.
+  - `permissions:assign`: Permiso para asignar permisos a roles.
+  - `permissions:deassign`: Permiso para desasignar permisos de roles.
 
+---
 
+### Resumen de Módulos y Permisos
 
-|**ID**|[45](http://localhost:8080/work_packages/45)|**TYPE**|Task|
-| - | - | - | - |
-|**STATUS**|New|**ASSIGNEE**|José Valentino Masías Castillo|
-|**PRIORITY**|Normal|**AUTHOR**|José Valentino Masías Castillo|
-|**DURATION**|6 d|**START DATE**|05/12/2025|
-|**FINISH DATE**|05/19/2025|||
-**Description**
+| **Módulo**        | **Permisos**                                                                                                                                                                                                               |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Auth**          | Sin permisos específicos.                                                                                                                                                                                                  |
+| **Users**         | `users:all`, `users:list`, `users:create`, `users:update`, `users:show`, `users:delete`                                                                                                                                    |
+| **Roles**         | `roles:all`, `roles:list`, `roles:create`, `roles:update`, `roles:assign`, `roles:deassign`, `roles:delete`                                                                                                                |
+| **Devices**       | `devices:all`, `devices:list`, `devices:create`, `devices:update`, `devices:delete`, `devices:assign`, `devices:deassign`, `devices:register_event`, `devices:show_mac_esp32`, `devices:show_serial`, `devices:show_batch` |
+| **EventType**     | `event_types:all`, `event_types:list`, `event_types:create`, `event_types:update`, `event_types:delete`                                                                                                                    |
+| **DeviceModel**   | `device_models:all`, `device_models:list`, `device_models:create`, `device_models:update`, `device_models:delete`                                                                                                          |
+| **DeviceStatus**  | `device_statuses:all`, `device_statuses:list`, `device_statuses:create`, `device_statuses:update`, `device_statuses:delete`                                                                                                |
+| **Events**        | `events:all`, `events:list`, `events:delete`                                                                                                                                                                               |
+| **UserDevices**   | `user_devices:all`, `user_devices:list`                                                                                                                                                                                    |
+| **DeviceHistory** | `device_histories:all`, `device_histories:list`                                                                                                                                                                            |
+| **Permission**    | `permissions:all`, `permissions:list`, `permissions:assign`, `permissions:deassign`                                                                                                                                        |
 
-**Objetivo:** Conectar backend-frontend y ajustes finales
+---
 
-1. **Conexión WebSocket**
-- Actualizaciones en tiempo real
-- Notificaciones toast para eventos
-2. **Testing E2E**
-- Cypress: Flujos críticos (login, CRUD dispositivos)
-- React Testing Library: Componentes clave
-3. **Ajustes UI/UX**
-- Dark mode
-- Animaciones básicas
-- Responsive design (mobile-first)
+### Notas:
 
-![](/assets/Aspose.Words.a0e15626-ba5e-4e53-b264-0afe8bf6a56a.009.png)
-
-<a name="_page8_x0.00_y60.00"></a>**6. Despliegue y Documentación**
-
-
-
-|**ID**|[46](http://localhost:8080/work_packages/46)|**TYPE**|Task|
-| - | - | - | - |
-|**STATUS**|New|**ASSIGNEE**|José Valentino Masías Castillo|
-|**PRIORITY**|Normal|**AUTHOR**|José Valentino Masías Castillo|
-|**DURATION**|6 d|**START DATE**|05/02/2025|
-|**FINISH DATE**|05/09/2025|||
-**Description**
-
-**Objetivo:** Sistema en producción y docs completos
-
-1. **Despliegue**
-- Backend: Por definir (Servidor propio)
-- Frontend: Vercel/Netlify o en Servidor propio
-- Dominio personalizado (opcional)
-2. **Documentación**
-- Swagger público con ejemplos
-- Guía de instalación local (README.md)
-- Postman Collection completa
-3. **Entrega Final**
-- Video demo de 5 minutos
-- Repositorio GitHub organizado
-- Checklist de funcionalidades completadas
-
-![](/assets/Aspose.Words.a0e15626-ba5e-4e53-b264-0afe8bf6a56a.010.png)
-
-<a name="_page9_x0.00_y605.77"></a>**7. Análisis de la arquitectura del sistema (Frontend y Backend) de Athor**
-
-
-
-|**ID**|[47](http://localhost:8080/work_packages/47)|**TYPE**|Phase|
-| - | - | - | - |
-|**STATUS**|New|**ASSIGNEE**|José Valentino Masías Castillo|
-|**PRIORITY**|Normal|**AUTHOR**|José Valentino Masías Castillo|
-|**DURATION**||**START DATE**||
-|**FINISH DATE**||||
-**Description**
-
-![](/assets/Aspose.Words.a0e15626-ba5e-4e53-b264-0afe8bf6a56a.011.png)
-03/02/2025 07:33 AM 10/10 All open
+- Los permisos con el sufijo `:all` son permisos globales que permiten acceder a todas las operaciones dentro de un módulo.
+- Las rutas de autenticación (`/auth`) no tienen permisos asociados, lo que sugiere que son accesibles sin restricciones.
+- Cada módulo tiene permisos específicos para operaciones como listar, crear, actualizar, eliminar, etc.

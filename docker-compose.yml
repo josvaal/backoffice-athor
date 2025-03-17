@@ -36,47 +36,47 @@ services:
   #     - bo_athor_db
   #   networks:
   #     - backend-network
-  metabase_db:
-    container_name: metabase_db
-    build:
-      context: ./metabase_db
-      dockerfile: Dockerfile
-    ports:
-      - "${PG_PORT}:5432"
-    volumes:
-      - metabase_db_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    networks:
-      - backend-network
-  metabase:
-    image: metabase/metabase:latest
-    container_name: metabase
-    hostname: metabase
-    depends_on:
-      - metabase_db
-      # - bo_athor_api
-      - bo_athor_db
-    volumes:
-      - /dev/urandom:/dev/random:ro
-    ports:
-      - "${MB_PORT}:3000"
-    environment:
-      MB_DB_TYPE: postgres
-      MB_DB_DBNAME: ${POSTGRES_DB}
-      MB_DB_PORT: ${PG_PORT}
-      MB_DB_USER: ${POSTGRES_USER}
-      MB_DB_PASS: ${POSTGRES_PASSWORD}
-      MB_DB_HOST: metabase_db
-    networks:
-      - backend-network
-    healthcheck:
-      test: curl --fail -I http://localhost:${MB_PORT}/api/health || exit 1
-      interval: 15s
-      timeout: 5s
-      retries: 5
+  # metabase_db:
+  #   container_name: metabase_db
+  #   build:
+  #     context: ./metabase_db
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "${PG_PORT}:5432"
+  #   volumes:
+  #     - metabase_db_data:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   networks:
+  #     - backend-network
+  # metabase:
+  #   image: metabase/metabase:latest
+  #   container_name: metabase
+  #   hostname: metabase
+  #   depends_on:
+  #     - metabase_db
+  #     # - bo_athor_api
+  #     - bo_athor_db
+  #   volumes:
+  #     - /dev/urandom:/dev/random:ro
+  #   ports:
+  #     - "${MB_PORT}:3000"
+  #   environment:
+  #     MB_DB_TYPE: postgres
+  #     MB_DB_DBNAME: ${POSTGRES_DB}
+  #     MB_DB_PORT: ${PG_PORT}
+  #     MB_DB_USER: ${POSTGRES_USER}
+  #     MB_DB_PASS: ${POSTGRES_PASSWORD}
+  #     MB_DB_HOST: metabase_db
+  #   networks:
+  #     - backend-network
+  #   healthcheck:
+  #     test: curl --fail -I http://localhost:${MB_PORT}/api/health || exit 1
+  #     interval: 15s
+  #     timeout: 5s
+  #     retries: 5
   # bo_athor_frontend:
   #   build:
   #     context: ./frontend
@@ -94,4 +94,4 @@ networks:
 
 volumes:
   mssql_data:
-  metabase_db_data:
+  # metabase_db_data:

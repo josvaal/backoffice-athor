@@ -6,6 +6,6 @@ import { UsersModule } from 'src/users/users.module';
 @Module({
   imports: [UsersModule],
   providers: [TokenService],
-  controllers: [TokenController]
+  controllers: [TokenController],
 })
 export class TokenModule {}

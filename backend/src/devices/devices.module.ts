@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { DevicesController } from './devices.controller';
 import { DevicesService } from './devices.service';
-import { RoleGuard } from 'src/auth/role/role.guard';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { UsersModule } from 'src/users/users.module';
+import { PermissionGuard } from 'src/auth/permission/permission.guard';
 
 @Module({
   imports: [PrismaModule, UsersModule],
-  providers: [DevicesService, RoleGuard],
+  providers: [DevicesService, PermissionGuard],
   controllers: [DevicesController],
   exports: [DevicesService],
 })

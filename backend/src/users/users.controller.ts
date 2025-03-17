@@ -23,21 +23,20 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
-import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
-import { RoleGuard } from 'src/auth/role/role.guard';
 import { Response as Res } from 'express';
-import { UserSignupDto } from './dto/user-signup.dto';
 import { UserCreateDto } from './dto/user-create.dto';
+import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @RolesWithDescription(
-    ['admin', 'superadmin'],
-    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" obtener una lista de todos los usuarios. Se asegura de que el solicitante esté autenticado y tenga el rol adecuado mediante los guardias de autenticación y roles. Si la solicitud es exitosa, devuelve la lista de usuarios; de lo contrario, devuelve un mensaje de error.',
+  @PermissionsWithDescription(
+    ['users:all', 'users:list'],
+    'Listar todos los usuarios existentes',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(
@@ -58,11 +57,11 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(
-    ['admin', 'superadmin'],
-    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" actualizar los datos de un usuario específico, pero no se permite modificar la contraseña ni el correo electrónico. Valida que el ID proporcionado sea correcto y que el usuario exista en la base de datos. Si ocurre algún error en los datos enviados o el usuario no se encuentra, devuelve un mensaje de error correspondiente. Si la actualización es exitosa, devuelve la información del usuario actualizada.',
+  @PermissionsWithDescription(
+    ['users:all', 'users:update'],
+    'Actualizar un usuario',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @Put('update/:id')
   async updateProfile(
     @Param('id') id: number,
@@ -96,11 +95,11 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(
-    ['superadmin'],
-    'Operacion restringida por superadmins, esta ruta permite crear usuarios',
+  @PermissionsWithDescription(
+    ['users:all', 'users:create'],
+    'Crear un usuario nuevo',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   async createUser(@Body() userCreateDto: UserCreateDto): Promise<ApiResponse> {
@@ -117,11 +116,11 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(
-    ['admin', 'superadmin'],
-    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" obtener los detalles de un usuario específico por su ID. Valida que el ID proporcionado sea correcto y busca al usuario en la base de datos, incluyendo sus roles y dispositivos asociados. Si el usuario no existe o el ID es inválido, se devuelve un mensaje de error. Si la consulta es exitosa, se devuelve la información del usuario.',
+  @PermissionsWithDescription(
+    ['users:all', 'users:show'],
+    'Visualizar un usuario por id',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   async listById(@Param('id') id: number): Promise<ApiResponse> {
@@ -138,11 +137,11 @@ export class UsersController {
     }
   }
 
-  @RolesWithDescription(
-    ['superadmin'],
-    'Esta operación de API permite a los usuarios con el rol de "superadmin" eliminar un usuario por su ID. Valida que el ID proporcionado sea correcto y, si el usuario existe, lo elimina de la base de datos. Si ocurre algún error en los datos enviados o durante la eliminación, se devuelve un mensaje de error adecuado.',
+  @PermissionsWithDescription(
+    ['users:all', 'users:delete'],
+    'Eliminar un usuario por id',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
   async delete(@Param('id') id: number): Promise<ApiResponse> {

@@ -3,10 +3,11 @@ import { RolesService } from './roles.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { RolesController } from './roles.controller';
 import { UsersModule } from 'src/users/users.module';
+import { PermissionGuard } from 'src/auth/permission/permission.guard';
 
 @Module({
   imports: [PrismaModule, UsersModule],
-  providers: [RolesService],
+  providers: [RolesService, PermissionGuard],
   exports: [RolesService],
   controllers: [RolesController],
 })

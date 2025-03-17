@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useGetIdentity } from "@refinedev/core";
+import { useGetIdentity, usePermissions } from "@refinedev/core";
 import {
   HamburgerMenu,
   type RefineThemedLayoutV2HeaderProps,
