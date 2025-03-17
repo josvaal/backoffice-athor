@@ -1,11 +1,12 @@
 // COMMIT
-import { Authenticated, Refine } from "@refinedev/core";
+import { Authenticated, Refine, usePermissions } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { Toaster } from "react-hot-toast";
 import {
   ErrorComponent,
   RefineSnackbarProvider,
   ThemedLayoutV2,
+  ThemedSiderV2,
   ThemedTitleV2,
   useNotificationProvider,
 } from "@refinedev/mui";
@@ -41,6 +42,9 @@ import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
 import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
 import ProfileEdit from "./pages/profile/edit";
+import { Box, ListItemText, Typography } from "@mui/material";
+import { Sidebar } from "./components";
+
 function App() {
   return (
     <BrowserRouter>
@@ -103,6 +107,19 @@ function App() {
                   <Route
                     element={
                       <ThemedLayoutV2
+                        Sider={() => (
+                          <ThemedSiderV2
+                            render={({ items, logout, collapsed }) => {
+                              return (
+                                <Sidebar
+                                  items={items}
+                                  logout={logout}
+                                  collapsed={collapsed}
+                                />
+                              );
+                            }}
+                          />
+                        )}
                         Title={({ collapsed }) => (
                           <ThemedTitleV2
                             collapsed={collapsed}
