@@ -124,6 +124,7 @@ model UserRole {
 model Module {
   id          Int          @id @default(autoincrement())
   name        String       @unique
+  groupName   String 
   description String
   path        String
   createdAt   DateTime     @default(now())
