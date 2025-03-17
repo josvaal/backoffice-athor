@@ -116,24 +116,24 @@ CREATE TABLE [dbo].[UserRole] (
 );
 
 -- CreateTable
-CREATE TABLE [dbo].[Module] (
+CREATE TABLE [dbo].[Permission] (
     [id] INT NOT NULL IDENTITY(1,1),
     [name] NVARCHAR(1000) NOT NULL,
+    [groupName] NVARCHAR(1000) NOT NULL,
     [description] NVARCHAR(1000) NOT NULL,
     [path] NVARCHAR(1000) NOT NULL,
-    [createdAt] DATETIME2 NOT NULL CONSTRAINT [Module_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [Permission_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
     [updatedAt] DATETIME2 NOT NULL,
-    CONSTRAINT [Module_pkey] PRIMARY KEY CLUSTERED ([id]),
-    CONSTRAINT [Module_name_key] UNIQUE NONCLUSTERED ([name]),
-    CONSTRAINT [Module_path_key] UNIQUE NONCLUSTERED ([path])
+    CONSTRAINT [Permission_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [Permission_name_key] UNIQUE NONCLUSTERED ([name])
 );
 
 -- CreateTable
-CREATE TABLE [dbo].[UserModule] (
+CREATE TABLE [dbo].[RolePermission] (
     [id] INT NOT NULL IDENTITY(1,1),
-    [userId] INT NOT NULL,
-    [moduleId] INT NOT NULL,
-    CONSTRAINT [UserModule_pkey] PRIMARY KEY CLUSTERED ([id])
+    [roleId] INT NOT NULL,
+    [permissionId] INT NOT NULL,
+    CONSTRAINT [RolePermission_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
 -- AddForeignKey
@@ -167,10 +167,10 @@ ALTER TABLE [dbo].[UserRole] ADD CONSTRAINT [UserRole_userId_fkey] FOREIGN KEY (
 ALTER TABLE [dbo].[UserRole] ADD CONSTRAINT [UserRole_roleId_fkey] FOREIGN KEY ([roleId]) REFERENCES [dbo].[Role]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[UserModule] ADD CONSTRAINT [UserModule_userId_fkey] FOREIGN KEY ([userId]) REFERENCES [dbo].[User]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE [dbo].[RolePermission] ADD CONSTRAINT [RolePermission_roleId_fkey] FOREIGN KEY ([roleId]) REFERENCES [dbo].[Role]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE [dbo].[UserModule] ADD CONSTRAINT [UserModule_moduleId_fkey] FOREIGN KEY ([moduleId]) REFERENCES [dbo].[Module]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE [dbo].[RolePermission] ADD CONSTRAINT [RolePermission_permissionId_fkey] FOREIGN KEY ([permissionId]) REFERENCES [dbo].[Permission]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 COMMIT TRAN;
 
