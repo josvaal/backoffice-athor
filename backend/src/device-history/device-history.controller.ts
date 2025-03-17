@@ -6,20 +6,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DeviceHistoryService } from './device-history.service';
-import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { RoleGuard } from 'src/auth/role/role.guard';
 import { ApiResponse } from 'src/custom.types';
+import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
+import { PermissionGuard } from 'src/auth/permission/permission.guard';
 
 @Controller('device-history')
 export class DeviceHistoryController {
   constructor(private deviceHistoryService: DeviceHistoryService) {}
 
-  @RolesWithDescription(
-    ['superadmin', 'admin'],
-    "Esta operación de API permite obtener un historial de dispositivos, incluyendo detalles sobre cada dispositivo y el evento relacionado, con información adicional sobre el tipo de evento. Solo los usuarios con los roles de 'superadmin' o 'admin' pueden acceder a esta información. En caso de éxito, la respuesta incluirá los datos solicitados; si ocurre algún error, se devolverá un mensaje de error adecuado.",
+  @PermissionsWithDescription(
+    ['device_histories:all', 'device_histories:list'],
+    'Listar los historiales de dispositivo',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(): Promise<ApiResponse> {

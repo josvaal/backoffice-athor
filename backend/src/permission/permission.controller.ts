@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   Delete,
   Get,
@@ -12,21 +11,24 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PermissionService } from './permission.service';
-import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { RoleGuard } from 'src/auth/role/role.guard';
 import { ApiResponse } from 'src/custom.types';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
+import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
+import { PermissionGuard } from 'src/auth/permission/permission.guard';
 
 @Controller('module')
 export class PermissionController {
   constructor(private permissionService: PermissionService) {}
 
-  @RolesWithDescription(['superadmin'], 'Listar todos los permisos del sistema')
-  @UseGuards(AuthGuard, RoleGuard)
+  @PermissionsWithDescription(
+    ['permissions:all', 'permissions:list'],
+    'Listar todos los permisos actuales',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(): Promise<ApiResponse> {
@@ -43,8 +45,11 @@ export class PermissionController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], 'Ver un permiso del sistema.')
-  @UseGuards(AuthGuard)
+  @PermissionsWithDescription(
+    ['permissions:all', 'permissions:show'],
+    'Ver un permiso por id',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   async listById(@Param('id') id: number): Promise<ApiResponse> {
@@ -61,11 +66,11 @@ export class PermissionController {
     }
   }
 
-  @RolesWithDescription(
-    ['superadmin'],
-    'Operación para asignar un rol a este permiso',
+  @PermissionsWithDescription(
+    ['permissions:all', 'permissions:assign'],
+    'Asignar un rol a este permiso mediante la id de ambos',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('assign/permission/:permissionId/role/:roleId')
   async assign(
@@ -105,11 +110,11 @@ export class PermissionController {
     }
   }
 
-  @RolesWithDescription(
-    ['superadmin'],
-    'Operación para desasignar un rol a este permiso',
+  @PermissionsWithDescription(
+    ['permissions:all', 'permissions:deassign'],
+    'Des-asignar un rol a este permiso mediante la id de ambos',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('deassign/permission/:permissionId/role/:roleId')
   async deassign(
