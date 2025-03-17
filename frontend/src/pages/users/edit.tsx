@@ -1,22 +1,7 @@
-import {
-  Autocomplete,
-  Box,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import {
-  Edit,
-  ListButton,
-  RefreshButton,
-  SaveButton,
-  useAutocomplete,
-} from "@refinedev/mui";
+import { Box, TextField, Typography } from "@mui/material";
+import { Edit, ListButton, RefreshButton, SaveButton } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
-import { ReactNode, useEffect, useState } from "react";
-import { Controller } from "react-hook-form";
-import { getAccessToken } from "../../utils/retrieve_token";
+import { ReactNode, useEffect } from "react";
 
 export const UserEdit = () => {
   const {
@@ -24,7 +9,6 @@ export const UserEdit = () => {
     refineCore: { queryResult, formLoading },
     register,
     setValue,
-    control,
     formState: { errors },
   } = useForm({});
 
@@ -33,51 +17,14 @@ export const UserEdit = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { disabled, ...restSaveButtonProps } = saveButtonProps;
 
-  const [loadingRoles, setLoadingRoles] = useState(true);
-  const [errorRoles, setErrorRoles] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [roles, setRoles] = useState<any[]>([]);
-
-  const fetchRoles = async () => {
-    const ba_url = import.meta.env.VITE_BA_URL;
-
-    const [token, isError] = await getAccessToken();
-
-    if (isError) {
-      setErrorRoles(true);
-      setLoadingRoles(false);
-    }
-
-    const response = await fetch(`${ba_url}/roles/list`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      setErrorRoles(true);
-      setLoadingRoles(false);
-    }
-
-    setLoadingRoles(false);
-    setRoles(data.data);
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchRoles();
-    };
-
-    fetchData();
     if (!formLoading) {
       setValue("name", userData.name);
       setValue("lastname", userData.lastname);
       setValue("username", userData.username ?? "");
     }
   }, [formLoading, setValue, userData]);
-
+  //TODO:  Invalid `this.prismaService.userRole.create()` invocation in /home/aukdedev/code/backoffice-athor/backend/src/users/users.service.ts:123:60 120 throw new InternalServerErrorException('Error al crear el usuario'); 121 } 122 → 123 const assigned = await this.prismaService.userRole.create( Unique constraint failed on the constraint: `dbo.UserRole`
   return (
     <Edit
       resource="users"
@@ -85,11 +32,7 @@ export const UserEdit = () => {
       saveButtonProps={restSaveButtonProps}
       title={<Typography variant="h5">Editar usuario</Typography>}
       footerButtons={
-        <SaveButton
-          disabled={errorRoles}
-          {...restSaveButtonProps}
-          type="submit"
-        >
+        <SaveButton {...restSaveButtonProps} type="submit">
           Actualizar
         </SaveButton>
       }

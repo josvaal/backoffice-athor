@@ -99,10 +99,9 @@ export class UsersService {
       const saltOrRounds: number = Number(process.env.SALTROUNDS);
       const hashPass = await bcrypt.hash(userCreateDto.password, saltOrRounds);
       userCreateDto.password = hashPass;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const userDb = await this.prismaService.$transaction(async (prisma) => {
         const { roleId, ...restUserData } = userCreateDto;
-        const role = await this.prismaService.role.findUnique({
+        const role = await prisma.role.findUnique({
           where: {
             id: roleId,
           },
@@ -112,7 +111,7 @@ export class UsersService {
           throw new NotFoundException('No existe este rol');
         }
 
-        const userCreated = await this.prismaService.user.create({
+        const userCreated = await prisma.user.create({
           data: restUserData,
         });
 
@@ -120,7 +119,7 @@ export class UsersService {
           throw new InternalServerErrorException('Error al crear el usuario');
         }
 
-        const assigned = await this.prismaService.userRole.create({
+        const assigned = await prisma.userRole.create({
           data: {
             userId: userCreated.id,
             roleId: roleId,

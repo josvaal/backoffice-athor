@@ -65,6 +65,10 @@ const getListProvider = async ({
     },
   });
 
+  if (response.data.error) {
+    throw new Error(response.data.error.message);
+  }
+
   // The total row count could be sourced differently based on the provider
   const total = response.headers["x-total-count"] ?? response.data.length;
 
@@ -125,6 +129,8 @@ const createProvider = async ({
     window.location.reload();
     throw new Error("Ocurrió un error al intentar crear este registro");
   }
+
+  console.log(variables);
 
   // Adjust request parameters to meet the requirements of your API
   const response = await axios.post(
