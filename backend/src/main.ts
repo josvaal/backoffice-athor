@@ -18,7 +18,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, documentFactory, {
     customCss: theme.getBuffer(SwaggerThemeNameEnum.DARK),
     //TODO: Esto genera el JSON crudo para asi poder importarlo desde donde quiera o imprimir la documentacion
-    jsonDocumentUrl: '/docs.json',
+    // jsonDocumentUrl: '/docs.json',
   });
 
   app.enableCors({
