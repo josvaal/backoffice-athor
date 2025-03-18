@@ -72,7 +72,6 @@ BEGIN TRY
         -- Permisos para permisos
         ('permissions:all', 'permissions', 'Permiso global para todas las operaciones de permisos', '/permissions', GETDATE(), GETDATE()),
         ('permissions:list', 'permissions', 'Permiso para listar permisos', '/permissions/list', GETDATE(), GETDATE()),
-        ('permissions:list_by_role_id', 'permissions', 'Permiso para listar permisos en base a un id de rol', '/permissions/list_by_role_id', GETDATE(), GETDATE()),
         ('permissions:list_by_user_id', 'permissions', 'Permiso para listar permisos en base a un id de usuario', '/permissions/list_by_user_id', GETDATE(), GETDATE()),
         ('permissions:assign', 'permissions', 'Permiso para asignar permisos a roles', '/permissions/assign', GETDATE(), GETDATE()),
         ('permissions:deassign', 'permissions', 'Permiso para desasignar permisos de roles', '/permissions/deassign', GETDATE(), GETDATE());

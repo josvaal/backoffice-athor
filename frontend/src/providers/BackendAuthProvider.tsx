@@ -137,12 +137,9 @@ export const customAuthProvider: AuthProvider = {
     }
 
     const ba_url = import.meta.env.VITE_BA_URL;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const identity = await (customAuthProvider as any).getIdentity();
-
     const response = await fetch(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      `${ba_url}/permission/user/${(identity as any).id}`,
+      `${ba_url}/permission/me`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -151,6 +148,7 @@ export const customAuthProvider: AuthProvider = {
     );
 
     const data = await response.json();
+    console.log(data);
 
     const { error } = data;
 

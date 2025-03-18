@@ -44,7 +44,12 @@ export const Sidebar = ({ items, logout }: SidebarProps) => {
 
   return (
     <>
-      {items.filter((item: any) => permissionPaths.includes(item.key))}
+      {items.filter((item: any) => {
+        if (item.key === "/profile") {
+          return true;
+        }
+        return permissionPaths.includes(item.key);
+      })}
       <Divider />
       {logout}
     </>

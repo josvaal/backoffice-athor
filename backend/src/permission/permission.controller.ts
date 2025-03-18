@@ -9,21 +9,41 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { PermissionService } from './permission.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ApiResponse } from 'src/custom.types';
+import { ApiResponse, JwtRequestPayload } from 'src/custom.types';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('permission')
 export class PermissionController {
   constructor(private permissionService: PermissionService) {}
+
+  @ApiOperation({ description: 'Esto retorna todos tus permisos actuales' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Get('/me')
+  async listByMe(@Request() req: JwtRequestPayload): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.permissionService.findPermissionsByMe(req),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
 
   @PermissionsWithDescription(
     ['permissions:all', 'permissions:list'],
@@ -57,31 +77,6 @@ export class PermissionController {
     try {
       return {
         data: await this.permissionService.findById(id),
-        error: null,
-      };
-    } catch (error) {
-      return {
-        error: error,
-        data: null,
-      };
-    }
-  }
-
-  @PermissionsWithDescription(
-    ['permissions:all', 'permissions:list_by_role_id'],
-    'Listar los permisos mediante un id de rol',
-  )
-  @UseGuards(AuthGuard, PermissionGuard)
-  @HttpCode(HttpStatus.OK)
-  @Post('/role')
-  async listByRoleId(
-    @Body() body: { roleIds: number[] },
-  ): Promise<ApiResponse> {
-    try {
-      return {
-        data: await this.permissionService.findPermissionsByRoleIds(
-          body.roleIds,
-        ),
         error: null,
       };
     } catch (error) {

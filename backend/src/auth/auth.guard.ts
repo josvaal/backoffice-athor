@@ -15,6 +15,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+
     if (!token) {
       throw new UnauthorizedException('Token no proporcionado');
     }
@@ -26,6 +27,7 @@ export class AuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request['user'] = payload;
     } catch (error) {
+      console.log(error);
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException(
           'La sesión ya expiró, inicie sesión nuevamente',
@@ -35,6 +37,7 @@ export class AuthGuard implements CanActivate {
         'No tienes acceso a esto, consulta a un administrador o de rol más alto',
       );
     }
+
     return true;
   }
 

@@ -102,6 +102,7 @@ export class PermissionGuard implements CanActivate {
 
       return true;
     } catch (error) {
+      console.log(error);
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException(
           'La sesión ya expiró, inicie sesión nuevamente',

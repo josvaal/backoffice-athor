@@ -3,7 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtRequestPayload } from 'src/custom.types';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserView } from 'src/users/dto/user-view.dto';
 
 @Injectable()
 export class PermissionService {
@@ -27,23 +29,53 @@ export class PermissionService {
     });
   }
 
-  async findPermissionsByRoleIds(ids: (number | string)[]) {
-    const roleIds = ids.map((id) => Number(id));
+  async findPermissionsByMe(request: JwtRequestPayload) {
+    const userJwt = request.user.user;
 
-    if (roleIds.some((roleId) => isNaN(roleId))) {
-      throw new BadRequestException(
-        `Uno o más IDs proporcionados no son válidos`,
-      );
+    if (!userJwt) {
+      throw new BadRequestException('Nos eproporcionó un token adecuado');
     }
 
-    return await this.prismaService.rolePermission.findMany({
+    if (!userJwt.id) {
+      throw new BadRequestException('El token proporcionado no es válido');
+    }
+
+    const userPermissions = await this.prismaService.user.findUnique({
       where: {
-        roleId: { in: roleIds },
+        id: userJwt.id,
       },
-      include: {
-        permission: true,
+      select: {
+        UserRole: {
+          select: {
+            role: {
+              select: {
+                RolePermission: {
+                  select: {
+                    permission: {
+                      select: {
+                        id: true,
+                        name: true,
+                        groupName: true,
+                        description: true,
+                        path: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
+
+    const permissions = userPermissions?.UserRole?.flatMap((userRole) =>
+      userRole.role.RolePermission.map(
+        (rolePermission) => rolePermission.permission,
+      ),
+    );
+
+    return permissions;
   }
 
   async findPermissionsByUserId(id: number | string) {
