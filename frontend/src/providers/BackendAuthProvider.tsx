@@ -111,6 +111,11 @@ export const customAuthProvider: AuthProvider = {
     });
 
     const data = await response.json();
+    const { error } = data;
+
+    if (error) {
+      throw new Error(error.message);
+    }
 
     const roles: string[] = data.data.UserRole.map(
       (userRole: { role: { name: any } }) => userRole.role.name
@@ -132,7 +137,16 @@ export const customAuthProvider: AuthProvider = {
     }
 
     const ba_url = import.meta.env.VITE_BA_URL;
-    const response = await fetch(`${ba_url}/auth/me`, {
+    const responseMe = await fetch(`${ba_url}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const dataMe = await responseMe.json();
+    const userId = dataMe.data.id;
+
+    const response = await fetch(`${ba_url}/permission/user/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -140,12 +154,6 @@ export const customAuthProvider: AuthProvider = {
 
     const data = await response.json();
 
-    const roles: string[] = data.data.UserRole.map(
-      (userRole: { role: { name: any } }) => userRole.role
-    );
-
-    return {
-      data: roles,
-    };
+    return data.data;
   },
 };
