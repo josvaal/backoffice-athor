@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import {
   DataGrid,
   GridRenderCellParams,
@@ -13,10 +13,15 @@ import {
   ShowButton,
   useDataGrid,
 } from "@refinedev/mui";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import RoleChip from "../profile/components/RoleChip";
+import { usePermissions } from "@refinedev/core";
+import { useLocation } from "react-router";
 
 export const UserList = () => {
+  const location = useLocation();
+  const { data, isLoading } = usePermissions();
+  const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   const { dataGridProps } = useDataGrid({
     filters: {
       mode: "off",
@@ -122,12 +127,45 @@ export const UserList = () => {
     []
   );
 
+  useEffect(() => {
+    if (data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const paths = (data as any).map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (permission: any) => permission.path
+      );
+
+      console.log(location.pathname);
+      console.log(paths);
+      setPermissionPaths(paths);
+    }
+  }, [data]);
+
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        width="100%"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <List
       title={<Typography variant="h5">Usuarios</Typography>}
       headerButtons={<CreateButton>Crear usuario</CreateButton>}
     >
-      <DataGrid {...dataGridProps} columns={columns} />
+      {!permissionPaths.includes(`${location.pathname}/list`) &&
+      !permissionPaths.includes(location.pathname) ? (
+        <Alert severity="error">No tienes los permisos suficientes</Alert>
+      ) : (
+        <DataGrid {...dataGridProps} columns={columns} />
+      )}
     </List>
   );
 };

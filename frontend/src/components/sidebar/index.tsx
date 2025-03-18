@@ -1,10 +1,6 @@
 import { Box, CircularProgress, Divider } from "@mui/material";
-import { useGetIdentity, usePermissions } from "@refinedev/core";
-import axios from "axios";
+import { usePermissions } from "@refinedev/core";
 import { useEffect, useState } from "react";
-import Cookie from "universal-cookie";
-
-const cookies = new Cookie();
 
 interface SidebarProps {
   items: JSX.Element[];

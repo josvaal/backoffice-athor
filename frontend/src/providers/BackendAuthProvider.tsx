@@ -22,7 +22,7 @@ export const customAuthProvider: AuthProvider = {
     });
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     const { error } = data;
 
     if (error) {
@@ -148,7 +148,7 @@ export const customAuthProvider: AuthProvider = {
     );
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
 
     const { error } = data;
 
@@ -156,7 +156,7 @@ export const customAuthProvider: AuthProvider = {
       throw new Error(error.message);
     }
 
-    console.log(data.data);
+    // console.log(data.data);
     return data.data;
   },
 };
