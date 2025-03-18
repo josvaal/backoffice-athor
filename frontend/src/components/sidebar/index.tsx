@@ -21,10 +21,9 @@ export const Sidebar = ({ items, logout }: SidebarProps) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const paths = (data as any).map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (permission: any) => permission.path
+        (permission: any) => `/${permission.groupName}`
       );
 
-      console.log(paths);
       setPermissionPaths(paths);
     }
   }, [data]);

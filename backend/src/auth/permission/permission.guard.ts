@@ -75,14 +75,14 @@ export class PermissionGuard implements CanActivate {
         return permission.name;
       });
 
-      console.log(permissionsList);
+      // console.log(permissionsList);
 
       const requiredPermissions = this.reflector.get<string[]>(
         PERMISSIONS_KEY,
         context.getHandler(),
       );
 
-      console.log(requiredPermissions);
+      // console.log(requiredPermissions);
 
       // If no roles are defined in metadata, skip role check
       if (!requiredPermissions || requiredPermissions.length === 0) {

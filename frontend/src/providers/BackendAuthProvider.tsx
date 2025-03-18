@@ -1,4 +1,4 @@
-import { useGetIdentity, type AuthProvider } from "@refinedev/core";
+import { type AuthProvider } from "@refinedev/core";
 import { getAccessToken } from "../utils/retrieve_token";
 import Cookie from "universal-cookie";
 
@@ -152,6 +152,13 @@ export const customAuthProvider: AuthProvider = {
 
     const data = await response.json();
 
+    const { error } = data;
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    console.log(data.data);
     return data.data;
   },
 };
