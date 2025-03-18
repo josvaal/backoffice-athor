@@ -87,6 +87,7 @@
 
 - **permissions:all**: Permite acceder a todas las operaciones de permisos.
 - **permissions:list**: Permite listar todos los permisos.
+- **permissions:list_by_role_id**: Permite listar todos los permisos por id de rol
 - **permissions:show**: Permite ver un permiso por ID.
 - **permissions:assign**: Permite asignar un rol a un permiso.
 - **permissions:deassign**: Permite desasignar un rol de un permiso.

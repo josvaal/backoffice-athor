@@ -141,7 +141,7 @@ export const customAuthProvider: AuthProvider = {
     const data = await response.json();
 
     const roles: string[] = data.data.UserRole.map(
-      (userRole: { role: { name: any } }) => userRole.role.name
+      (userRole: { role: { name: any } }) => userRole.role
     );
 
     return {

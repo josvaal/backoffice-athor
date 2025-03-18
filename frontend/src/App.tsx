@@ -42,7 +42,6 @@ import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
 import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
 import ProfileEdit from "./pages/profile/edit";
-import { Box, ListItemText, Typography } from "@mui/material";
 import { Sidebar } from "./components";
 
 function App() {

@@ -53,6 +53,7 @@ BEGIN TRY
         ('device_histories:list', 'device_histories', 'Permiso para listar historial de dispositivos', '/device-histories', GETDATE(), GETDATE()),
         ('permissions:all', 'permissions', 'Permiso global para todas las operaciones de permisos', '/permissions', GETDATE(), GETDATE()),
         ('permissions:list', 'permissions', 'Permiso para listar permisos', '/permissions', GETDATE(), GETDATE()),
+        ('permissions:list_by_role_id', 'permissions', 'Permiso para listar permisos en base a un id de rol', '/permissions', GETDATE(), GETDATE()),
         ('permissions:assign', 'permissions', 'Permiso para asignar permisos a roles', '/permissions', GETDATE(), GETDATE()),
         ('permissions:deassign', 'permissions', 'Permiso para desasignar permisos de roles', '/permissions', GETDATE(), GETDATE());
 

@@ -27,6 +27,25 @@ export class PermissionService {
     });
   }
 
+  async findPermissionsByRoleIds(ids: (number | string)[]) {
+    const roleIds = ids.map((id) => Number(id));
+
+    if (roleIds.some((roleId) => isNaN(roleId))) {
+      throw new BadRequestException(
+        `Uno o más IDs proporcionados no son válidos`,
+      );
+    }
+
+    return await this.prismaService.rolePermission.findMany({
+      where: {
+        roleId: { in: roleIds },
+      },
+      include: {
+        permission: true,
+      },
+    });
+  }
+
   async assignRole(idRole: number | string, idPermission: number | string) {
     const rId = Number(idRole);
 
