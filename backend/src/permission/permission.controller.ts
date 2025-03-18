@@ -93,6 +93,29 @@ export class PermissionController {
   }
 
   @PermissionsWithDescription(
+    ['permissions:all', 'permissions:list_by_user_id'],
+    'Listar los permisos mediante un id de rol',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('/user/:userId')
+  async listByUserId(
+    @Param('userId') id: number | string,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.permissionService.findPermissionsByUserId(id),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
+  @PermissionsWithDescription(
     ['permissions:all', 'permissions:assign'],
     'Asignar un rol a este permiso mediante la id de ambos',
   )

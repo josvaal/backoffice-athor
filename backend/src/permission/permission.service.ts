@@ -46,6 +46,51 @@ export class PermissionService {
     });
   }
 
+  async findPermissionsByUserId(id: number | string) {
+    const userId = Number(id);
+
+    if (isNaN(userId)) {
+      throw new BadRequestException(`El ID proporcionado no es válido`);
+    }
+
+    const userPermissions = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        UserRole: {
+          select: {
+            role: {
+              select: {
+                RolePermission: {
+                  select: {
+                    permission: {
+                      select: {
+                        id: true,
+                        name: true,
+                        groupName: true,
+                        description: true,
+                        path: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const permissions = userPermissions?.UserRole?.flatMap((userRole) =>
+      userRole.role.RolePermission.map(
+        (rolePermission) => rolePermission.permission,
+      ),
+    );
+
+    return permissions;
+  }
+
   async assignRole(idRole: number | string, idPermission: number | string) {
     const rId = Number(idRole);
 
