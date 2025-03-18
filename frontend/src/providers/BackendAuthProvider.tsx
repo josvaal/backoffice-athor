@@ -1,4 +1,4 @@
-import type { AuthProvider } from "@refinedev/core";
+import { useGetIdentity, type AuthProvider } from "@refinedev/core";
 import { getAccessToken } from "../utils/retrieve_token";
 import Cookie from "universal-cookie";
 
@@ -137,20 +137,18 @@ export const customAuthProvider: AuthProvider = {
     }
 
     const ba_url = import.meta.env.VITE_BA_URL;
-    const responseMe = await fetch(`${ba_url}/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const identity = await (customAuthProvider as any).getIdentity();
 
-    const dataMe = await responseMe.json();
-    const userId = dataMe.data.id;
-
-    const response = await fetch(`${ba_url}/permission/user/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      `${ba_url}/permission/user/${(identity as any).id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     const data = await response.json();
 
