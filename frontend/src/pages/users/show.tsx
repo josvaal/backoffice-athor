@@ -15,6 +15,7 @@ export const UserShow = () => {
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   const { query } = useShow({});
   const { data, isLoading } = query;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [recordData, setRecordData] = useState<any>({});
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export const UserShow = () => {
       console.log(paths);
       setPermissionPaths(paths);
     }
-  }, [data, permissionsData]);
+  }, [data, location.pathname, permissionsData]);
 
   if (
     !permissionPaths.includes(location.pathname.replace(/\/\d+$/, "")) &&
@@ -76,7 +77,8 @@ export const UserShow = () => {
           {recordData ? (
             <>
               {recordData.UserRole
-                ? recordData.UserRole.map((role: any, i: number) => (
+                ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  recordData.UserRole.map((role: any, i: number) => (
                     <RoleChip role={role.role.name} key={i} />
                   ))
                 : "-"}

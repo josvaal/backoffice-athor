@@ -32,7 +32,7 @@ export const UserCreate = () => {
       console.log(paths);
       setPermissionPaths(paths);
     }
-  }, [data]);
+  }, [data, location.pathname]);
 
   if (!permissionPaths.includes(location.pathname.replace(/\/create$/, ""))) {
     if (!permissionPaths.includes(location.pathname)) {

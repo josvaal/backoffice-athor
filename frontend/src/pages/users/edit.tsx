@@ -42,7 +42,7 @@ export const UserEdit = () => {
       console.log(paths);
       setPermissionPaths(paths);
     }
-  }, [formLoading, setValue, recordData, data]);
+  }, [formLoading, setValue, recordData, data, location.pathname]);
 
   if (
     !permissionPaths.includes(location.pathname.replace(/\/edit\/\d+$/, ""))

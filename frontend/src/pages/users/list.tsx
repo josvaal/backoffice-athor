@@ -112,19 +112,28 @@ export const UserList = () => {
         renderCell: function render({ row }) {
           return (
             <>
-              <EditButton hideText recordItemId={row.id} />
-              <ShowButton hideText recordItemId={row.id} />
-              <DeleteButton
-                hideText
-                recordItemId={row.id}
-                confirmTitle="Estas seguro?"
-              />
+              {permissionPaths.includes(`${location.pathname}/edit`) ||
+              permissionPaths.includes(location.pathname) ? (
+                <EditButton hideText recordItemId={row.id} />
+              ) : null}
+              {permissionPaths.includes(`${location.pathname}/show`) ||
+              permissionPaths.includes(location.pathname) ? (
+                <ShowButton hideText recordItemId={row.id} />
+              ) : null}
+              {permissionPaths.includes(`${location.pathname}/delete`) ||
+              permissionPaths.includes(location.pathname) ? (
+                <DeleteButton
+                  hideText
+                  recordItemId={row.id}
+                  confirmTitle="Estas seguro?"
+                />
+              ) : null}
             </>
           );
         },
       },
     ],
-    []
+    [location.pathname, permissionPaths]
   );
 
   useEffect(() => {
@@ -158,7 +167,14 @@ export const UserList = () => {
   return (
     <List
       title={<Typography variant="h5">Usuarios</Typography>}
-      headerButtons={<CreateButton>Crear usuario</CreateButton>}
+      headerButtons={
+        permissionPaths.includes(`${location.pathname}/create`) ||
+        permissionPaths.includes(location.pathname) ? (
+          <CreateButton>Crear usuario</CreateButton>
+        ) : (
+          <Typography> - </Typography>
+        )
+      }
     >
       {!permissionPaths.includes(`${location.pathname}/list`) &&
       !permissionPaths.includes(location.pathname) ? (
