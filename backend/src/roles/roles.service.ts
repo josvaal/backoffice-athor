@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -128,6 +127,17 @@ export class RolesService {
 
     if (isNaN(roleID)) {
       throw new BadRequestException(`El ID de rol proporcionado no es válido`);
+    }
+
+    const userRoleDb = await this.prismaService.userRole.findFirst({
+      where: {
+        roleId: roleID,
+        userId: userID,
+      },
+    });
+
+    if (userRoleDb) {
+      throw new BadRequestException('Este usuario ya esta asignado a ese rol');
     }
 
     return await this.prismaService.userRole.create({
