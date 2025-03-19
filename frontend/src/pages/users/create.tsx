@@ -1,71 +1,44 @@
-import {
-  Alert,
-  Box,
-  CircularProgress,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, TextField, Typography } from "@mui/material";
 import { Create, SaveButton } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
 import { ReactNode, useEffect, useState } from "react";
-import { getAccessToken } from "../../utils/retrieve_token";
-import { Controller } from "react-hook-form";
+import { useLocation } from "react-router";
+import { usePermissions } from "@refinedev/core";
 
 export const UserCreate = () => {
+  const location = useLocation();
+  const { data } = usePermissions();
+  const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   const {
     saveButtonProps,
     refineCore: { formLoading },
     register,
-    control,
     formState: { errors },
   } = useForm({});
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { disabled, ...restSaveButtonProps } = saveButtonProps;
 
-  const [loadingRoles, setLoadingRoles] = useState(true);
-  const [errorRoles, setErrorRoles] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [roles, setRoles] = useState<any[]>([]);
-
-  const fetchRoles = async () => {
-    const ba_url = import.meta.env.VITE_BA_URL;
-
-    const [token, isError] = await getAccessToken();
-
-    if (isError) {
-      setErrorRoles(true);
-      setLoadingRoles(false);
-    }
-
-    const response = await fetch(`${ba_url}/roles/list`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      setErrorRoles(true);
-      setLoadingRoles(false);
-    }
-
-    setLoadingRoles(false);
-    setRoles(data.data);
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchRoles();
-    };
+    if (data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const paths = (data as any).map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (permission: any) => permission.path
+      );
 
-    fetchData();
-  }, []);
+      console.log(location.pathname.replace(/\/create$/, ""));
+      console.log(location.pathname);
+      console.log(paths);
+      setPermissionPaths(paths);
+    }
+  }, [data]);
+
+  if (!permissionPaths.includes(location.pathname.replace(/\/create$/, ""))) {
+    if (!permissionPaths.includes(location.pathname)) {
+      return <Alert severity="error">No tienes los permisos suficientes</Alert>;
+    }
+  }
 
   return (
     <Create
@@ -74,7 +47,7 @@ export const UserCreate = () => {
       title={<Typography variant="h5">Crear usuario</Typography>}
       footerButtons={
         <SaveButton
-          disabled={errorRoles}
+          disabled={formLoading}
           {...restSaveButtonProps}
           type="submit"
         >
@@ -172,44 +145,6 @@ export const UserCreate = () => {
           label="Apellidos"
           name="lastname"
         />
-        {loadingRoles ? (
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            {errorRoles ? (
-              <Alert severity="error">
-                Ocurrió un error cargando los roles
-              </Alert>
-            ) : (
-              <Controller
-                name="roleId"
-                defaultValue={1}
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <FormControl style={{ marginTop: 15 }}>
-                      <InputLabel id="rol-label">Rol*</InputLabel>
-                      <Select
-                        labelId="rol-label"
-                        {...field}
-                        value={field?.value || 1}
-                        required
-                      >
-                        {(roles ? roles : []).map((role) => (
-                          <MenuItem key={role.id} value={role.id}>
-                            {role.name.toUpperCase() as string}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  );
-                }}
-              />
-            )}
-          </>
-        )}
       </Box>
     </Create>
   );

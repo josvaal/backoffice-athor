@@ -105,19 +105,8 @@ export class UsersService {
       const hashPass = await bcrypt.hash(userCreateDto.password, saltOrRounds);
       userCreateDto.password = hashPass;
       const userDb = await this.prismaService.$transaction(async (prisma) => {
-        const { roleId, ...restUserData } = userCreateDto;
-        const role = await prisma.role.findUnique({
-          where: {
-            id: roleId,
-          },
-        });
-
-        if (!role) {
-          throw new NotFoundException('No existe este rol');
-        }
-
         const userCreated = await prisma.user.create({
-          data: restUserData,
+          data: userCreateDto,
         });
 
         if (!userCreated) {
@@ -127,7 +116,8 @@ export class UsersService {
         const assigned = await prisma.userRole.create({
           data: {
             userId: userCreated.id,
-            roleId: roleId,
+            // Suponiendo siempre que el id de usuario es 1
+            roleId: Number(1),
           },
         });
 

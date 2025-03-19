@@ -1,4 +1,4 @@
-import { Alert, Box, CircularProgress, Stack, Typography } from "@mui/material";
+import { Alert, Box, Stack, Typography } from "@mui/material";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
   DateField,
@@ -11,8 +11,7 @@ import { useLocation } from "react-router";
 
 export const UserShow = () => {
   const location = useLocation();
-  const { data: permissionsData, isLoading: permissionsLoading } =
-    usePermissions();
+  const { data: permissionsData } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   const { query } = useShow({});
   const { data, isLoading } = query;
