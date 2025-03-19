@@ -25,8 +25,7 @@ export const RoleEdit = () => {
   useEffect(() => {
     if (!formLoading) {
       setValue("name", recordData ? recordData.name : "");
-      setValue("lastname", recordData ? recordData.lastname : "");
-      setValue("username", recordData ? recordData.username : "");
+      setValue("description", recordData ? recordData.description : "");
     }
 
     if (data) {
@@ -62,7 +61,7 @@ export const RoleEdit = () => {
       resource="users"
       isLoading={formLoading}
       saveButtonProps={restSaveButtonProps}
-      title={<Typography variant="h5">Editar usuario</Typography>}
+      title={<Typography variant="h5">Editar rol</Typography>}
       footerButtons={
         <SaveButton {...restSaveButtonProps} type="submit">
           Actualizar
@@ -85,7 +84,7 @@ export const RoleEdit = () => {
           })}
           error={!!errors.name}
           helperText={errors.name?.message as ReactNode}
-          placeholder="Juan"
+          placeholder="Rol"
           margin="normal"
           required
           color={errors.name ? "error" : "primary"}
@@ -100,15 +99,15 @@ export const RoleEdit = () => {
           name="name"
         />
         <TextField
-          {...register("lastname", {
-            required: "Apellidos requeridos",
+          {...register("description", {
+            required: "Descripción requerido",
           })}
-          error={!!errors.name}
-          helperText={errors.name?.message as ReactNode}
-          placeholder="Perez"
+          error={!!errors.description}
+          helperText={errors.description?.message as ReactNode}
+          placeholder="Rol importante"
           margin="normal"
           required
-          color={errors.lastname ? "error" : "primary"}
+          color={errors.description ? "error" : "primary"}
           fullWidth
           slotProps={{
             inputLabel: {
@@ -116,27 +115,8 @@ export const RoleEdit = () => {
             },
           }}
           type="text"
-          label="Apellidos"
-          name="lastname"
-        />
-
-        <TextField
-          {...register("username")}
-          error={!!errors.username}
-          helperText={errors.username?.message as ReactNode}
-          placeholder="juan123"
-          margin="normal"
-          required
-          color={errors.username ? "error" : "primary"}
-          fullWidth
-          slotProps={{
-            inputLabel: {
-              shrink: true,
-            },
-          }}
-          type="text"
-          label="Nombre de usuario"
-          name="username"
+          label="Descripción"
+          name="description"
         />
       </Box>
     </Edit>
