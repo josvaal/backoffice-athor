@@ -23,7 +23,7 @@ import { PermissionsWithDescription } from 'decorators/permissionsWithDescriptio
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
 import { ApiOperation } from '@nestjs/swagger';
 
-@Controller('permission')
+@Controller('permissions')
 export class PermissionController {
   constructor(private permissionService: PermissionService) {}
 
