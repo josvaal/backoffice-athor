@@ -2,6 +2,10 @@ import { Alert, Box, Stack, Typography } from "@mui/material";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
   DateField,
+  DeleteButton,
+  EditButton,
+  ListButton,
+  RefreshButton,
   Show,
   TextFieldComponent as TextField,
 } from "@refinedev/mui";
@@ -47,6 +51,14 @@ export const UserShow = () => {
     <Show
       isLoading={isLoading}
       title={<Typography variant="h5">Ver usuario</Typography>}
+      headerButtons={
+        <>
+          <ListButton />
+          <EditButton children="Editar" />
+          <DeleteButton children="Eliminar" />
+          <RefreshButton children="Refrescar" />
+        </>
+      }
     >
       <Stack gap={1}>
         <Typography variant="body1" fontWeight="bold">

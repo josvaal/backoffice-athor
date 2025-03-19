@@ -1,5 +1,5 @@
 // COMMIT
-import { Authenticated, Refine, usePermissions } from "@refinedev/core";
+import { Authenticated, Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { Toaster } from "react-hot-toast";
 import {
@@ -21,20 +21,8 @@ import routerBindings, {
 import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
 import { ProfileShow } from "./pages/profile";
-import { AccountCircle, Group } from "@mui/icons-material";
+import { AccountCircle, Group, PermIdentity } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
@@ -43,6 +31,7 @@ import SignUp from "./pages/auth/sign-up";
 import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
 import ProfileEdit from "./pages/profile/edit";
 import { Sidebar } from "./components";
+import { RoleCreate, RoleEdit, RoleList, RoleShow } from "./pages/roles";
 
 function App() {
   return (
@@ -81,13 +70,15 @@ function App() {
                   },
                 },
                 {
-                  name: "blog_posts",
-                  list: "/blog-posts",
-                  show: "/blog-posts/show/:id",
-                  create: "/blog-posts/create",
-                  edit: "/blog-posts/edit/:id",
+                  name: "roles",
+                  list: "/roles",
+                  create: "/roles/create",
+                  edit: "/roles/edit/:id",
+                  show: "/roles/show/:id",
                   meta: {
                     canDelete: true,
+                    icon: <PermIdentity />,
+                    label: "Roles",
                   },
                 },
               ]}
@@ -154,17 +145,11 @@ function App() {
                       <Route path="edit/:id" element={<UserEdit />} />
                       <Route path="show/:id" element={<UserShow />} />
                     </Route>
-                    <Route path="/blog-posts">
-                      <Route index element={<BlogPostList />} />
-                      <Route path="create" element={<BlogPostCreate />} />
-                      <Route path="edit/:id" element={<BlogPostEdit />} />
-                      <Route path="show/:id" element={<BlogPostShow />} />
-                    </Route>
-                    <Route path="/categories">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
+                    <Route path="/roles">
+                      <Route index element={<RoleList />} />
+                      <Route path="create" element={<RoleCreate />} />
+                      <Route path="edit/:id" element={<RoleEdit />} />
+                      <Route path="show/:id" element={<RoleShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>

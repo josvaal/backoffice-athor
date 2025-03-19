@@ -7,13 +7,47 @@ import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class RolesService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll() {
-    return await this.prismaService.role.findMany({});
+  async findAll(res: Response, page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.max(limit, 1);
+
+    const skip = (page - 1) * limit; // Cálculo correcto de skip
+    const take = limit;
+
+    const [roles, total] = await Promise.all([
+      this.prismaService.role.findMany({
+        skip: skip,
+        take: take,
+        include: {
+          UserRole: {
+            include: {
+              user: true,
+            },
+          },
+          RolePermission: {
+            include: {
+              permission: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.role.count(),
+    ]);
+
+    res.set({
+      'x-total-count': total,
+      'x-current-page': page,
+      'x-per-page': limit,
+      'x-total-pages': Math.ceil(total / limit),
+    });
+
+    return res.json(roles);
   }
 
   async findById(id: number | string) {
@@ -23,14 +57,20 @@ export class RolesService {
       throw new BadRequestException(`El ID proporcionado no es válido`);
     }
 
-    const role: Role | null = await this.prismaService.role.findUnique({
+    const role = await this.prismaService.role.findUnique({
       where: {
         id: roleId,
       },
       include: {
         UserRole: {
           include: {
-            user: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                lastname: true,
+              },
+            },
           },
         },
         RolePermission: {
