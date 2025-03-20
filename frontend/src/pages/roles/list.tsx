@@ -1,9 +1,5 @@
 import { Alert, Box, CircularProgress, Typography } from "@mui/material";
-import {
-  DataGrid,
-  GridRenderCellParams,
-  type GridColDef,
-} from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import {
   CreateButton,
   DateField,
@@ -14,7 +10,6 @@ import {
   useDataGrid,
 } from "@refinedev/mui";
 import React, { useEffect, useState } from "react";
-import RoleChip from "../profile/components/RoleChip";
 import { usePermissions } from "@refinedev/core";
 import { useLocation } from "react-router";
 
@@ -83,15 +78,18 @@ export const RoleList = () => {
           return (
             <>
               {permissionPaths.includes(`${location.pathname}/edit`) ||
-              permissionPaths.includes(location.pathname) ? (
+              permissionPaths.includes(location.pathname) ||
+              permissionPaths.includes("/superadmin") ? (
                 <EditButton hideText recordItemId={row.id} />
               ) : null}
               {permissionPaths.includes(`${location.pathname}/show`) ||
-              permissionPaths.includes(location.pathname) ? (
+              permissionPaths.includes(location.pathname) ||
+              permissionPaths.includes("/superadmin") ? (
                 <ShowButton hideText recordItemId={row.id} />
               ) : null}
               {permissionPaths.includes(`${location.pathname}/delete`) ||
-              permissionPaths.includes(location.pathname) ? (
+              permissionPaths.includes(location.pathname) ||
+              permissionPaths.includes("/superadmin") ? (
                 <DeleteButton
                   hideText
                   recordItemId={row.id}
@@ -139,7 +137,8 @@ export const RoleList = () => {
       title={<Typography variant="h5">Roles</Typography>}
       headerButtons={
         permissionPaths.includes(`${location.pathname}/create`) ||
-        permissionPaths.includes(location.pathname) ? (
+        permissionPaths.includes(location.pathname) ||
+        permissionPaths.includes("/superadmin") ? (
           <CreateButton>Crear rol</CreateButton>
         ) : (
           <Typography> - </Typography>
@@ -147,7 +146,8 @@ export const RoleList = () => {
       }
     >
       {!permissionPaths.includes(`${location.pathname}/list`) &&
-      !permissionPaths.includes(location.pathname) ? (
+      !permissionPaths.includes(location.pathname) &&
+      !permissionPaths.includes("/superadmin") ? (
         <Alert severity="error">No tienes los permisos suficientes</Alert>
       ) : (
         <DataGrid {...dataGridProps} columns={columns} />

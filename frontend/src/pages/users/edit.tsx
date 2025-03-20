@@ -48,10 +48,11 @@ export const UserEdit = () => {
     !permissionPaths.includes(location.pathname.replace(/\/edit\/\d+$/, ""))
   ) {
     if (
-      !permissionPaths.includes(location.pathname.replace(/\/\d+$/, "")) ||
+      !permissionPaths.includes(location.pathname.replace(/\/\d+$/, "")) &&
       !permissionPaths.includes(
         location.pathname.replace(/\/edit\/\d+$/, "/show")
-      )
+      ) &&
+      !permissionPaths.includes("/superadmin")
     ) {
       return <Alert severity="error">No tienes los permisos suficientes</Alert>;
     }

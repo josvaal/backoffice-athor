@@ -1,16 +1,9 @@
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { DateField, List, ShowButton, useDataGrid } from "@refinedev/mui";
 import React, { useEffect, useState } from "react";
 import { usePermissions } from "@refinedev/core";
 import { useLocation } from "react-router";
-import { AddCircle } from "@mui/icons-material";
 
 export const PermissionList = () => {
   const location = useLocation();
@@ -89,7 +82,8 @@ export const PermissionList = () => {
           return (
             <>
               {permissionPaths.includes(`${location.pathname}/show`) ||
-              permissionPaths.includes(location.pathname) ? (
+              permissionPaths.includes(location.pathname) ||
+              permissionPaths.includes("/superadmin") ? (
                 <ShowButton hideText recordItemId={row.id} />
               ) : (
                 <Typography> - </Typography>
@@ -136,7 +130,8 @@ export const PermissionList = () => {
       headerButtons={<></>}
     >
       {!permissionPaths.includes(`${location.pathname}/list`) &&
-      !permissionPaths.includes(location.pathname) ? (
+      !permissionPaths.includes(location.pathname) &&
+      !permissionPaths.includes("/superadmin") ? (
         <Alert severity="error">No tienes los permisos suficientes</Alert>
       ) : (
         <DataGrid {...dataGridProps} columns={columns} />

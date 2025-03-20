@@ -38,6 +38,16 @@ export const Sidebar = ({ items, logout }: SidebarProps) => {
     );
   }
 
+  if (permissionPaths.includes("/superadmin")) {
+    return (
+      <>
+        {items}
+        <Divider />
+        {logout}
+      </>
+    );
+  }
+
   return (
     <>
       {items.filter((item: any) => {

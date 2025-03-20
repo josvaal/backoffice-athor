@@ -42,7 +42,8 @@ export const UserShow = () => {
 
   if (
     !permissionPaths.includes(location.pathname.replace(/\/\d+$/, "")) &&
-    !permissionPaths.includes(location.pathname.replace(/\/show\/\d+$/, ""))
+    !permissionPaths.includes(location.pathname.replace(/\/show\/\d+$/, "")) &&
+    !permissionPaths.includes("/superadmin")
   ) {
     return <Alert severity="error">No tienes los permisos suficientes</Alert>;
   }
@@ -59,7 +60,8 @@ export const UserShow = () => {
           ) ||
           permissionPaths.includes(
             location.pathname.replace(/\/users\/show\/\d+/, "/users")
-          ) ? (
+          ) ||
+          permissionPaths.includes("/superadmin") ? (
             <EditButton children="Editar" />
           ) : (
             <Typography> - </Typography>
@@ -69,7 +71,8 @@ export const UserShow = () => {
           ) ||
           permissionPaths.includes(
             location.pathname.replace(/\/users\/show\/\d+/, "/users")
-          ) ? (
+          ) ||
+          permissionPaths.includes("/superadmin") ? (
             <DeleteButton children="Eliminar" />
           ) : (
             <Typography> - </Typography>

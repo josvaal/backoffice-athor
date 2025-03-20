@@ -98,7 +98,8 @@ export const RoleShow = () => {
               ) ||
               permissionPaths.includes(
                 location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
-              ) ? (
+              ) ||
+              permissionPaths.includes("/superadmin") ? (
                 <Button
                   startIcon={<Close />}
                   color="error"
@@ -146,7 +147,8 @@ export const RoleShow = () => {
 
   if (
     !permissionPaths.includes(location.pathname.replace(/\/\d+$/, "")) &&
-    !permissionPaths.includes(location.pathname.replace(/\/show\/\d+$/, ""))
+    !permissionPaths.includes(location.pathname.replace(/\/show\/\d+$/, "")) &&
+    !permissionPaths.includes("/superadmin")
   ) {
     return <Alert severity="error">No tienes los permisos suficientes</Alert>;
   }
@@ -163,7 +165,8 @@ export const RoleShow = () => {
           ) ||
           permissionPaths.includes(
             location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
-          ) ? (
+          ) ||
+          permissionPaths.includes("/superadmin") ? (
             <EditButton children="Editar" />
           ) : (
             <Typography> - </Typography>
@@ -173,7 +176,8 @@ export const RoleShow = () => {
           ) ||
           permissionPaths.includes(
             location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
-          ) ? (
+          ) ||
+          permissionPaths.includes("/superadmin") ? (
             <DeleteButton children="Eliminar" />
           ) : (
             <Typography> - </Typography>
@@ -184,7 +188,8 @@ export const RoleShow = () => {
           ) ||
           permissionPaths.includes(
             location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
-          ) ? (
+          ) ||
+          permissionPaths.includes("/superadmin") ? (
             <Button
               startIcon={<Person />}
               onClick={handleClickOpenAssign}

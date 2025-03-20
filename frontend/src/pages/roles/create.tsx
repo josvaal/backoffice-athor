@@ -34,10 +34,12 @@ export const RoleCreate = () => {
     }
   }, [data, location.pathname]);
 
-  if (!permissionPaths.includes(location.pathname.replace(/\/create$/, ""))) {
-    if (!permissionPaths.includes(location.pathname)) {
-      return <Alert severity="error">No tienes los permisos suficientes</Alert>;
-    }
+  if (
+    !permissionPaths.includes(location.pathname.replace(/\/create$/, "")) &&
+    !permissionPaths.includes(location.pathname) &&
+    !permissionPaths.includes("/superadmin")
+  ) {
+    return <Alert severity="error">No tienes los permisos suficientes</Alert>;
   }
 
   return (

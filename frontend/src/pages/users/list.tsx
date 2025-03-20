@@ -113,15 +113,18 @@ export const UserList = () => {
           return (
             <>
               {permissionPaths.includes(`${location.pathname}/edit`) ||
-              permissionPaths.includes(location.pathname) ? (
+              permissionPaths.includes(location.pathname) ||
+              permissionPaths.includes("/superadmin") ? (
                 <EditButton hideText recordItemId={row.id} />
               ) : null}
               {permissionPaths.includes(`${location.pathname}/show`) ||
-              permissionPaths.includes(location.pathname) ? (
+              permissionPaths.includes(location.pathname) ||
+              permissionPaths.includes("/superadmin") ? (
                 <ShowButton hideText recordItemId={row.id} />
               ) : null}
               {permissionPaths.includes(`${location.pathname}/delete`) ||
-              permissionPaths.includes(location.pathname) ? (
+              permissionPaths.includes(location.pathname) ||
+              permissionPaths.includes("/superadmin") ? (
                 <DeleteButton
                   hideText
                   recordItemId={row.id}
@@ -169,7 +172,8 @@ export const UserList = () => {
       title={<Typography variant="h5">Usuarios</Typography>}
       headerButtons={
         permissionPaths.includes(`${location.pathname}/create`) ||
-        permissionPaths.includes(location.pathname) ? (
+        permissionPaths.includes(location.pathname) ||
+        permissionPaths.includes("/superadmin") ? (
           <CreateButton>Crear usuario</CreateButton>
         ) : (
           <Typography> - </Typography>
@@ -177,7 +181,8 @@ export const UserList = () => {
       }
     >
       {!permissionPaths.includes(`${location.pathname}/list`) &&
-      !permissionPaths.includes(location.pathname) ? (
+      !permissionPaths.includes(location.pathname) &&
+      !permissionPaths.includes("/superadmin") ? (
         <Alert severity="error">No tienes los permisos suficientes</Alert>
       ) : (
         <DataGrid {...dataGridProps} columns={columns} />

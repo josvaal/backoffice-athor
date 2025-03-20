@@ -17,6 +17,7 @@ BEGIN TRY
         ('roles:all', 'roles', 'Permiso global para todas las operaciones de roles', '/roles', GETDATE(), GETDATE()),
         ('roles:list', 'roles', 'Permiso para listar roles', '/roles/list', GETDATE(), GETDATE()),
         ('roles:create', 'roles', 'Permiso para crear un nuevo rol', '/roles/create', GETDATE(), GETDATE()),
+        ('roles:show', 'roles', 'Permiso para ver detalles de un rol', '/roles/show', GETDATE(), GETDATE()),
         ('roles:update', 'roles', 'Permiso para actualizar un rol', '/roles/edit', GETDATE(), GETDATE()),
         ('roles:assign', 'roles', 'Permiso para asignar roles a usuarios', '/roles/assign', GETDATE(), GETDATE()),
         ('roles:deassign', 'roles', 'Permiso para desasignar roles de usuarios', '/roles/deassign', GETDATE(), GETDATE()),
@@ -26,6 +27,7 @@ BEGIN TRY
         ('devices:all', 'devices', 'Permiso global para todas las operaciones de dispositivos', '/devices', GETDATE(), GETDATE()),
         ('devices:list', 'devices', 'Permiso para listar dispositivos', '/devices/list', GETDATE(), GETDATE()),
         ('devices:create', 'devices', 'Permiso para crear un nuevo dispositivo', '/devices/create', GETDATE(), GETDATE()),
+        ('devices:show', 'devices', 'Permiso para ver detalles de un dispositivo', '/devices/show', GETDATE(), GETDATE()),
         ('devices:update', 'devices', 'Permiso para actualizar un dispositivo', '/devices/edit', GETDATE(), GETDATE()),
         ('devices:delete', 'devices', 'Permiso para eliminar un dispositivo', '/devices/delete', GETDATE(), GETDATE()),
         ('devices:assign', 'devices', 'Permiso para asignar dispositivos a usuarios', '/devices/assign', GETDATE(), GETDATE()),
@@ -39,6 +41,7 @@ BEGIN TRY
         ('event_types:all', 'event_types', 'Permiso global para todas las operaciones de tipos de eventos', '/event-types', GETDATE(), GETDATE()),
         ('event_types:list', 'event_types', 'Permiso para listar tipos de eventos', '/event-types/list', GETDATE(), GETDATE()),
         ('event_types:create', 'event_types', 'Permiso para crear un nuevo tipo de evento', '/event-types/create', GETDATE(), GETDATE()),
+        ('event_types:show', 'event_types', 'Permiso para ver detalles de un tipo de evento', '/event_types/show', GETDATE(), GETDATE()),
         ('event_types:update', 'event_types', 'Permiso para actualizar un tipo de evento', '/event-types/edit', GETDATE(), GETDATE()),
         ('event_types:delete', 'event_types', 'Permiso para eliminar un tipo de evento', '/event-types/delete', GETDATE(), GETDATE()),
 
@@ -46,6 +49,7 @@ BEGIN TRY
         ('device_models:all', 'device_models', 'Permiso global para todas las operaciones de modelos de dispositivos', '/device-models', GETDATE(), GETDATE()),
         ('device_models:list', 'device_models', 'Permiso para listar modelos de dispositivos', '/device-models/list', GETDATE(), GETDATE()),
         ('device_models:create', 'device_models', 'Permiso para crear un nuevo modelo de dispositivo', '/device-models/create', GETDATE(), GETDATE()),
+        ('device_models:show', 'device_models', 'Permiso para ver detalles de un modelo de dispositivo', '/device_models/show', GETDATE(), GETDATE()),
         ('device_models:update', 'device_models', 'Permiso para actualizar un modelo de dispositivo', '/device-models/edit', GETDATE(), GETDATE()),
         ('device_models:delete', 'device_models', 'Permiso para eliminar un modelo de dispositivo', '/device-models/delete', GETDATE(), GETDATE()),
 
@@ -53,12 +57,14 @@ BEGIN TRY
         ('device_statuses:all', 'device_statuses', 'Permiso global para todas las operaciones de estados de dispositivos', '/device-statuses', GETDATE(), GETDATE()),
         ('device_statuses:list', 'device_statuses', 'Permiso para listar estados de dispositivos', '/device-statuses/list', GETDATE(), GETDATE()),
         ('device_statuses:create', 'device_statuses', 'Permiso para crear un nuevo estado de dispositivo', '/device-statuses/create', GETDATE(), GETDATE()),
+        ('device_statuses:show', 'device_statuses', 'Permiso para ver detalles de un estado de dispositivo', '/device_statuses/show', GETDATE(), GETDATE()),
         ('device_statuses:update', 'device_statuses', 'Permiso para actualizar un estado de dispositivo', '/device-statuses/edit', GETDATE(), GETDATE()),
         ('device_statuses:delete', 'device_statuses', 'Permiso para eliminar un estado de dispositivo', '/device-statuses/delete', GETDATE(), GETDATE()),
 
         -- Permisos para eventos
         ('events:all', 'events', 'Permiso global para todas las operaciones de eventos', '/events', GETDATE(), GETDATE()),
         ('events:list', 'events', 'Permiso para listar eventos', '/events/list', GETDATE(), GETDATE()),
+        ('events:show', 'events', 'Permiso para ver detalles de un evento', '/events/show', GETDATE(), GETDATE()),
         ('events:delete', 'events', 'Permiso para eliminar eventos', '/events/delete', GETDATE(), GETDATE()),
 
         -- Permisos para relaciones usuario-dispositivo
@@ -72,9 +78,13 @@ BEGIN TRY
         -- Permisos para permisos
         ('permissions:all', 'permissions', 'Permiso global para todas las operaciones de permisos', '/permissions', GETDATE(), GETDATE()),
         ('permissions:list', 'permissions', 'Permiso para listar permisos', '/permissions/list', GETDATE(), GETDATE()),
+        ('permissions:show', 'permissions', 'Permiso para ver detalles de un permiso', '/permissions/show', GETDATE(), GETDATE()),
         ('permissions:list_by_user_id', 'permissions', 'Permiso para listar permisos en base a un id de usuario', '/permissions/list_by_user_id', GETDATE(), GETDATE()),
         ('permissions:assign', 'permissions', 'Permiso para asignar permisos a roles', '/permissions/assign', GETDATE(), GETDATE()),
-        ('permissions:deassign', 'permissions', 'Permiso para desasignar permisos de roles', '/permissions/deassign', GETDATE(), GETDATE());
+        ('permissions:deassign', 'permissions', 'Permiso para desasignar permisos de roles', '/permissions/deassign', GETDATE(), GETDATE()),
+
+        -- Super Admin
+        ('superadmin', 'superadmin', 'Permiso que te otorga todos los permisos disponibles', '/superadmin', GETDATE(), GETDATE());
 
     -- Confirmar la transacción si todo está bien
     COMMIT TRANSACTION;

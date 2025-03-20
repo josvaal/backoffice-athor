@@ -99,7 +99,8 @@ export const PermissionShow = () => {
                   /\/permissions\/show\/\d+/,
                   "/permissions"
                 )
-              ) ? (
+              ) ||
+              permissionPaths.includes("/superadmin") ? (
                 <Button
                   startIcon={<Close />}
                   color="error"
@@ -151,7 +152,8 @@ export const PermissionShow = () => {
 
   if (
     !permissionPaths.includes(location.pathname.replace(/\/\d+$/, "")) &&
-    !permissionPaths.includes(location.pathname.replace(/\/show\/\d+$/, ""))
+    !permissionPaths.includes(location.pathname.replace(/\/show\/\d+$/, "")) &&
+    !permissionPaths.includes("/superadmin")
   ) {
     return <Alert severity="error">No tienes los permisos suficientes</Alert>;
   }
@@ -175,7 +177,8 @@ export const PermissionShow = () => {
               /\/permissions\/show\/\d+/,
               "/permissions"
             )
-          ) ? (
+          ) ||
+          permissionPaths.includes("/superadmin") ? (
             <Button
               startIcon={<AdminPanelSettings />}
               onClick={handleClickOpenAssign}
