@@ -170,6 +170,7 @@ export class UsersService {
     ]);
 
     res.set({
+      'Access-Control-Expose-Headers': 'x-total-count',
       'x-total-count': total,
       'x-current-page': page,
       'x-per-page': limit,

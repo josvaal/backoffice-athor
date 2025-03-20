@@ -54,8 +54,26 @@ export const UserShow = () => {
       headerButtons={
         <>
           <ListButton />
-          <EditButton children="Editar" />
-          <DeleteButton children="Eliminar" />
+          {permissionPaths.includes(
+            location.pathname.replace(/\/users\/show\/\d+/, "/users/edit")
+          ) ||
+          permissionPaths.includes(
+            location.pathname.replace(/\/users\/show\/\d+/, "/users")
+          ) ? (
+            <EditButton children="Editar" />
+          ) : (
+            <Typography> - </Typography>
+          )}
+          {permissionPaths.includes(
+            location.pathname.replace(/\/users\/show\/\d+/, "/users/delete")
+          ) ||
+          permissionPaths.includes(
+            location.pathname.replace(/\/users\/show\/\d+/, "/users")
+          ) ? (
+            <DeleteButton children="Eliminar" />
+          ) : (
+            <Typography> - </Typography>
+          )}
           <RefreshButton children="Refrescar" />
         </>
       }

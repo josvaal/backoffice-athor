@@ -6,7 +6,6 @@ import {
 import { Response } from 'express';
 import { JwtRequestPayload } from 'src/custom.types';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserView } from 'src/users/dto/user-view.dto';
 
 @Injectable()
 export class PermissionService {

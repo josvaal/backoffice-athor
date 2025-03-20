@@ -27,7 +27,7 @@ import {
   AdminPanelSettings,
   Fingerprint,
   Group,
-  PermIdentity,
+  MemoryTwoTone,
 } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
@@ -118,6 +118,21 @@ function App() {
                       <ThemedLayoutV2
                         Sider={() => (
                           <ThemedSiderV2
+                            Title={({ collapsed }) => (
+                              <ThemedTitleV2
+                                collapsed={collapsed}
+                                icon={
+                                  collapsed ? (
+                                    // <SideSmallAthorIcon />
+                                    <MemoryTwoTone />
+                                  ) : (
+                                    // <SideSmallAthorIcon />
+                                    <MemoryTwoTone />
+                                  )
+                                }
+                                text="Athor Backoffice"
+                              />
+                            )}
                             render={({ items, logout, collapsed }) => {
                               return (
                                 <Sidebar
@@ -127,19 +142,6 @@ function App() {
                                 />
                               );
                             }}
-                          />
-                        )}
-                        Title={({ collapsed }) => (
-                          <ThemedTitleV2
-                            collapsed={collapsed}
-                            icon={
-                              collapsed ? (
-                                <SideSmallAthorIcon />
-                              ) : (
-                                <SideSmallAthorIcon />
-                              )
-                            }
-                            text="Athor Backoffice"
                           />
                         )}
                         Header={() => <Header sticky />}
