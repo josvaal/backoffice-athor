@@ -13,9 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DeviceModelService } from './device-model.service';
-import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { RoleGuard } from 'src/auth/role/role.guard';
 import { ApiResponse } from 'src/custom.types';
 import { CreateModelDeviceDto } from './dto/create-model-device.dto';
 import {
@@ -23,13 +21,18 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { UpdateModelDeviceDto } from './dto/update-model-device.dto';
+import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
+import { PermissionGuard } from 'src/auth/permission/permission.guard';
 
 @Controller('device-model')
 export class DeviceModelController {
   constructor(private deviceModelService: DeviceModelService) {}
 
-  @RolesWithDescription(['superadmin'], '')
-  @UseGuards(AuthGuard, RoleGuard)
+  @PermissionsWithDescription(
+    ['device_models:all', 'device_models:list'],
+    'Listar todos los modelos de dispositivo',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(): Promise<ApiResponse> {
@@ -46,8 +49,11 @@ export class DeviceModelController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], '')
-  @UseGuards(AuthGuard)
+  @PermissionsWithDescription(
+    ['device_models:all', 'device_models:show'],
+    'Mostrar modelo de dispositivo por id',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   async listById(@Param('id') id: number): Promise<ApiResponse> {
@@ -64,8 +70,11 @@ export class DeviceModelController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], '')
-  @UseGuards(AuthGuard, RoleGuard)
+  @PermissionsWithDescription(
+    ['device_models:all', 'device_models:create'],
+    'Crear nuevo modelo de dispositivo',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   async create(
@@ -100,8 +109,11 @@ export class DeviceModelController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], '')
-  @UseGuards(AuthGuard, RoleGuard)
+  @PermissionsWithDescription(
+    ['device_models:all', 'device_models:update'],
+    'Actualizar modelo de dispositivo por id',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Put('update/:id')
   async update(
@@ -139,8 +151,11 @@ export class DeviceModelController {
     }
   }
 
-  @RolesWithDescription(['superadmin'], '')
-  @UseGuards(AuthGuard, RoleGuard)
+  @PermissionsWithDescription(
+    ['device_models:all', 'device_models:delete'],
+    'Eliminar modelo de dispositivo por id',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
   async delete(@Param('id') id: number): Promise<ApiResponse> {

@@ -1,3 +1,4 @@
+// COMMIT
 import { Authenticated, Refine } from "@refinedev/core";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { Toaster } from "react-hot-toast";
@@ -5,6 +6,7 @@ import {
   ErrorComponent,
   RefineSnackbarProvider,
   ThemedLayoutV2,
+  ThemedSiderV2,
   ThemedTitleV2,
   useNotificationProvider,
 } from "@refinedev/mui";
@@ -19,20 +21,14 @@ import routerBindings, {
 import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
-import {
-  BlogPostCreate,
-  BlogPostEdit,
-  BlogPostList,
-  BlogPostShow,
-} from "./pages/blog-posts";
-import {
-  CategoryCreate,
-  CategoryEdit,
-  CategoryList,
-  CategoryShow,
-} from "./pages/categories";
 import { ProfileShow } from "./pages/profile";
-import { AccountCircle, Group } from "@mui/icons-material";
+import {
+  AccountCircle,
+  AdminPanelSettings,
+  Fingerprint,
+  Group,
+  MemoryTwoTone,
+} from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
@@ -40,6 +36,10 @@ import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
 import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
 import ProfileEdit from "./pages/profile/edit";
+import { Sidebar } from "./components";
+import { RoleCreate, RoleEdit, RoleList, RoleShow } from "./pages/roles";
+import { PermissionList, PermissionShow } from "./pages/permissions";
+
 function App() {
   return (
     <BrowserRouter>
@@ -77,13 +77,27 @@ function App() {
                   },
                 },
                 {
-                  name: "blog_posts",
-                  list: "/blog-posts",
-                  show: "/blog-posts/show/:id",
-                  create: "/blog-posts/create",
-                  edit: "/blog-posts/edit/:id",
+                  name: "permissions",
+                  list: "/permissions",
+                  create: () => null,
+                  edit: () => null,
+                  show: "/permissions/show/:id",
+                  meta: {
+                    canDelete: false,
+                    icon: <Fingerprint />,
+                    label: "Permisos",
+                  },
+                },
+                {
+                  name: "roles",
+                  list: "/roles",
+                  create: "/roles/create",
+                  edit: "/roles/edit/:id",
+                  show: "/roles/show/:id",
                   meta: {
                     canDelete: true,
+                    icon: <AdminPanelSettings />,
+                    label: "Roles",
                   },
                 },
               ]}
@@ -102,17 +116,32 @@ function App() {
                   <Route
                     element={
                       <ThemedLayoutV2
-                        Title={({ collapsed }) => (
-                          <ThemedTitleV2
-                            collapsed={collapsed}
-                            icon={
-                              collapsed ? (
-                                <SideSmallAthorIcon />
-                              ) : (
-                                <SideSmallAthorIcon />
-                              )
-                            }
-                            text="Athor Backoffice"
+                        Sider={() => (
+                          <ThemedSiderV2
+                            Title={({ collapsed }) => (
+                              <ThemedTitleV2
+                                collapsed={collapsed}
+                                icon={
+                                  collapsed ? (
+                                    // <SideSmallAthorIcon />
+                                    <MemoryTwoTone />
+                                  ) : (
+                                    // <SideSmallAthorIcon />
+                                    <MemoryTwoTone />
+                                  )
+                                }
+                                text="Athor Backoffice"
+                              />
+                            )}
+                            render={({ items, logout, collapsed }) => {
+                              return (
+                                <Sidebar
+                                  items={items}
+                                  logout={logout}
+                                  collapsed={collapsed}
+                                />
+                              );
+                            }}
                           />
                         )}
                         Header={() => <Header sticky />}
@@ -137,17 +166,15 @@ function App() {
                       <Route path="edit/:id" element={<UserEdit />} />
                       <Route path="show/:id" element={<UserShow />} />
                     </Route>
-                    <Route path="/blog-posts">
-                      <Route index element={<BlogPostList />} />
-                      <Route path="create" element={<BlogPostCreate />} />
-                      <Route path="edit/:id" element={<BlogPostEdit />} />
-                      <Route path="show/:id" element={<BlogPostShow />} />
+                    <Route path="/roles">
+                      <Route index element={<RoleList />} />
+                      <Route path="create" element={<RoleCreate />} />
+                      <Route path="edit/:id" element={<RoleEdit />} />
+                      <Route path="show/:id" element={<RoleShow />} />
                     </Route>
-                    <Route path="/categories">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
+                    <Route path="/permissions">
+                      <Route index element={<PermissionList />} />
+                      <Route path="show/:id" element={<PermissionShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>

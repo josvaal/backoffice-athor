@@ -1,7 +1,6 @@
-import type { AuthProvider } from "@refinedev/core";
+import { type AuthProvider } from "@refinedev/core";
 import { getAccessToken } from "../utils/retrieve_token";
 import Cookie from "universal-cookie";
-import { useNavigate } from "react-router";
 
 const cookies = new Cookie();
 
@@ -23,7 +22,7 @@ export const customAuthProvider: AuthProvider = {
     });
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     const { error } = data;
 
     if (error) {
@@ -112,19 +111,52 @@ export const customAuthProvider: AuthProvider = {
     });
 
     const data = await response.json();
+    const { error } = data;
+
+    if (error) {
+      throw new Error(error.message);
+    }
 
     const roles: string[] = data.data.UserRole.map(
       (userRole: { role: { name: any } }) => userRole.role.name
     );
 
-    const { devices, ...restData } = data;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { devices, UserRole, ...restData } = data.data;
 
-    // console.log({ devices, ...restData.data });
-
-    return { roles, ...restData.data };
+    return { roles, ...restData };
   },
 
-  getPermissions: async () => {
-    throw new Error("Not implemented");
+  getPermissions: async (params) => {
+    const token = cookies.get("access_token");
+
+    if (!token) {
+      cookies.remove("access_token", { path: "/" });
+      window.location.reload();
+      throw new Error("No hay una sesión activa");
+    }
+
+    const ba_url = import.meta.env.VITE_BA_URL;
+    const response = await fetch(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      `${ba_url}/permissions/me`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+    // console.log(data);
+
+    const { error } = data;
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // console.log(data.data);
+    return data.data;
   },
 };

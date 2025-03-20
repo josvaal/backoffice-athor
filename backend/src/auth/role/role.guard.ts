@@ -11,7 +11,7 @@ import { User } from '@prisma/client';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'decorators/roles.decorator';
 import { UsersService } from 'src/users/users.service';
-import { ApiOperation } from '@nestjs/swagger';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -19,21 +19,24 @@ export class RoleGuard implements CanActivate {
     private usersService: UsersService,
     private jwtService: JwtService,
     private reflector: Reflector,
+    private prismaService: PrismaService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const request = context.switchToHttp().getRequest();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException('Token no proporcionado');
     }
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       const user = payload['user'] as User;
       const userDb = await this.usersService.findById(user.id);
 

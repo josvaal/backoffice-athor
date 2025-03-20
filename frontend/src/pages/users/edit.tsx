@@ -1,9 +1,14 @@
-import { Box, TextField, Typography } from "@mui/material";
+import { Alert, Box, TextField, Typography } from "@mui/material";
+import { usePermissions } from "@refinedev/core";
 import { Edit, ListButton, RefreshButton, SaveButton } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { useLocation } from "react-router";
 
 export const UserEdit = () => {
+  const location = useLocation();
+  const { data } = usePermissions();
+  const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   const {
     saveButtonProps,
     refineCore: { queryResult, formLoading },
@@ -12,19 +17,46 @@ export const UserEdit = () => {
     formState: { errors },
   } = useForm({});
 
-  const userData = queryResult?.data?.data.data;
+  const recordData = queryResult?.data?.data.data;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { disabled, ...restSaveButtonProps } = saveButtonProps;
 
   useEffect(() => {
     if (!formLoading) {
-      setValue("name", userData.name);
-      setValue("lastname", userData.lastname);
-      setValue("username", userData.username ?? "");
+      setValue("name", recordData ? recordData.name : "");
+      setValue("lastname", recordData ? recordData.lastname : "");
+      setValue("username", recordData ? recordData.username : "");
     }
-  }, [formLoading, setValue, userData]);
-  //TODO:  Invalid `this.prismaService.userRole.create()` invocation in /home/aukdedev/code/backoffice-athor/backend/src/users/users.service.ts:123:60 120 throw new InternalServerErrorException('Error al crear el usuario'); 121 } 122 → 123 const assigned = await this.prismaService.userRole.create( Unique constraint failed on the constraint: `dbo.UserRole`
+
+    if (data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const paths = (data as any).map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (permission: any) => permission.path
+      );
+
+      console.log(location.pathname.replace(/\/\d+$/, ""));
+      console.log(location.pathname.replace(/\/edit\/\d+$/, ""));
+      console.log(location.pathname.replace(/\/edit\/\d+$/, "/show"));
+      console.log(paths);
+      setPermissionPaths(paths);
+    }
+  }, [formLoading, setValue, recordData, data, location.pathname]);
+
+  if (
+    !permissionPaths.includes(location.pathname.replace(/\/edit\/\d+$/, ""))
+  ) {
+    if (
+      !permissionPaths.includes(location.pathname.replace(/\/\d+$/, "")) ||
+      !permissionPaths.includes(
+        location.pathname.replace(/\/edit\/\d+$/, "/show")
+      )
+    ) {
+      return <Alert severity="error">No tienes los permisos suficientes</Alert>;
+    }
+  }
+
   return (
     <Edit
       resource="users"

@@ -14,9 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { EventTypeService } from './event-type.service';
-import { RolesWithDescription } from 'decorators/rolesWithDescription.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { RoleGuard } from 'src/auth/role/role.guard';
 import { ApiResponse } from 'src/custom.types';
 import { CreateEventTypeDto } from './dto/create-event-type.dto';
 import {
@@ -24,16 +22,18 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { UpdateEventTypeDto } from './dto/update-event-type.dto';
+import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
+import { PermissionGuard } from 'src/auth/permission/permission.guard';
 
 @Controller('event-type')
 export class EventTypeController {
   constructor(private eventTypeService: EventTypeService) {}
 
-  @RolesWithDescription(
-    ['admin', 'superadmin'],
-    'Esta operación de API permite a los usuarios con roles de "admin" o "superadmin" obtener una lista de todos los tipos de eventos disponibles. Si la solicitud es exitosa, devuelve la información solicitada; si ocurre algún error, lo captura y lo devuelve en la respuesta.',
+  @PermissionsWithDescription(
+    ['event_types:all', 'event_types:list'],
+    'Listar todos los tipos de evento',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listAll(): Promise<ApiResponse> {
@@ -50,11 +50,11 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(
-    ['superadmin'],
-    'Esta operación de API permite obtener un tipo de evento específico a partir de su ID. Si el ID proporcionado no es válido o el tipo de evento no se encuentra en la base de datos, se lanzan errores adecuados. Si se encuentra el tipo de evento, se devuelve la información correspondiente.',
+  @PermissionsWithDescription(
+    ['event_types:all', 'event_types:show'],
+    'Mostrar tipo de evento por id',
   )
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   async listById(@Param('id') id: number): Promise<ApiResponse> {
@@ -71,11 +71,11 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(
-    ['admin', 'superadmin'],
-    "Esta operación de API permite crear un nuevo tipo de evento en el sistema. Si los datos proporcionados son incorrectos o el nombre del tipo de evento ya existe, se devuelve un error. Si todo está correcto, se crea el tipo de evento y se devuelve la información correspondiente. Solo los usuarios con roles de 'admin' o 'superadmin' pueden realizar esta operación.",
+  @PermissionsWithDescription(
+    ['event_types:all', 'event_types:create'],
+    'Crear tipo de evento',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   async create(
@@ -111,11 +111,11 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(
-    ['admin', 'superadmin'],
-    "Esta operación de API permite actualizar un tipo de evento existente en el sistema, identificando el tipo de evento por su ID. Si el ID proporcionado es inválido o el tipo de evento no se encuentra, se devuelve un error. Solo los usuarios con roles de 'admin' o 'superadmin' pueden realizar esta operación. Si todo es correcto, el tipo de evento se actualiza con los nuevos datos proporcionados.",
+  @PermissionsWithDescription(
+    ['event_types:all', 'event_types:update'],
+    'Actualizar tipo de evento por id',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Put('update/:id')
   async update(
@@ -153,11 +153,11 @@ export class EventTypeController {
     }
   }
 
-  @RolesWithDescription(
-    ['admin', 'superadmin'],
-    "Esta operación de API permite eliminar un tipo de evento del sistema utilizando su ID. Solo los usuarios con roles de 'admin' o 'superadmin' pueden realizar esta acción. Si el ID proporcionado no es válido o el tipo de evento no se encuentra, se devuelve un error adecuado. Si la eliminación es exitosa, se responde con el tipo de evento eliminado, mientras que si ocurre algún error, se maneja de acuerdo con el tipo de problema encontrado, como errores en los datos enviados o problemas internos del servidor.",
+  @PermissionsWithDescription(
+    ['event_types:all', 'event_types:delete'],
+    'Eliminar tipo de evento por id',
   )
-  @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Delete('delete/:id')
   async deleteEventType(@Param('id') id: number): Promise<ApiResponse> {

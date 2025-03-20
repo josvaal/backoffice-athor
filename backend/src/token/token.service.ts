@@ -1,10 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService, TokenExpiredError } from '@nestjs/jwt';
-import { ApiResponse, JwtPayload, JwtToken } from 'src/custom.types';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'src/custom.types';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
