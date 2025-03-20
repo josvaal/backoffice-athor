@@ -6,13 +6,36 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateModelDeviceDto } from './dto/create-model-device.dto';
 import { UpdateModelDeviceDto } from './dto/update-model-device.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class DeviceModelService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll() {
-    return await this.prismaService.deviceModel.findMany();
+  async findAll(res: Response, page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.max(limit, 1);
+
+    const skip = (page - 1) * limit; // Cálculo correcto de skip
+    const take = limit;
+
+    const [device_models, total] = await Promise.all([
+      this.prismaService.deviceModel.findMany({
+        skip: skip,
+        take: take,
+      }),
+      this.prismaService.deviceModel.count(),
+    ]);
+
+    res.set({
+      'Access-Control-Expose-Headers': 'x-total-count',
+      'x-total-count': total,
+      'x-current-page': page,
+      'x-per-page': limit,
+      'x-total-pages': Math.ceil(total / limit),
+    });
+
+    return res.json(device_models);
   }
 
   async findById(id: number | string) {

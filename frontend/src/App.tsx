@@ -25,6 +25,7 @@ import { ProfileShow } from "./pages/profile";
 import {
   AccountCircle,
   AdminPanelSettings,
+  DeveloperBoard,
   Fingerprint,
   Group,
   MemoryTwoTone,
@@ -34,11 +35,22 @@ import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
 import SignIn from "./pages/auth/sign-in";
 import SignUp from "./pages/auth/sign-up";
-import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
 import ProfileEdit from "./pages/profile/edit";
 import { Sidebar } from "./components";
 import { RoleCreate, RoleEdit, RoleList, RoleShow } from "./pages/roles";
 import { PermissionList, PermissionShow } from "./pages/permissions";
+import {
+  DeviceCreate,
+  DeviceEdit,
+  DeviceList,
+  DeviceShow,
+} from "./pages/devices";
+import {
+  DeviceModelCreate,
+  DeviceModelEdit,
+  DeviceModelList,
+  DeviceModelShow,
+} from "./pages/device_models";
 
 function App() {
   return (
@@ -98,6 +110,30 @@ function App() {
                     canDelete: true,
                     icon: <AdminPanelSettings />,
                     label: "Roles",
+                  },
+                },
+                {
+                  name: "devices",
+                  list: "/devices",
+                  create: "/devices/create",
+                  edit: "/devices/edit/:id",
+                  show: "/devices/show/:id",
+                  meta: {
+                    canDelete: true,
+                    icon: <DeveloperBoard />,
+                    label: "Dispositivos",
+                  },
+                },
+                {
+                  name: "device_models",
+                  list: "/device_models",
+                  create: "/device_models/create",
+                  edit: "/device_models/edit/:id",
+                  show: "/device_models/show/:id",
+                  meta: {
+                    canDelete: true,
+                    icon: <DeveloperBoard />,
+                    label: "Modelos de dispositivos",
                   },
                 },
               ]}
@@ -171,6 +207,18 @@ function App() {
                       <Route path="create" element={<RoleCreate />} />
                       <Route path="edit/:id" element={<RoleEdit />} />
                       <Route path="show/:id" element={<RoleShow />} />
+                    </Route>
+                    <Route path="/devices">
+                      <Route index element={<DeviceList />} />
+                      <Route path="create" element={<DeviceCreate />} />
+                      <Route path="edit/:id" element={<DeviceEdit />} />
+                      <Route path="show/:id" element={<DeviceShow />} />
+                    </Route>
+                    <Route path="/device_models">
+                      <Route index element={<DeviceModelList />} />
+                      <Route path="create" element={<DeviceModelCreate />} />
+                      <Route path="edit/:id" element={<DeviceModelEdit />} />
+                      <Route path="show/:id" element={<DeviceModelShow />} />
                     </Route>
                     <Route path="/permissions">
                       <Route index element={<PermissionList />} />

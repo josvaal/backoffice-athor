@@ -72,11 +72,6 @@ const getListProvider = async ({
   // The total row count could be sourced differently based on the provider
   const total = response.headers["x-total-count"] ?? response.data.length;
 
-  //TODO: x-total-pages no lo recibe axios
-  console.log(response.headers);
-
-  console.log(total);
-
   return {
     data: response.data,
     total,

@@ -10,6 +10,8 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { DeviceModelService } from './device-model.service';
@@ -23,8 +25,9 @@ import {
 import { UpdateModelDeviceDto } from './dto/update-model-device.dto';
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { Response as Res } from 'express';
 
-@Controller('device-model')
+@Controller('device_models')
 export class DeviceModelController {
   constructor(private deviceModelService: DeviceModelService) {}
 
@@ -35,10 +38,14 @@ export class DeviceModelController {
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.deviceModelService.findAll(),
+        data: await this.deviceModelService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {

@@ -5,7 +5,7 @@ import { useForm } from "@refinedev/react-hook-form";
 import { ReactNode, useEffect, useState } from "react";
 import { useLocation } from "react-router";
 
-export const UserEdit = () => {
+export const DeviceModelEdit = () => {
   const location = useLocation();
   const { data } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
@@ -25,8 +25,7 @@ export const UserEdit = () => {
   useEffect(() => {
     if (!formLoading) {
       setValue("name", recordData ? recordData.name : "");
-      setValue("lastname", recordData ? recordData.lastname : "");
-      setValue("username", recordData ? recordData.username : "");
+      setValue("description", recordData ? recordData.description : "");
     }
 
     if (data) {
@@ -60,10 +59,10 @@ export const UserEdit = () => {
 
   return (
     <Edit
-      resource="users"
+      resource="device_models"
       isLoading={formLoading}
       saveButtonProps={restSaveButtonProps}
-      title={<Typography variant="h5">Editar usuario</Typography>}
+      title={<Typography variant="h5">Editar modelo de dispositivo</Typography>}
       footerButtons={
         <SaveButton {...restSaveButtonProps} type="submit">
           Actualizar
@@ -101,15 +100,15 @@ export const UserEdit = () => {
           name="name"
         />
         <TextField
-          {...register("lastname", {
-            required: "Apellidos requeridos",
+          {...register("description", {
+            required: "Descripción requerida",
           })}
-          error={!!errors.lastname}
-          helperText={errors.lastname?.message as ReactNode}
+          error={!!errors.description}
+          helperText={errors.description?.message as ReactNode}
           placeholder="Perez"
           margin="normal"
           required
-          color={errors.lastname ? "error" : "primary"}
+          color={errors.description ? "error" : "primary"}
           fullWidth
           slotProps={{
             inputLabel: {
@@ -117,27 +116,8 @@ export const UserEdit = () => {
             },
           }}
           type="text"
-          label="Apellidos"
-          name="lastname"
-        />
-
-        <TextField
-          {...register("username")}
-          error={!!errors.username}
-          helperText={errors.username?.message as ReactNode}
-          placeholder="juan123"
-          margin="normal"
-          required
-          color={errors.username ? "error" : "primary"}
-          fullWidth
-          slotProps={{
-            inputLabel: {
-              shrink: true,
-            },
-          }}
-          type="text"
-          label="Nombre de usuario"
-          name="username"
+          label="Descripción"
+          name="description"
         />
       </Box>
     </Edit>

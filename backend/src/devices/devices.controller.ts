@@ -11,6 +11,8 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { DevicesService } from './devices.service';
@@ -25,6 +27,7 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 import { RegisterEventDto } from './dto/register-event.dto';
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { Response as Res } from 'express';
 
 @Controller('devices')
 export class DevicesController {
@@ -37,10 +40,14 @@ export class DevicesController {
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.devicesService.findAll(),
+        data: await this.devicesService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {
