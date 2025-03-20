@@ -22,7 +22,13 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import { Header } from "./components/header";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { ProfileShow } from "./pages/profile";
-import { AccountCircle, Group, PermIdentity } from "@mui/icons-material";
+import {
+  AccountCircle,
+  AdminPanelSettings,
+  Fingerprint,
+  Group,
+  PermIdentity,
+} from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
 import { customAuthProvider } from "./providers/BackendAuthProvider";
@@ -32,6 +38,7 @@ import { SideSmallAthorIcon } from "./pages/auth/components/custom-icons";
 import ProfileEdit from "./pages/profile/edit";
 import { Sidebar } from "./components";
 import { RoleCreate, RoleEdit, RoleList, RoleShow } from "./pages/roles";
+import { PermissionList, PermissionShow } from "./pages/permissions";
 
 function App() {
   return (
@@ -70,6 +77,18 @@ function App() {
                   },
                 },
                 {
+                  name: "permissions",
+                  list: "/permissions",
+                  create: () => null,
+                  edit: () => null,
+                  show: "/permissions/show/:id",
+                  meta: {
+                    canDelete: false,
+                    icon: <Fingerprint />,
+                    label: "Permisos",
+                  },
+                },
+                {
                   name: "roles",
                   list: "/roles",
                   create: "/roles/create",
@@ -77,7 +96,7 @@ function App() {
                   show: "/roles/show/:id",
                   meta: {
                     canDelete: true,
-                    icon: <PermIdentity />,
+                    icon: <AdminPanelSettings />,
                     label: "Roles",
                   },
                 },
@@ -150,6 +169,10 @@ function App() {
                       <Route path="create" element={<RoleCreate />} />
                       <Route path="edit/:id" element={<RoleEdit />} />
                       <Route path="show/:id" element={<RoleShow />} />
+                    </Route>
+                    <Route path="/permissions">
+                      <Route index element={<PermissionList />} />
+                      <Route path="show/:id" element={<PermissionShow />} />
                     </Route>
                     <Route path="*" element={<ErrorComponent />} />
                   </Route>

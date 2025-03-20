@@ -1,11 +1,9 @@
-import { Close, Person } from "@mui/icons-material";
+import { AdminPanelSettings, Close } from "@mui/icons-material";
 import { Alert, Button, Stack, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
   DateField,
-  DeleteButton,
-  EditButton,
   ListButton,
   RefreshButton,
   Show,
@@ -14,10 +12,10 @@ import {
 } from "@refinedev/mui";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router";
-import AssignRole from "./components/AssignRole";
-import DeassignRole from "./components/DeassignRole";
+import DeassignPermission from "./components/DeassignPermission";
+import AssignPermission from "./components/AssignPermission";
 
-export const RoleShow = () => {
+export const PermissionShow = () => {
   const location = useLocation();
   const { dataGridProps } = useDataGrid({
     resource: "roles",
@@ -29,7 +27,7 @@ export const RoleShow = () => {
   const { data: permissionsData } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [usersDatagrid, setUsersDataGrid] = useState<any>([]);
+  const [rolesDatagrid, setRolesDatagrid] = useState<any>([]);
   const { query } = useShow({});
   const { data, isLoading, refetch } = query;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,13 +66,13 @@ export const RoleShow = () => {
       {
         field: "name",
         headerName: "Nombres",
-        flex: 1,
         minWidth: 150,
         display: "flex",
       },
       {
-        field: "lastname",
-        headerName: "Apellidos",
+        field: "description",
+        headerName: "Descripción",
+        flex: 1,
         minWidth: 160,
         display: "flex",
       },
@@ -83,7 +81,7 @@ export const RoleShow = () => {
         headerName: "Acciones",
         align: "center",
         headerAlign: "center",
-        minWidth: 200,
+        minWidth: 250,
         sortable: false,
         display: "flex",
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -92,12 +90,15 @@ export const RoleShow = () => {
             <>
               {permissionPaths.includes(
                 location.pathname.replace(
-                  /\/roles\/show\/\d+/,
-                  "/roles/deassign"
+                  /\/permissions\/show\/\d+/,
+                  "/permissions/deassign"
                 )
               ) ||
               permissionPaths.includes(
-                location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
+                location.pathname.replace(
+                  /\/permissions\/show\/\d+/,
+                  "/permissions"
+                )
               ) ? (
                 <Button
                   startIcon={<Close />}
@@ -107,9 +108,11 @@ export const RoleShow = () => {
                     handleClickOpenDeassign();
                   }}
                 >
-                  Desasignar Rol
+                  Desasignar Permiso
                 </Button>
-              ) : null}
+              ) : (
+                <Typography> - </Typography>
+              )}
             </>
           );
         },
@@ -135,13 +138,15 @@ export const RoleShow = () => {
       setPermissionPaths(paths);
     }
     if (record) {
-      console.log(record.UserRole);
+      console.log(record.RolePermission);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      dataGridProps.rows = record.UserRole.map((row: any) => ({ ...row.user }));
+      dataGridProps.rows = record.RolePermission.map((row: any) => ({
+        ...row.role,
+      }));
       dataGridProps.loading = false;
-      setUsersDataGrid(dataGridProps);
+      console.log(dataGridProps);
+      setRolesDatagrid(dataGridProps);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, location.pathname, permissionsData]);
 
   if (
@@ -154,43 +159,29 @@ export const RoleShow = () => {
   return (
     <Show
       isLoading={isLoading}
-      title={<Typography variant="h5">Ver rol</Typography>}
+      title={<Typography variant="h5">Ver permiso</Typography>}
       headerButtons={
         <>
           <ListButton />
-          {permissionPaths.includes(
-            location.pathname.replace(/\/roles\/show\/\d+/, "/roles/update")
-          ) ||
-          permissionPaths.includes(
-            location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
-          ) ? (
-            <EditButton children="Editar" />
-          ) : (
-            <Typography> - </Typography>
-          )}
-          {permissionPaths.includes(
-            location.pathname.replace(/\/roles\/show\/\d+/, "/roles/delete")
-          ) ||
-          permissionPaths.includes(
-            location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
-          ) ? (
-            <DeleteButton children="Eliminar" />
-          ) : (
-            <Typography> - </Typography>
-          )}
           <RefreshButton children="Refrescar" />
           {permissionPaths.includes(
-            location.pathname.replace(/\/roles\/show\/\d+/, "/roles/assign")
+            location.pathname.replace(
+              /\/permissions\/show\/\d+/,
+              "/permissions/assign"
+            )
           ) ||
           permissionPaths.includes(
-            location.pathname.replace(/\/roles\/show\/\d+/, "/roles")
+            location.pathname.replace(
+              /\/permissions\/show\/\d+/,
+              "/permissions"
+            )
           ) ? (
             <Button
-              startIcon={<Person />}
+              startIcon={<AdminPanelSettings />}
               onClick={handleClickOpenAssign}
               color="success"
             >
-              Asignar usuario
+              Asignar permiso
             </Button>
           ) : (
             <Typography> - </Typography>
@@ -212,6 +203,14 @@ export const RoleShow = () => {
         </Typography>
         <TextField value={recordData ? recordData.description : "-"} />
         <Typography variant="body1" fontWeight="bold">
+          {"Ruta"}
+        </Typography>
+        <TextField value={recordData ? recordData.path : "-"} />
+        <Typography variant="body1" fontWeight="bold">
+          {"Grupo"}
+        </Typography>
+        <TextField value={recordData ? recordData.groupName : "-"} />
+        <Typography variant="body1" fontWeight="bold">
           {"Creado en"}
         </Typography>
         <DateField value={recordData ? recordData.createdAt : "-"} />
@@ -227,17 +226,17 @@ export const RoleShow = () => {
         fontWeight="bold"
         align="center"
       >
-        Usuarios con este rol
+        Roles con este permiso
       </Typography>
 
-      <DataGrid {...usersDatagrid} columns={columns} />
+      <DataGrid {...rolesDatagrid} columns={columns} />
 
       {recordData ? (
-        <DeassignRole
+        <DeassignPermission
           open={openDeassign}
           handleClose={handleCloseDeassign}
-          userId={idDeassign}
-          roleId={recordData.id}
+          roleId={idDeassign}
+          permissionId={recordData.id}
           refetch={refetch}
         />
       ) : (
@@ -245,11 +244,11 @@ export const RoleShow = () => {
       )}
 
       {recordData ? (
-        <AssignRole
+        <AssignPermission
           refetch={refetch}
           open={openAssign}
           handleClose={handleCloseAssign}
-          roleId={recordData.id}
+          permissionId={recordData.id}
         />
       ) : (
         <></>

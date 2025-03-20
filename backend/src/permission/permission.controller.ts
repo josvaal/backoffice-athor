@@ -9,7 +9,9 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Query,
   Request,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { PermissionService } from './permission.service';
@@ -22,6 +24,7 @@ import {
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
 import { ApiOperation } from '@nestjs/swagger';
+import { Response as Res } from 'express';
 
 @Controller('permissions')
 export class PermissionController {
@@ -52,10 +55,14 @@ export class PermissionController {
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.permissionService.findAll(),
+        data: await this.permissionService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {

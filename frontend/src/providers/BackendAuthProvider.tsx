@@ -139,7 +139,7 @@ export const customAuthProvider: AuthProvider = {
     const ba_url = import.meta.env.VITE_BA_URL;
     const response = await fetch(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      `${ba_url}/permission/me`,
+      `${ba_url}/permissions/me`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

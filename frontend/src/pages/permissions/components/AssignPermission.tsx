@@ -8,10 +8,10 @@ import { useForm } from "@refinedev/react-hook-form";
 
 const cookies = new Cookies();
 
-interface AssignRoleProps {
+interface AssignPermissionProps {
   open: boolean;
   handleClose: () => void;
-  roleId: number;
+  permissionId: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: any;
 }
@@ -28,12 +28,12 @@ const style = {
   p: 4,
 };
 
-export default function AssignRole({
+export default function AssignPermission({
   open,
   handleClose,
-  roleId,
+  permissionId,
   refetch,
-}: AssignRoleProps) {
+}: AssignPermissionProps) {
   const {
     refineCore: { formLoading },
     register,
@@ -52,10 +52,10 @@ export default function AssignRole({
       throw new Error("Ocurrió un error al intentar obtener los datos");
     }
 
-    const userId = Number(data.userId);
+    const roleId = Number(data.roleId);
 
     const response = await axios.post(
-      `${ba_url}/roles/assign/user/${userId}/role/${roleId}`,
+      `${ba_url}/permissions/assign/permission/${permissionId}/role/${roleId}`,
       {},
       {
         headers: {
@@ -66,11 +66,11 @@ export default function AssignRole({
 
     if (response.data.error) {
       console.log(response.data.error);
-      toast.error("Error asignando el rol o este usuario no existe");
+      toast.error("Error asignando el permiso o este rol, no existe");
       throw new Error(response.data.error.message);
     }
 
-    toast.success("Rol asignado con éxito");
+    toast.success("Permiso asignado con éxito");
     refetch();
     handleClose();
   };
@@ -87,15 +87,15 @@ export default function AssignRole({
           Asignar rol a usuario
         </Typography>
         <TextField
-          {...register("userId", {
-            required: "El id de usuario es requerido",
+          {...register("roleId", {
+            required: "El id de rol es requerido",
           })}
-          error={!!errors.userId}
-          helperText={errors.userId?.message as ReactNode}
+          error={!!errors.roleId}
+          helperText={errors.roleId?.message as ReactNode}
           placeholder=""
           margin="normal"
           required
-          color={errors.userId ? "error" : "primary"}
+          color={errors.roleId ? "error" : "primary"}
           fullWidth
           slotProps={{
             inputLabel: {
@@ -103,8 +103,8 @@ export default function AssignRole({
             },
           }}
           type="number"
-          label="ID de usuario"
-          name="userId"
+          label="ID de rol"
+          name="roleId"
         />
         <Box
           display="flex"

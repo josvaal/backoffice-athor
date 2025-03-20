@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { JwtRequestPayload } from 'src/custom.types';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserView } from 'src/users/dto/user-view.dto';
@@ -11,8 +12,37 @@ import { UserView } from 'src/users/dto/user-view.dto';
 export class PermissionService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll() {
-    return await this.prismaService.permission.findMany();
+  async findAll(res: Response, page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.max(limit, 1);
+
+    const skip = (page - 1) * limit; // Cálculo correcto de skip
+    const take = limit;
+
+    const [permissions, total] = await Promise.all([
+      this.prismaService.permission.findMany({
+        skip: skip,
+        take: take,
+        include: {
+          RolePermission: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.permission.count(),
+    ]);
+
+    res.set({
+      'Access-Control-Expose-Headers': 'x-total-count',
+      'x-total-count': total,
+      'x-current-page': page,
+      'x-per-page': limit,
+      'x-total-pages': Math.ceil(total / limit),
+    });
+
+    return res.json(permissions);
   }
 
   async findById(id: number | string) {
@@ -25,6 +55,13 @@ export class PermissionService {
     return await this.prismaService.permission.findUnique({
       where: {
         id: permissionId,
+      },
+      include: {
+        RolePermission: {
+          select: {
+            role: true,
+          },
+        },
       },
     });
   }
