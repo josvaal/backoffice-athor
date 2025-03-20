@@ -31,7 +31,7 @@ export class DevicesController {
   constructor(private devicesService: DevicesService) {}
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:list'],
+    ['devices:all', 'devices:list', 'superadmin'],
     'Listar todos los dispositivos',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -52,7 +52,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:show'],
+    ['devices:all', 'devices:show', 'superadmin'],
     'Mostrar dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -73,7 +73,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:show_mac_esp32'],
+    ['devices:all', 'devices:show_mac_esp32', 'superadmin'],
     'Mostrar dispositivo por la mac del esp32',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -94,7 +94,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:show_serial'],
+    ['devices:all', 'devices:show_serial', 'superadmin'],
     'Mostrar dispositivo por el serial',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -117,7 +117,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:show_batch'],
+    ['devices:all', 'devices:show_batch', 'superadmin'],
     'Mostrar dispositivo por su lote',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -138,7 +138,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:create'],
+    ['devices:all', 'devices:create', 'superadmin'],
     'Crear dispositivo nuevo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -186,7 +186,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:update'],
+    ['devices:all', 'devices:update', 'superadmin'],
     'Actualizar dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -228,7 +228,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:delete'],
+    ['devices:all', 'devices:delete', 'superadmin'],
     'Eliminar dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -260,7 +260,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:assign'],
+    ['devices:all', 'devices:assign', 'superadmin'],
     'Asignar dispositivo a un usuario por id de ambos',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -306,7 +306,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:deassign'],
+    ['devices:all', 'devices:deassign', 'superadmin'],
     'Des-asignar dispositivo a un usuario por id de ambos',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -352,7 +352,7 @@ export class DevicesController {
   }
 
   @PermissionsWithDescription(
-    ['devices:all', 'devices:register_event'],
+    ['devices:all', 'devices:register_event', 'superadmin'],
     'Registrar eventos por dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)

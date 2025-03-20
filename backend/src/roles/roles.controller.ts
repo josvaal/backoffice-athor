@@ -33,7 +33,7 @@ export class RolesController {
   constructor(private rolesService: RolesService) {}
 
   @PermissionsWithDescription(
-    ['roles:all', 'roles:list'],
+    ['roles:all', 'roles:list', 'superadmin'],
     'Listar todas las relaciones usuario-dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -57,7 +57,10 @@ export class RolesController {
     }
   }
 
-  @PermissionsWithDescription(['roles:all', 'roles:show'], 'Ver rol por id')
+  @PermissionsWithDescription(
+    ['roles:all', 'roles:show', 'superadmin'],
+    'Ver rol por id',
+  )
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
@@ -75,7 +78,10 @@ export class RolesController {
     }
   }
 
-  @PermissionsWithDescription(['roles:all', 'roles:create'], 'Crear nuevo rol')
+  @PermissionsWithDescription(
+    ['roles:all', 'roles:create', 'superadmin'],
+    'Crear nuevo rol',
+  )
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
@@ -110,7 +116,10 @@ export class RolesController {
     }
   }
 
-  @PermissionsWithDescription(['roles:all', 'roles:update'], 'Crear nuevo rol')
+  @PermissionsWithDescription(
+    ['roles:all', 'roles:update', 'roles:show', 'superadmin'],
+    'Crear nuevo rol',
+  )
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.CREATED)
   @Put('update/:id')
@@ -148,7 +157,7 @@ export class RolesController {
   }
 
   @PermissionsWithDescription(
-    ['roles:all', 'roles:assign'],
+    ['roles:all', 'roles:assign', 'superadmin'],
     'Asignar un rol a un usuario por id de ambos',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -192,7 +201,7 @@ export class RolesController {
   }
 
   @PermissionsWithDescription(
-    ['roles:all', 'roles:deassign'],
+    ['roles:all', 'roles:deassign', 'superadmin'],
     'Des-asignar un rol a un usuario por id de ambos',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -236,7 +245,7 @@ export class RolesController {
   }
 
   @PermissionsWithDescription(
-    ['roles:all', 'roles:delete'],
+    ['roles:all', 'roles:delete', 'superadmin'],
     'Eliminar un rol por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)

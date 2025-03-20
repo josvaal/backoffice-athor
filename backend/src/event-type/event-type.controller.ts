@@ -30,7 +30,7 @@ export class EventTypeController {
   constructor(private eventTypeService: EventTypeService) {}
 
   @PermissionsWithDescription(
-    ['event_types:all', 'event_types:list'],
+    ['event_types:all', 'event_types:list', 'superadmin'],
     'Listar todos los tipos de evento',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -51,7 +51,7 @@ export class EventTypeController {
   }
 
   @PermissionsWithDescription(
-    ['event_types:all', 'event_types:show'],
+    ['event_types:all', 'event_types:show', 'superadmin'],
     'Mostrar tipo de evento por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -72,7 +72,7 @@ export class EventTypeController {
   }
 
   @PermissionsWithDescription(
-    ['event_types:all', 'event_types:create'],
+    ['event_types:all', 'event_types:create', 'superadmin'],
     'Crear tipo de evento',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -112,7 +112,7 @@ export class EventTypeController {
   }
 
   @PermissionsWithDescription(
-    ['event_types:all', 'event_types:update'],
+    ['event_types:all', 'event_types:update', 'superadmin'],
     'Actualizar tipo de evento por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -154,7 +154,7 @@ export class EventTypeController {
   }
 
   @PermissionsWithDescription(
-    ['event_types:all', 'event_types:delete'],
+    ['event_types:all', 'event_types:delete', 'superadmin'],
     'Eliminar tipo de evento por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)

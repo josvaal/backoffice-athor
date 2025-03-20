@@ -29,7 +29,7 @@ export class DeviceModelController {
   constructor(private deviceModelService: DeviceModelService) {}
 
   @PermissionsWithDescription(
-    ['device_models:all', 'device_models:list'],
+    ['device_models:all', 'device_models:list', 'superadmin'],
     'Listar todos los modelos de dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -50,7 +50,7 @@ export class DeviceModelController {
   }
 
   @PermissionsWithDescription(
-    ['device_models:all', 'device_models:show'],
+    ['device_models:all', 'device_models:show', 'superadmin'],
     'Mostrar modelo de dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -71,7 +71,7 @@ export class DeviceModelController {
   }
 
   @PermissionsWithDescription(
-    ['device_models:all', 'device_models:create'],
+    ['device_models:all', 'device_models:create', 'superadmin'],
     'Crear nuevo modelo de dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -110,7 +110,7 @@ export class DeviceModelController {
   }
 
   @PermissionsWithDescription(
-    ['device_models:all', 'device_models:update'],
+    ['device_models:all', 'device_models:update', 'superadmin'],
     'Actualizar modelo de dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -152,7 +152,7 @@ export class DeviceModelController {
   }
 
   @PermissionsWithDescription(
-    ['device_models:all', 'device_models:delete'],
+    ['device_models:all', 'device_models:delete', 'superadmin'],
     'Eliminar modelo de dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)

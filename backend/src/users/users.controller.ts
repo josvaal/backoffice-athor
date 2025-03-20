@@ -33,7 +33,7 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @PermissionsWithDescription(
-    ['users:all', 'users:list'],
+    ['users:all', 'users:list', 'superadmin'],
     'Listar todos los usuarios existentes',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -58,7 +58,7 @@ export class UsersController {
   }
 
   @PermissionsWithDescription(
-    ['users:all', 'users:update', 'users:show'],
+    ['users:all', 'users:update', 'users:show', 'superadmin'],
     'Actualizar un usuario',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -96,7 +96,7 @@ export class UsersController {
   }
 
   @PermissionsWithDescription(
-    ['users:all', 'users:create'],
+    ['users:all', 'users:create', 'superadmin'],
     'Crear un usuario nuevo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -117,7 +117,7 @@ export class UsersController {
   }
 
   @PermissionsWithDescription(
-    ['users:all', 'users:show'],
+    ['users:all', 'users:show', 'superadmin'],
     'Visualizar un usuario por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -138,7 +138,7 @@ export class UsersController {
   }
 
   @PermissionsWithDescription(
-    ['users:all', 'users:delete'],
+    ['users:all', 'users:delete', 'superadmin'],
     'Eliminar un usuario por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)

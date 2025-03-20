@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   Delete,
   Get,
@@ -49,7 +48,7 @@ export class PermissionController {
   }
 
   @PermissionsWithDescription(
-    ['permissions:all', 'permissions:list'],
+    ['permissions:all', 'permissions:list', 'superadmin'],
     'Listar todos los permisos actuales',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -74,7 +73,7 @@ export class PermissionController {
   }
 
   @PermissionsWithDescription(
-    ['permissions:all', 'permissions:show'],
+    ['permissions:all', 'permissions:show', 'superadmin'],
     'Ver un permiso por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -95,7 +94,7 @@ export class PermissionController {
   }
 
   @PermissionsWithDescription(
-    ['permissions:all', 'permissions:list_by_user_id'],
+    ['permissions:all', 'permissions:list_by_user_id', 'superadmin'],
     'Listar los permisos mediante un id de rol',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -118,7 +117,7 @@ export class PermissionController {
   }
 
   @PermissionsWithDescription(
-    ['permissions:all', 'permissions:assign'],
+    ['permissions:all', 'permissions:assign', 'superadmin'],
     'Asignar un rol a este permiso mediante la id de ambos',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -162,7 +161,7 @@ export class PermissionController {
   }
 
   @PermissionsWithDescription(
-    ['permissions:all', 'permissions:deassign'],
+    ['permissions:all', 'permissions:deassign', 'superadmin'],
     'Des-asignar un rol a este permiso mediante la id de ambos',
   )
   @UseGuards(AuthGuard, PermissionGuard)

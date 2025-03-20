@@ -29,7 +29,7 @@ export class DeviceStatusController {
   constructor(private deviceStatusService: DeviceStatusService) {}
 
   @PermissionsWithDescription(
-    ['device_statuses:all', 'device_statuses:list'],
+    ['device_statuses:all', 'device_statuses:list', 'superadmin'],
     'Listar todos los estados de dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -50,7 +50,7 @@ export class DeviceStatusController {
   }
 
   @PermissionsWithDescription(
-    ['device_statuses:all', 'device_statuses:show'],
+    ['device_statuses:all', 'device_statuses:show', 'superadmin'],
     'Mostrar un estado de dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -71,7 +71,7 @@ export class DeviceStatusController {
   }
 
   @PermissionsWithDescription(
-    ['device_statuses:all', 'device_statuses:create'],
+    ['device_statuses:all', 'device_statuses:create', 'superadmin'],
     'Crear nuevo estado de dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -110,7 +110,7 @@ export class DeviceStatusController {
   }
 
   @PermissionsWithDescription(
-    ['device_statuses:all', 'device_statuses:update'],
+    ['device_statuses:all', 'device_statuses:update', 'superadmin'],
     'Actualizar estado de dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -152,7 +152,7 @@ export class DeviceStatusController {
   }
 
   @PermissionsWithDescription(
-    ['device_statuses:all', 'device_statuses:delete'],
+    ['device_statuses:all', 'device_statuses:delete', 'superadmin'],
     'Eliminar un estado de dispositivo por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)

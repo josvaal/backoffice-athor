@@ -24,7 +24,7 @@ export class EventsController {
   constructor(private eventsService: EventsService) {}
 
   @PermissionsWithDescription(
-    ['events:all', 'events:list'],
+    ['events:all', 'events:list', 'superadmin'],
     'Listar todos los eventos',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -45,7 +45,7 @@ export class EventsController {
   }
 
   @PermissionsWithDescription(
-    ['events:all', 'events:show'],
+    ['events:all', 'events:show', 'superadmin'],
     'Obtener un evento por una id',
   )
   @UseGuards(AuthGuard, PermissionGuard)
@@ -66,7 +66,7 @@ export class EventsController {
   }
 
   @PermissionsWithDescription(
-    ['events:all', 'events:delete'],
+    ['events:all', 'events:delete', 'superadmin'],
     'Eliminar un evento por id',
   )
   @UseGuards(AuthGuard, PermissionGuard)

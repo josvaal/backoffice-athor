@@ -16,7 +16,7 @@ export class UserDevicesController {
   constructor(private userDevicesService: UserDevicesService) {}
 
   @PermissionsWithDescription(
-    ['user_devices:all', 'user_devices:list'],
+    ['user_devices:all', 'user_devices:list', 'superadmin'],
     'Listar todas las relaciones usuario-dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)

@@ -16,7 +16,7 @@ export class DeviceHistoryController {
   constructor(private deviceHistoryService: DeviceHistoryService) {}
 
   @PermissionsWithDescription(
-    ['device_histories:all', 'device_histories:list'],
+    ['device_histories:all', 'device_histories:list', 'superadmin'],
     'Listar los historiales de dispositivo',
   )
   @UseGuards(AuthGuard, PermissionGuard)
