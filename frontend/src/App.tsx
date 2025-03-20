@@ -51,6 +51,12 @@ import {
   DeviceModelList,
   DeviceModelShow,
 } from "./pages/device_models";
+import {
+  DeviceStatusCreate,
+  DeviceStatusEdit,
+  DeviceStatusList,
+  DeviceStatusShow,
+} from "./pages/device_statuses";
 
 function App() {
   return (
@@ -136,6 +142,18 @@ function App() {
                     label: "Modelos de dispositivos",
                   },
                 },
+                {
+                  name: "device_statuses",
+                  list: "/device_statuses",
+                  create: "/device_statuses/create",
+                  edit: "/device_statuses/edit/:id",
+                  show: "/device_statuses/show/:id",
+                  meta: {
+                    canDelete: true,
+                    icon: <DeveloperBoard />,
+                    label: "Estado de dispositivos",
+                  },
+                },
               ]}
             >
               <Routes>
@@ -219,6 +237,12 @@ function App() {
                       <Route path="create" element={<DeviceModelCreate />} />
                       <Route path="edit/:id" element={<DeviceModelEdit />} />
                       <Route path="show/:id" element={<DeviceModelShow />} />
+                    </Route>
+                    <Route path="/device_statuses">
+                      <Route index element={<DeviceStatusList />} />
+                      <Route path="create" element={<DeviceStatusCreate />} />
+                      <Route path="edit/:id" element={<DeviceStatusEdit />} />
+                      <Route path="show/:id" element={<DeviceStatusShow />} />
                     </Route>
                     <Route path="/permissions">
                       <Route index element={<PermissionList />} />
