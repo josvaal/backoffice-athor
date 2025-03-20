@@ -18,7 +18,7 @@ import RoleChip from "../profile/components/RoleChip";
 import { usePermissions } from "@refinedev/core";
 import { useLocation } from "react-router";
 
-export const UserList = () => {
+export const RoleList = () => {
   const location = useLocation();
   const { data, isLoading } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
@@ -41,47 +41,17 @@ export const UserList = () => {
         headerAlign: "left",
       },
       {
-        field: "email",
-        headerName: "Correo",
-        minWidth: 200,
-        display: "flex",
-      },
-      {
         field: "name",
-        flex: 1,
         headerName: "Nombres",
+        minWidth: 150,
+        display: "flex",
+      },
+      {
+        field: "description",
+        headerName: "Descripción",
+        flex: 1,
         minWidth: 160,
         display: "flex",
-      },
-      {
-        field: "lastname",
-        headerName: "Apellidos",
-        minWidth: 160,
-        display: "flex",
-      },
-      {
-        field: "username",
-        headerName: "Nombre de usuario",
-        minWidth: 80,
-        display: "flex",
-      },
-      {
-        field: "UserRole",
-        headerName: "Roles",
-        display: "flex",
-        minWidth: 300,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        renderCell: (params: GridRenderCellParams<any>) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const value = params.value as any[];
-          return (
-            <Box display="flex" gap={1} justifyContent="center">
-              {value.map((role, i: number) => (
-                <RoleChip role={role.role.name} key={i} />
-              ))}
-            </Box>
-          );
-        },
       },
       {
         field: "createdAt",
@@ -166,11 +136,11 @@ export const UserList = () => {
 
   return (
     <List
-      title={<Typography variant="h5">Usuarios</Typography>}
+      title={<Typography variant="h5">Roles</Typography>}
       headerButtons={
         permissionPaths.includes(`${location.pathname}/create`) ||
         permissionPaths.includes(location.pathname) ? (
-          <CreateButton>Crear usuario</CreateButton>
+          <CreateButton>Crear rol</CreateButton>
         ) : (
           <Typography> - </Typography>
         )

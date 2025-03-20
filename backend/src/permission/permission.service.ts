@@ -3,14 +3,45 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Response } from 'express';
+import { JwtRequestPayload } from 'src/custom.types';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PermissionService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll() {
-    return await this.prismaService.permission.findMany();
+  async findAll(res: Response, page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.max(limit, 1);
+
+    const skip = (page - 1) * limit; // Cálculo correcto de skip
+    const take = limit;
+
+    const [permissions, total] = await Promise.all([
+      this.prismaService.permission.findMany({
+        skip: skip,
+        take: take,
+        include: {
+          RolePermission: {
+            include: {
+              role: true,
+            },
+          },
+        },
+      }),
+      this.prismaService.permission.count(),
+    ]);
+
+    res.set({
+      'Access-Control-Expose-Headers': 'x-total-count',
+      'x-total-count': total,
+      'x-current-page': page,
+      'x-per-page': limit,
+      'x-total-pages': Math.ceil(total / limit),
+    });
+
+    return res.json(permissions);
   }
 
   async findById(id: number | string) {
@@ -24,7 +55,108 @@ export class PermissionService {
       where: {
         id: permissionId,
       },
+      include: {
+        RolePermission: {
+          select: {
+            role: true,
+          },
+        },
+      },
     });
+  }
+
+  async findPermissionsByMe(request: JwtRequestPayload) {
+    const userJwt = request.user.user;
+
+    if (!userJwt) {
+      throw new BadRequestException('Nos eproporcionó un token adecuado');
+    }
+
+    if (!userJwt.id) {
+      throw new BadRequestException('El token proporcionado no es válido');
+    }
+
+    const userPermissions = await this.prismaService.user.findUnique({
+      where: {
+        id: userJwt.id,
+      },
+      select: {
+        UserRole: {
+          select: {
+            role: {
+              select: {
+                RolePermission: {
+                  select: {
+                    permission: {
+                      select: {
+                        id: true,
+                        name: true,
+                        groupName: true,
+                        description: true,
+                        path: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const permissions = userPermissions?.UserRole?.flatMap((userRole) =>
+      userRole.role.RolePermission.map(
+        (rolePermission) => rolePermission.permission,
+      ),
+    );
+
+    return permissions;
+  }
+
+  async findPermissionsByUserId(id: number | string) {
+    const userId = Number(id);
+
+    if (isNaN(userId)) {
+      throw new BadRequestException(`El ID proporcionado no es válido`);
+    }
+
+    const userPermissions = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        UserRole: {
+          select: {
+            role: {
+              select: {
+                RolePermission: {
+                  select: {
+                    permission: {
+                      select: {
+                        id: true,
+                        name: true,
+                        groupName: true,
+                        description: true,
+                        path: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const permissions = userPermissions?.UserRole?.flatMap((userRole) =>
+      userRole.role.RolePermission.map(
+        (rolePermission) => rolePermission.permission,
+      ),
+    );
+
+    return permissions;
   }
 
   async assignRole(idRole: number | string, idPermission: number | string) {

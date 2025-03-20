@@ -1,24 +1,18 @@
-import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import {
-  DataGrid,
-  GridRenderCellParams,
-  type GridColDef,
-} from "@mui/x-data-grid";
-import {
-  CreateButton,
-  DateField,
-  DeleteButton,
-  EditButton,
-  List,
-  ShowButton,
-  useDataGrid,
-} from "@refinedev/mui";
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DateField, List, ShowButton, useDataGrid } from "@refinedev/mui";
 import React, { useEffect, useState } from "react";
-import RoleChip from "../profile/components/RoleChip";
 import { usePermissions } from "@refinedev/core";
 import { useLocation } from "react-router";
+import { AddCircle } from "@mui/icons-material";
 
-export const UserList = () => {
+export const PermissionList = () => {
   const location = useLocation();
   const { data, isLoading } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
@@ -41,47 +35,29 @@ export const UserList = () => {
         headerAlign: "left",
       },
       {
-        field: "email",
-        headerName: "Correo",
-        minWidth: 200,
-        display: "flex",
-      },
-      {
         field: "name",
+        headerName: "Nombre",
+        minWidth: 160,
+        display: "flex",
+      },
+      {
+        field: "description",
+        headerName: "Descripción",
         flex: 1,
-        headerName: "Nombres",
         minWidth: 160,
         display: "flex",
       },
       {
-        field: "lastname",
-        headerName: "Apellidos",
-        minWidth: 160,
+        field: "groupName",
+        headerName: "Grupo",
+        minWidth: 140,
         display: "flex",
       },
       {
-        field: "username",
-        headerName: "Nombre de usuario",
-        minWidth: 80,
+        field: "path",
+        headerName: "Ruta",
+        minWidth: 150,
         display: "flex",
-      },
-      {
-        field: "UserRole",
-        headerName: "Roles",
-        display: "flex",
-        minWidth: 300,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        renderCell: (params: GridRenderCellParams<any>) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const value = params.value as any[];
-          return (
-            <Box display="flex" gap={1} justifyContent="center">
-              {value.map((role, i: number) => (
-                <RoleChip role={role.role.name} key={i} />
-              ))}
-            </Box>
-          );
-        },
       },
       {
         field: "createdAt",
@@ -106,28 +82,18 @@ export const UserList = () => {
         headerName: "Acciones",
         align: "right",
         headerAlign: "right",
-        minWidth: 120,
+        minWidth: 20,
         sortable: false,
         display: "flex",
         renderCell: function render({ row }) {
           return (
             <>
-              {permissionPaths.includes(`${location.pathname}/edit`) ||
-              permissionPaths.includes(location.pathname) ? (
-                <EditButton hideText recordItemId={row.id} />
-              ) : null}
               {permissionPaths.includes(`${location.pathname}/show`) ||
               permissionPaths.includes(location.pathname) ? (
                 <ShowButton hideText recordItemId={row.id} />
-              ) : null}
-              {permissionPaths.includes(`${location.pathname}/delete`) ||
-              permissionPaths.includes(location.pathname) ? (
-                <DeleteButton
-                  hideText
-                  recordItemId={row.id}
-                  confirmTitle="Estas seguro?"
-                />
-              ) : null}
+              ) : (
+                <Typography> - </Typography>
+              )}
             </>
           );
         },
@@ -166,15 +132,8 @@ export const UserList = () => {
 
   return (
     <List
-      title={<Typography variant="h5">Usuarios</Typography>}
-      headerButtons={
-        permissionPaths.includes(`${location.pathname}/create`) ||
-        permissionPaths.includes(location.pathname) ? (
-          <CreateButton>Crear usuario</CreateButton>
-        ) : (
-          <Typography> - </Typography>
-        )
-      }
+      title={<Typography variant="h5">Permisos</Typography>}
+      headerButtons={<></>}
     >
       {!permissionPaths.includes(`${location.pathname}/list`) &&
       !permissionPaths.includes(location.pathname) ? (

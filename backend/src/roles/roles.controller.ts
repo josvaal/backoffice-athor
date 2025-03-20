@@ -11,6 +11,8 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
@@ -24,6 +26,7 @@ import {
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { Response as Res } from 'express';
 
 @Controller('roles')
 export class RolesController {
@@ -36,10 +39,14 @@ export class RolesController {
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.rolesService.findAll(),
+        data: await this.rolesService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {

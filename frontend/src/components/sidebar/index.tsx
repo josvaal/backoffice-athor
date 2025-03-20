@@ -1,5 +1,6 @@
-import { Divider } from "@mui/material";
+import { Box, CircularProgress, Divider } from "@mui/material";
 import { usePermissions } from "@refinedev/core";
+import { useEffect, useState } from "react";
 
 interface SidebarProps {
   items: JSX.Element[];
@@ -8,20 +9,43 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ items, logout }: SidebarProps) => {
-  const { data: permissionsData } = usePermissions();
+  const { data, isLoading } = usePermissions();
+  const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
 
-  console.log(permissionsData);
+  useEffect(() => {
+    if (data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const paths = (data as any).map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (permission: any) => `/${permission.groupName}`
+      );
 
-  const pathItems = items.map((item) => {
-    return item.key;
-  });
+      setPermissionPaths(paths);
+    }
+  }, [data]);
 
-  console.log(pathItems);
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        width="100%"
+        height="100%"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <>
-      {/* <div>My Custom Element</div> */}
-      {items}
+      {items.filter((item: any) => {
+        if (item.key === "/profile") {
+          return true;
+        }
+        return permissionPaths.includes(item.key);
+      })}
       <Divider />
       {logout}
     </>

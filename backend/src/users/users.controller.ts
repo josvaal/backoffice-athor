@@ -58,7 +58,7 @@ export class UsersController {
   }
 
   @PermissionsWithDescription(
-    ['users:all', 'users:update'],
+    ['users:all', 'users:update', 'users:show'],
     'Actualizar un usuario',
   )
   @UseGuards(AuthGuard, PermissionGuard)

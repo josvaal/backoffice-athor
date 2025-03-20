@@ -1,4 +1,4 @@
-import type { AuthProvider } from "@refinedev/core";
+import { type AuthProvider } from "@refinedev/core";
 import { getAccessToken } from "../utils/retrieve_token";
 import Cookie from "universal-cookie";
 
@@ -22,7 +22,7 @@ export const customAuthProvider: AuthProvider = {
     });
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     const { error } = data;
 
     if (error) {
@@ -111,6 +111,11 @@ export const customAuthProvider: AuthProvider = {
     });
 
     const data = await response.json();
+    const { error } = data;
+
+    if (error) {
+      throw new Error(error.message);
+    }
 
     const roles: string[] = data.data.UserRole.map(
       (userRole: { role: { name: any } }) => userRole.role.name
@@ -132,20 +137,26 @@ export const customAuthProvider: AuthProvider = {
     }
 
     const ba_url = import.meta.env.VITE_BA_URL;
-    const response = await fetch(`${ba_url}/auth/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-
-    const roles: string[] = data.data.UserRole.map(
-      (userRole: { role: { name: any } }) => userRole.role.name
+    const response = await fetch(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      `${ba_url}/permissions/me`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
-    return {
-      data: roles,
-    };
+    const data = await response.json();
+    // console.log(data);
+
+    const { error } = data;
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // console.log(data.data);
+    return data.data;
   },
 };

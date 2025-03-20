@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Delete,
   Get,
@@ -8,21 +9,44 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Query,
+  Request,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { PermissionService } from './permission.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ApiResponse } from 'src/custom.types';
+import { ApiResponse, JwtRequestPayload } from 'src/custom.types';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { ApiOperation } from '@nestjs/swagger';
+import { Response as Res } from 'express';
 
-@Controller('module')
+@Controller('permissions')
 export class PermissionController {
   constructor(private permissionService: PermissionService) {}
+
+  @ApiOperation({ description: 'Esto retorna todos tus permisos actuales' })
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Get('/me')
+  async listByMe(@Request() req: JwtRequestPayload): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.permissionService.findPermissionsByMe(req),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
 
   @PermissionsWithDescription(
     ['permissions:all', 'permissions:list'],
@@ -31,10 +55,14 @@ export class PermissionController {
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.permissionService.findAll(),
+        data: await this.permissionService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {
@@ -56,6 +84,29 @@ export class PermissionController {
     try {
       return {
         data: await this.permissionService.findById(id),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        error: error,
+        data: null,
+      };
+    }
+  }
+
+  @PermissionsWithDescription(
+    ['permissions:all', 'permissions:list_by_user_id'],
+    'Listar los permisos mediante un id de rol',
+  )
+  @UseGuards(AuthGuard, PermissionGuard)
+  @HttpCode(HttpStatus.OK)
+  @Get('/user/:userId')
+  async listByUserId(
+    @Param('userId') id: number | string,
+  ): Promise<ApiResponse> {
+    try {
+      return {
+        data: await this.permissionService.findPermissionsByUserId(id),
         error: null,
       };
     } catch (error) {
