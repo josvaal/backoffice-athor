@@ -29,6 +29,7 @@ import {
   Fingerprint,
   Group,
   MemoryTwoTone,
+  RadioButtonChecked,
 } from "@mui/icons-material";
 import { customDataProvider } from "./providers/BackendDataProvider";
 import { UserCreate, UserEdit, UserList, UserShow } from "./pages/users";
@@ -57,6 +58,12 @@ import {
   DeviceStatusList,
   DeviceStatusShow,
 } from "./pages/device_statuses";
+import {
+  EventTypeCreate,
+  EventTypeEdit,
+  EventTypeList,
+  EventTypeShow,
+} from "./pages/ event_types";
 
 function App() {
   return (
@@ -154,6 +161,18 @@ function App() {
                     label: "Estado de dispositivos",
                   },
                 },
+                {
+                  name: "event_types",
+                  list: "/event_types",
+                  create: "/event_types/create",
+                  edit: "/event_types/edit/:id",
+                  show: "/event_types/show/:id",
+                  meta: {
+                    canDelete: true,
+                    icon: <RadioButtonChecked />,
+                    label: "Tipo de eventos",
+                  },
+                },
               ]}
             >
               <Routes>
@@ -243,6 +262,12 @@ function App() {
                       <Route path="create" element={<DeviceStatusCreate />} />
                       <Route path="edit/:id" element={<DeviceStatusEdit />} />
                       <Route path="show/:id" element={<DeviceStatusShow />} />
+                    </Route>
+                    <Route path="/event_types">
+                      <Route index element={<EventTypeList />} />
+                      <Route path="create" element={<EventTypeCreate />} />
+                      <Route path="edit/:id" element={<EventTypeEdit />} />
+                      <Route path="show/:id" element={<EventTypeShow />} />
                     </Route>
                     <Route path="/permissions">
                       <Route index element={<PermissionList />} />

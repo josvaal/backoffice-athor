@@ -326,7 +326,7 @@ export class DevicesService {
 
     const deviceHistory = await this.prismaService.$transaction(
       async (prisma) => {
-        const eventCreated = await this.prismaService.event.create({
+        const eventCreated = await prisma.event.create({
           data: {
             status,
             eventTypeId: eventTypeID,
@@ -335,7 +335,7 @@ export class DevicesService {
         if (!eventCreated) {
           throw new InternalServerErrorException('Error al crear el evento');
         }
-        const deviceHistory = await this.prismaService.deviceHistory.create({
+        const deviceHistory = await prisma.deviceHistory.create({
           data: {
             triggered: new Date(),
             deviceId: deviceID,

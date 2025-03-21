@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 
-export const DeviceStatusShow = () => {
+export const EventTypeShow = () => {
   const location = useLocation();
   const { data: permissionsData } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
@@ -23,6 +23,8 @@ export const DeviceStatusShow = () => {
   useEffect(() => {
     const record = data?.data.data;
     setRecordData(record);
+
+    console.log(record);
 
     if (permissionsData) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,20 +51,20 @@ export const DeviceStatusShow = () => {
   return (
     <Show
       isLoading={isLoading}
-      title={<Typography variant="h5">Ver estado de dispositivo</Typography>}
+      title={<Typography variant="h5">Ver tipo de evento</Typography>}
       headerButtons={
         <>
           <ListButton />
           {permissionPaths.includes(
             location.pathname.replace(
-              /\/device_statuses\/show\/\d+/,
-              "/device_statuses/edit"
+              /\/event_types\/show\/\d+/,
+              "/event_types/edit"
             )
           ) ||
           permissionPaths.includes(
             location.pathname.replace(
-              /\/device_statuses\/show\/\d+/,
-              "/device_statuses"
+              /\/event_types\/show\/\d+/,
+              "/event_types"
             )
           ) ||
           permissionPaths.includes("/superadmin") ? (
@@ -72,14 +74,14 @@ export const DeviceStatusShow = () => {
           )}
           {permissionPaths.includes(
             location.pathname.replace(
-              /\/device_statuses\/show\/\d+/,
-              "/device_statuses/delete"
+              /\/event_types\/show\/\d+/,
+              "/event_types/delete"
             )
           ) ||
           permissionPaths.includes(
             location.pathname.replace(
-              /\/device_statuses\/show\/\d+/,
-              "/device_statuses"
+              /\/event_types\/show\/\d+/,
+              "/event_types"
             )
           ) ||
           permissionPaths.includes("/superadmin") ? (

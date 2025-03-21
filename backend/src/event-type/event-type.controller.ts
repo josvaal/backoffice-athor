@@ -11,6 +11,8 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { EventTypeService } from './event-type.service';
@@ -24,8 +26,9 @@ import {
 import { UpdateEventTypeDto } from './dto/update-event-type.dto';
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { Response as Res } from 'express';
 
-@Controller('event-type')
+@Controller('event_types')
 export class EventTypeController {
   constructor(private eventTypeService: EventTypeService) {}
 
@@ -36,10 +39,14 @@ export class EventTypeController {
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.eventTypeService.findAll(),
+        data: await this.eventTypeService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {
