@@ -26,8 +26,14 @@ export class DevicesService {
         take: take,
         include: {
           model: true,
-          users: true,
-          DeviceHistory: true,
+          status: true,
+          superAdmin: {
+            select: {
+              id: true,
+              name: true,
+              lastname: true,
+            },
+          },
         },
       }),
       this.prismaService.device.count(),
@@ -56,10 +62,26 @@ export class DevicesService {
         id: deviceId,
       },
       include: {
-        superAdmin: true,
+        superAdmin: {
+          select: {
+            id: true,
+            name: true,
+            lastname: true,
+          },
+        },
         status: true,
         model: true,
-        users: true,
+        users: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                lastname: true,
+              },
+            },
+          },
+        },
         //TODO: Array de historial del dispositivo
         DeviceHistory: true,
       },
@@ -148,7 +170,17 @@ export class DevicesService {
 
   async create(createDeviceDto: CreateDeviceDto) {
     return await this.prismaService.device.create({
-      data: createDeviceDto,
+      data: {
+        batch: createDeviceDto.batch,
+        macBluetooth: createDeviceDto.macBluetooth,
+        macESP32: createDeviceDto.macESP32,
+        modelId: Number(createDeviceDto.modelId),
+        relayQuantity: Number(createDeviceDto.relayQuantity),
+        serialNumber: createDeviceDto.serialNumber,
+        statusId: Number(createDeviceDto.statusId),
+        superAdminId: Number(createDeviceDto.superAdminId),
+        version: createDeviceDto.version,
+      },
       include: {
         superAdmin: true,
         status: true,
@@ -163,6 +195,10 @@ export class DevicesService {
 
     if (isNaN(deviceId)) {
       throw new BadRequestException(`El ID proporcionado no es válido`);
+    }
+
+    if (updateDeviceDto.relayQuantity) {
+      updateDeviceDto.relayQuantity = Number(updateDeviceDto.relayQuantity);
     }
 
     if (updateDeviceDto['serialNumber']) {
