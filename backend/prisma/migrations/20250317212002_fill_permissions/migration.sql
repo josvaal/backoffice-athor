@@ -1,9 +1,11 @@
+USE bo_athor_db;
+
 BEGIN TRY
     -- Iniciar una transacción
     BEGIN TRANSACTION;
 
     -- Insertar permisos en la tabla Permission con paths más específicos
-    INSERT INTO Permission (name, groupName, description, path, createdAt, updatedAt)
+    INSERT INTO [dbo].[Permission] (name, groupName, description, path, createdAt, updatedAt)
     VALUES
         -- Permisos para usuarios
         ('users:all', 'users', 'Permiso global para todas las operaciones de usuarios', '/users', GETDATE(), GETDATE()),
@@ -74,6 +76,7 @@ BEGIN TRY
         -- Permisos para historial de dispositivos
         ('device_histories:all', 'device_histories', 'Permiso global para todas las operaciones de historial de dispositivos', '/device-histories', GETDATE(), GETDATE()),
         ('device_histories:list', 'device_histories', 'Permiso para listar historial de dispositivos', '/device-histories/list', GETDATE(), GETDATE()),
+        ('device_histories:show', 'device_histories', 'Permiso para ver detalles de un historial de dispositivo', '/device-histories/show', GETDATE(), GETDATE()),
 
         -- Permisos para permisos
         ('permissions:all', 'permissions', 'Permiso global para todas las operaciones de permisos', '/permissions', GETDATE(), GETDATE()),

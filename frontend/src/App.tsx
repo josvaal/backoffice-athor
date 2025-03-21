@@ -63,8 +63,8 @@ import {
   EventTypeEdit,
   EventTypeList,
   EventTypeShow,
-} from "./pages/ event_types";
-import { EventList, EventShow } from "./pages/ events";
+} from "./pages/event_types";
+import { EventList, EventShow } from "./pages/events";
 
 function App() {
   return (
