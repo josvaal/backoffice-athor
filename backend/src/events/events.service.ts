@@ -1,12 +1,38 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class EventsService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAll() {
-    return await this.prismaService.event.findMany();
+  async findAll(res: Response, page: number = 1, limit: number = 10) {
+    page = Math.max(page, 1);
+    limit = Math.max(limit, 1);
+
+    const skip = (page - 1) * limit; // Cálculo correcto de skip
+    const take = limit;
+
+    const [events, total] = await Promise.all([
+      this.prismaService.event.findMany({
+        skip: skip,
+        take: take,
+        include: {
+          eventType: true,
+        },
+      }),
+      this.prismaService.event.count(),
+    ]);
+
+    res.set({
+      'Access-Control-Expose-Headers': 'x-total-count',
+      'x-total-count': total,
+      'x-current-page': page,
+      'x-per-page': limit,
+      'x-total-pages': Math.ceil(total / limit),
+    });
+
+    return res.json(events);
   }
 
   async findById(id: number | string) {

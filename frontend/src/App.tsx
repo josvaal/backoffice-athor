@@ -64,6 +64,7 @@ import {
   EventTypeList,
   EventTypeShow,
 } from "./pages/ event_types";
+import { EventList, EventShow } from "./pages/ events";
 
 function App() {
   return (
@@ -159,6 +160,18 @@ function App() {
                     canDelete: true,
                     icon: <DeveloperBoard />,
                     label: "Estado de dispositivos",
+                  },
+                },
+                {
+                  name: "events",
+                  list: "/events",
+                  create: () => null,
+                  edit: () => null,
+                  show: "/events/show/:id",
+                  meta: {
+                    canDelete: true,
+                    icon: <RadioButtonChecked />,
+                    label: "Eventos",
                   },
                 },
                 {
@@ -268,6 +281,10 @@ function App() {
                       <Route path="create" element={<EventTypeCreate />} />
                       <Route path="edit/:id" element={<EventTypeEdit />} />
                       <Route path="show/:id" element={<EventTypeShow />} />
+                    </Route>
+                    <Route path="/events">
+                      <Route index element={<EventList />} />
+                      <Route path="show/:id" element={<EventShow />} />
                     </Route>
                     <Route path="/permissions">
                       <Route index element={<PermissionList />} />

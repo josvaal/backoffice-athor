@@ -7,6 +7,8 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Param,
+  Query,
+  Response,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -18,6 +20,7 @@ import {
 } from '@prisma/client/runtime/library';
 import { PermissionsWithDescription } from 'decorators/permissionsWithDescription.decorator';
 import { PermissionGuard } from 'src/auth/permission/permission.guard';
+import { Response as Res } from 'express';
 
 @Controller('events')
 export class EventsController {
@@ -30,10 +33,14 @@ export class EventsController {
   @UseGuards(AuthGuard, PermissionGuard)
   @HttpCode(HttpStatus.OK)
   @Get('list')
-  async listAll(): Promise<ApiResponse> {
+  async listAll(
+    @Response() res: Res,
+    @Query('_page') page: number,
+    @Query('_limit') limit: number,
+  ): Promise<ApiResponse> {
     try {
       return {
-        data: await this.eventsService.findAll(),
+        data: await this.eventsService.findAll(res, page, limit),
         error: null,
       };
     } catch (error) {
