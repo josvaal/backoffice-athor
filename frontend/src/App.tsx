@@ -67,6 +67,7 @@ import {
 } from "./pages/event_types";
 import { EventList, EventShow } from "./pages/events";
 import { DeviceHistoryList, DeviceHistoryShow } from "./pages/device_histories";
+import Home from "./pages/App";
 
 function App() {
   return (
@@ -251,11 +252,7 @@ function App() {
                       </ThemedLayoutV2>
                     }
                   >
-                    <Route
-                      index
-                      element={<NavigateToResource resource="/" />}
-                    />
-
+                    <Route index element={<Home />} />
                     <Route path="/profile">
                       <Route index element={<ProfileShow />} />
                       <Route path="edit" element={<ProfileEdit />} />

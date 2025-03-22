@@ -17,6 +17,8 @@ import { EventsModule } from './events/events.module';
 import { UserDevicesModule } from './user-devices/user-devices.module';
 import { DeviceHistoryModule } from './device-history/device-history.module';
 import { PermissionModule } from './permission/permission.module';
+import { DashboardController } from './dashboard/dashboard.controller';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -36,8 +38,9 @@ import { PermissionModule } from './permission/permission.module';
     UserDevicesModule,
     DeviceHistoryModule,
     PermissionModule,
+    DashboardModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, DashboardController],
   providers: [AppService, PrismaService, DevicesService],
 })
 export class AppModule {}
