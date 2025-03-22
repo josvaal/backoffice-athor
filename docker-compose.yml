@@ -1,22 +1,22 @@
 services:
-  bo_athor_db:
-    build:
-      context: ./database
-      dockerfile: Dockerfile
-    container_name: bo_athor_db
-    restart: always
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=${SA_PASSWORD}
-    ports:
-      - "${DB_PORT}:1433"
-    networks:
-      - backend-network
-    volumes:
-      - mssql_data:/var/opt/mssql
-      - ./database/entrypoint.sh:/entrypoint.sh
-      - ./database/db-init.sh:/db-init.sh
-      - ./database/db-init.sql:/db-init.sql
+  # bo_athor_db:
+  #   build:
+  #     context: ./database
+  #     dockerfile: Dockerfile
+  #   container_name: bo_athor_db
+  #   restart: always
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=${SA_PASSWORD}
+  #   ports:
+  #     - "${DB_PORT}:1433"
+  #   networks:
+  #     - backend-network
+  #   volumes:
+  #     - mssql_data:/var/opt/mssql
+  #     - ./database/entrypoint.sh:/entrypoint.sh
+  #     - ./database/db-init.sh:/db-init.sh
+  #     - ./database/db-init.sql:/db-init.sql
   # bo_athor_api:
   #   build:
   #     context: ./backend
