@@ -222,7 +222,7 @@ export const DeviceShow = () => {
         },
       },
     ],
-    [location.pathname, permissionPaths]
+    [permissionPaths]
   );
 
   useEffect(() => {

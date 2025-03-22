@@ -1,5 +1,15 @@
-import { Close, Person } from "@mui/icons-material";
-import { Alert, Button, Stack, Typography } from "@mui/material";
+import { Close, Person, Visibility } from "@mui/icons-material";
+import {
+  Alert,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
@@ -13,9 +23,11 @@ import {
   useDataGrid,
 } from "@refinedev/mui";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import AssignRole from "./components/AssignRole";
 import DeassignRole from "./components/DeassignRole";
+
+type ViewInterface = "users" | "permissions";
 
 export const RoleShow = () => {
   const location = useLocation();
@@ -30,6 +42,8 @@ export const RoleShow = () => {
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [usersDatagrid, setUsersDataGrid] = useState<any>([]);
+  const [permissionsDatagrid, setPermissionsDatagrid] = useState<any>([]);
+  const [view, setView] = useState<ViewInterface>("users");
   const { query } = useShow({});
   const { data, isLoading, refetch } = query;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,7 +68,7 @@ export const RoleShow = () => {
     setOpenDeassign(false);
   };
 
-  const columns = useMemo<GridColDef[]>(
+  const userColumns = useMemo<GridColDef[]>(
     () => [
       {
         field: "id",
@@ -119,6 +133,68 @@ export const RoleShow = () => {
     [location.pathname, permissionPaths]
   );
 
+  const permissionColumns = useMemo<GridColDef[]>(
+    () => [
+      {
+        field: "id",
+        headerName: "ID",
+        type: "number",
+        minWidth: 50,
+        display: "flex",
+        align: "left",
+        headerAlign: "left",
+      },
+      {
+        field: "name",
+        headerName: "Nombres",
+        minWidth: 150,
+        display: "flex",
+      },
+      {
+        field: "description",
+        headerName: "Descripción",
+        flex: 1,
+        minWidth: 160,
+        display: "flex",
+      },
+      {
+        field: "actions",
+        headerName: "Acciones",
+        align: "center",
+        headerAlign: "center",
+        minWidth: 200,
+        sortable: false,
+        display: "flex",
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        renderCell: function render({ row }) {
+          return (
+            <>
+              {permissionPaths.includes("/permissions/show") ||
+              permissionPaths.includes("/permissions") ||
+              permissionPaths.includes("/superadmin") ? (
+                <Link
+                  to={`/permissions/show/${row.id}`}
+                  style={{
+                    color: "#6e70ff",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 5,
+                    fontWeight: "bold",
+                  }}
+                >
+                  <Visibility />
+                  Ver permiso
+                </Link>
+              ) : null}
+            </>
+          );
+        },
+      },
+    ],
+    [permissionPaths]
+  );
+
   useEffect(() => {
     const record = data?.data.data;
     setRecordData(record);
@@ -136,11 +212,23 @@ export const RoleShow = () => {
       setPermissionPaths(paths);
     }
     if (record) {
-      console.log(record.UserRole);
+      console.log(record);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      dataGridProps.rows = record.UserRole.map((row: any) => ({ ...row.user }));
+      setUsersDataGrid({
+        ...dataGridProps,
+        rows: record.UserRole.map((row: any) => ({
+          ...row.user,
+        })),
+      });
+
+      setPermissionsDatagrid({
+        ...dataGridProps,
+        rows: record.RolePermission.map((row: any) => ({
+          ...row.permission,
+        })),
+      });
+
       dataGridProps.loading = false;
-      setUsersDataGrid(dataGridProps);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, location.pathname, permissionsData]);
@@ -225,17 +313,50 @@ export const RoleShow = () => {
         </Typography>
         <DateField value={recordData ? recordData.updatedAt : "-"} />
       </Stack>
-      <Typography
-        my={4}
-        alignSelf="center"
-        variant="h5"
-        fontWeight="bold"
-        align="center"
-      >
-        Usuarios con este rol
-      </Typography>
 
-      <DataGrid {...usersDatagrid} columns={columns} />
+      <FormControl fullWidth style={{ marginTop: 25 }}>
+        <InputLabel id="demo-simple-select-label">Ver</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={view}
+          label="Age"
+          onChange={(e: SelectChangeEvent) => {
+            setView(e.target.value as ViewInterface);
+          }}
+        >
+          <MenuItem value="users">Usuarios</MenuItem>
+          <MenuItem value="permissions">Permisos</MenuItem>
+        </Select>
+      </FormControl>
+
+      {view == "users" ? (
+        <>
+          <Typography
+            my={4}
+            alignSelf="center"
+            variant="h5"
+            fontWeight="bold"
+            align="center"
+          >
+            Usuarios con este dispositivo
+          </Typography>
+          <DataGrid {...usersDatagrid} columns={userColumns} />
+        </>
+      ) : (
+        <>
+          <Typography
+            my={4}
+            alignSelf="center"
+            variant="h5"
+            fontWeight="bold"
+            align="center"
+          >
+            Permisos del rol
+          </Typography>
+          <DataGrid {...permissionsDatagrid} columns={permissionColumns} />
+        </>
+      )}
 
       {recordData ? (
         <DeassignRole
