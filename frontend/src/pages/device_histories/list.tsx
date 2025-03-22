@@ -1,7 +1,7 @@
 import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import {
-  CreateButton,
+  DateField,
   DeleteButton,
   List,
   ShowButton,
@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { usePermissions } from "@refinedev/core";
 import { useLocation } from "react-router";
 
-export const EventList = () => {
+export const DeviceHistoryList = () => {
   const location = useLocation();
   const { data, isLoading } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
@@ -22,7 +22,7 @@ export const EventList = () => {
     },
   });
 
-  console.log(dataGridProps);
+  console.log(dataGridProps.rows);
 
   const columns = React.useMemo<GridColDef[]>(
     () => [
@@ -36,19 +36,58 @@ export const EventList = () => {
         headerAlign: "left",
       },
       {
-        field: "event_type",
-        headerName: "Tipo de evento",
+        field: "device_name",
+        headerName: "Nombre del modelo",
         minWidth: 160,
         display: "flex",
+        valueGetter: (value: number, row) => row.device.model.name,
+      },
+      {
+        field: "device_description",
+        headerName: "Descripción del modelo",
+        minWidth: 160,
         flex: 1,
-        valueGetter: (value, row) => row.eventType.name,
+        display: "flex",
+        valueGetter: (value: number, row) => row.device.model.description,
+      },
+      {
+        field: "event_name",
+        headerName: "Nombre del evento",
+        minWidth: 160,
+        display: "flex",
+        valueGetter: (value: number, row) => row.event.eventType.name,
+      },
+      {
+        field: "event_description",
+        headerName: "Descripción del evento",
+        minWidth: 160,
+        display: "flex",
+        valueGetter: (value: number, row) => row.event.eventType.description,
       },
       {
         field: "status",
         headerName: "Estado",
         minWidth: 160,
         display: "flex",
-        valueGetter: (value: number, row) => (value ? "Activo" : "Inactivo"),
+        valueGetter: (value: number, row) => (value ? "Encendido" : "Apagado"),
+      },
+      {
+        field: "createdAt",
+        headerName: "Creado en",
+        minWidth: 100,
+        display: "flex",
+        renderCell: function render({ value }) {
+          return <DateField value={value} />;
+        },
+      },
+      {
+        field: "updatedAt",
+        headerName: "Actualizado en",
+        minWidth: 100,
+        display: "flex",
+        renderCell: function render({ value }) {
+          return <DateField value={value} />;
+        },
       },
       {
         field: "actions",
@@ -65,15 +104,6 @@ export const EventList = () => {
               permissionPaths.includes(location.pathname) ||
               permissionPaths.includes("/superadmin") ? (
                 <ShowButton hideText recordItemId={row.id} />
-              ) : null}
-              {permissionPaths.includes(`${location.pathname}/delete`) ||
-              permissionPaths.includes(location.pathname) ||
-              permissionPaths.includes("/superadmin") ? (
-                <DeleteButton
-                  hideText
-                  recordItemId={row.id}
-                  confirmTitle="Estas seguro?"
-                />
               ) : null}
             </>
           );
@@ -113,7 +143,7 @@ export const EventList = () => {
 
   return (
     <List
-      title={<Typography variant="h5">Eventos</Typography>}
+      title={<Typography variant="h5">Historial de dispositivos</Typography>}
       headerButtons={<></>}
     >
       {!permissionPaths.includes(`${location.pathname}/list`) &&

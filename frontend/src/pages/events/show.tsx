@@ -2,8 +2,8 @@ import { Check, Close } from "@mui/icons-material";
 import { Alert, Stack, Typography } from "@mui/material";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
+  DateField,
   DeleteButton,
-  EditButton,
   ListButton,
   RefreshButton,
   Show,
@@ -52,7 +52,7 @@ export const EventShow = () => {
   return (
     <Show
       isLoading={isLoading}
-      title={<Typography variant="h5">Ver tipo de evento</Typography>}
+      title={<Typography variant="h5">Ver evento</Typography>}
       headerButtons={
         <>
           <ListButton />
@@ -100,6 +100,14 @@ export const EventShow = () => {
         ) : (
           <Typography> - </Typography>
         )}
+        <Typography variant="body1" fontWeight="bold">
+          {"Creado en"}
+        </Typography>
+        <DateField value={recordData ? recordData.createdAt : "-"} />
+        <Typography variant="body1" fontWeight="bold">
+          {"Actualizado en"}
+        </Typography>
+        <DateField value={recordData ? recordData.updatedAt : "-"} />
       </Stack>
     </Show>
   );

@@ -2,17 +2,17 @@ import { Check, Close } from "@mui/icons-material";
 import { Alert, Stack, Typography } from "@mui/material";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
+  DateField,
   DeleteButton,
-  EditButton,
   ListButton,
   RefreshButton,
   Show,
   TextFieldComponent as TextField,
 } from "@refinedev/mui";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 
-export const EventShow = () => {
+export const DeviceHistoryShow = () => {
   const location = useLocation();
   const { data: permissionsData } = usePermissions();
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
@@ -23,6 +23,7 @@ export const EventShow = () => {
 
   useEffect(() => {
     const record = data?.data.data;
+    console.log(record);
     setRecordData(record);
 
     console.log(record);
@@ -56,17 +57,6 @@ export const EventShow = () => {
       headerButtons={
         <>
           <ListButton />
-          {permissionPaths.includes(
-            location.pathname.replace(/\/events\/show\/\d+/, "/events/delete")
-          ) ||
-          permissionPaths.includes(
-            location.pathname.replace(/\/events\/show\/\d+/, "/events")
-          ) ||
-          permissionPaths.includes("/superadmin") ? (
-            <DeleteButton children="Eliminar" />
-          ) : (
-            <Typography> - </Typography>
-          )}
           <RefreshButton children="Refrescar" />
         </>
       }
@@ -77,21 +67,42 @@ export const EventShow = () => {
         </Typography>
         <TextField value={recordData ? recordData.id : "-"} />
         <Typography variant="body1" fontWeight="bold">
-          {"Nombre (Tipo de evento)"}
+          {"Nombre del modelo"}
         </Typography>
-        <TextField value={recordData ? recordData.eventType.name : "-"} />
+        <TextField value={recordData ? recordData.device.model.name : "-"} />
         <Typography variant="body1" fontWeight="bold">
-          {"Descripción (Tipo de evento)"}
+          {"Descripción del modelo"}
         </Typography>
         <TextField
-          value={recordData ? recordData.eventType.description : "-"}
+          value={recordData ? recordData.device.model.description : "-"}
         />
         <Typography variant="body1" fontWeight="bold">
-          {"Estado"}
+          {"Nº Serial del dispositivo"}
+        </Typography>
+        <TextField value={recordData ? recordData.device.serialNumber : "-"} />
+        <Typography variant="body1" fontWeight="bold" color="info">
+          {recordData ? (
+            <Link to={`/devices/show/${recordData.device.id}`}>
+              Ver dispositivo
+            </Link>
+          ) : null}
+        </Typography>
+        <Typography variant="body1" fontWeight="bold">
+          {"Nombre del evento"}
+        </Typography>
+        <TextField value={recordData ? recordData.event.eventType.name : "-"} />
+        <Typography variant="body1" fontWeight="bold">
+          {"Decripción del evento"}
+        </Typography>
+        <TextField
+          value={recordData ? recordData.event.eventType.description : "-"}
+        />
+        <Typography variant="body1" fontWeight="bold">
+          {"Estado del evento"}
         </Typography>
         {recordData ? (
           <>
-            {recordData.status ? (
+            {recordData.event.status ? (
               <Check color="success" />
             ) : (
               <Close color="error" />
@@ -100,6 +111,19 @@ export const EventShow = () => {
         ) : (
           <Typography> - </Typography>
         )}
+        <Typography variant="body1" fontWeight="bold" color="info">
+          {recordData ? (
+            <Link to={`/events/show/${recordData.event.id}`}>Ver evento</Link>
+          ) : null}
+        </Typography>
+        <Typography variant="body1" fontWeight="bold">
+          {"Creado en"}
+        </Typography>
+        <DateField value={recordData ? recordData.createdAt : "-"} />
+        <Typography variant="body1" fontWeight="bold">
+          {"Actualizado en"}
+        </Typography>
+        <DateField value={recordData ? recordData.updatedAt : "-"} />
       </Stack>
     </Show>
   );

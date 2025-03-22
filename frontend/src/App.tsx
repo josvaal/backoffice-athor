@@ -28,6 +28,7 @@ import {
   DeveloperBoard,
   Fingerprint,
   Group,
+  History,
   MemoryTwoTone,
   RadioButtonChecked,
 } from "@mui/icons-material";
@@ -65,6 +66,7 @@ import {
   EventTypeShow,
 } from "./pages/event_types";
 import { EventList, EventShow } from "./pages/events";
+import { DeviceHistoryList, DeviceHistoryShow } from "./pages/device_histories";
 
 function App() {
   return (
@@ -186,6 +188,18 @@ function App() {
                     label: "Tipo de eventos",
                   },
                 },
+                {
+                  name: "device_histories",
+                  list: "/device_histories",
+                  create: () => null,
+                  edit: () => null,
+                  show: "/device_histories/show/:id",
+                  meta: {
+                    canDelete: false,
+                    icon: <History />,
+                    label: "Historial de dispositivos",
+                  },
+                },
               ]}
             >
               <Routes>
@@ -285,6 +299,10 @@ function App() {
                     <Route path="/events">
                       <Route index element={<EventList />} />
                       <Route path="show/:id" element={<EventShow />} />
+                    </Route>
+                    <Route path="/device_histories">
+                      <Route index element={<DeviceHistoryList />} />
+                      <Route path="show/:id" element={<DeviceHistoryShow />} />
                     </Route>
                     <Route path="/permissions">
                       <Route index element={<PermissionList />} />

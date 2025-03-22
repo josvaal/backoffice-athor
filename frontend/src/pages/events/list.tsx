@@ -2,6 +2,7 @@ import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import {
   CreateButton,
+  DateField,
   DeleteButton,
   List,
   ShowButton,
@@ -48,7 +49,25 @@ export const EventList = () => {
         headerName: "Estado",
         minWidth: 160,
         display: "flex",
-        valueGetter: (value: number, row) => (value ? "Activo" : "Inactivo"),
+        valueGetter: (value: number, row) => (value ? "Encenido" : "Apagado"),
+      },
+      {
+        field: "createdAt",
+        headerName: "Creado en",
+        minWidth: 100,
+        display: "flex",
+        renderCell: function render({ value }) {
+          return <DateField value={value} />;
+        },
+      },
+      {
+        field: "updatedAt",
+        headerName: "Actualizado en",
+        minWidth: 100,
+        display: "flex",
+        renderCell: function render({ value }) {
+          return <DateField value={value} />;
+        },
       },
       {
         field: "actions",

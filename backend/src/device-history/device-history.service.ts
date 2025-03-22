@@ -59,6 +59,18 @@ export class DeviceHistoryService {
       where: {
         id: deviceHistoryId,
       },
+      include: {
+        device: {
+          include: {
+            model: true,
+          },
+        },
+        event: {
+          include: {
+            eventType: true,
+          },
+        },
+      },
     });
 
     if (!deviceHistory) {
