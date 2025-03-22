@@ -10,6 +10,14 @@ import {
 import React, { useEffect, useState } from "react";
 import { usePermissions } from "@refinedev/core";
 import { useLocation } from "react-router";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const DeviceHistoryList = () => {
   const location = useLocation();
@@ -67,9 +75,25 @@ export const DeviceHistoryList = () => {
       {
         field: "status",
         headerName: "Estado",
-        minWidth: 160,
+        minWidth: 100,
         display: "flex",
         valueGetter: (value: number, row) => (value ? "Encendido" : "Apagado"),
+      },
+      {
+        field: "triggered",
+        headerName: "Accionado en",
+        minWidth: 160,
+        display: "flex",
+        renderCell: function render({ value }) {
+          return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateField
+                value={dayjs.tz(value, "America/Lima")}
+                format="MM/DD/YYYY hh:mm:ss"
+              />
+            </LocalizationProvider>
+          );
+        },
       },
       {
         field: "createdAt",

@@ -1,9 +1,9 @@
 import { Check, Close } from "@mui/icons-material";
 import { Alert, Stack, Typography } from "@mui/material";
+import { DateTimeField, LocalizationProvider } from "@mui/x-date-pickers";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
   DateField,
-  DeleteButton,
   ListButton,
   RefreshButton,
   Show,
@@ -11,6 +11,13 @@ import {
 } from "@refinedev/mui";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const DeviceHistoryShow = () => {
   const location = useLocation();
@@ -53,7 +60,7 @@ export const DeviceHistoryShow = () => {
   return (
     <Show
       isLoading={isLoading}
-      title={<Typography variant="h5">Ver tipo de evento</Typography>}
+      title={<Typography variant="h5">Ver historial de dispositivo</Typography>}
       headerButtons={
         <>
           <ListButton />
@@ -116,6 +123,17 @@ export const DeviceHistoryShow = () => {
             <Link to={`/events/show/${recordData.event.id}`}>Ver evento</Link>
           ) : null}
         </Typography>
+        <Typography variant="body1" fontWeight="bold">
+          {"Accionado el"}
+        </Typography>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateField
+            value={
+              recordData ? dayjs.tz(recordData.triggered, "America/Lima") : "-"
+            }
+            format="MM/DD/YYYY hh:mm:ss"
+          />
+        </LocalizationProvider>
         <Typography variant="body1" fontWeight="bold">
           {"Creado en"}
         </Typography>
