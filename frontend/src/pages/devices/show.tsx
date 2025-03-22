@@ -1,5 +1,15 @@
-import { Close, Person } from "@mui/icons-material";
-import { Alert, Button, Stack, Typography } from "@mui/material";
+import { Check, Close, Person, Visibility } from "@mui/icons-material";
+import {
+  Alert,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { usePermissions, useShow } from "@refinedev/core";
 import {
@@ -13,9 +23,19 @@ import {
   useDataGrid,
 } from "@refinedev/mui";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import AssignDevice from "./components/AssignDevice";
 import DeassignDevice from "./components/DeassignDevice";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+type ViewInterface = "users" | "histories";
 
 export const DeviceShow = () => {
   const location = useLocation();
@@ -30,6 +50,7 @@ export const DeviceShow = () => {
   const [permissionPaths, setPermissionPaths] = useState<string[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [usersDatagrid, setUsersDataGrid] = useState<any>([]);
+  const [historiesDatagrid, setHistoriesDataGrid] = useState<any>([]);
   const { query } = useShow({});
   const { data, isLoading, refetch } = query;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,6 +58,7 @@ export const DeviceShow = () => {
   const [openAssign, setOpenAssign] = useState<boolean>(false);
   const [openDeassign, setOpenDeassign] = useState<boolean>(false);
   const [idDeassign, setIdDeassign] = useState<number>(0);
+  const [view, setView] = useState<ViewInterface>("users");
 
   const handleClickOpenAssign = () => {
     setOpenAssign(true);
@@ -54,7 +76,7 @@ export const DeviceShow = () => {
     setOpenDeassign(false);
   };
 
-  const columns = useMemo<GridColDef[]>(
+  const userColumns = useMemo<GridColDef[]>(
     () => [
       {
         field: "id",
@@ -119,6 +141,90 @@ export const DeviceShow = () => {
     [location.pathname, permissionPaths]
   );
 
+  const historyColumns = useMemo<GridColDef[]>(
+    () => [
+      {
+        field: "id",
+        headerName: "ID",
+        type: "number",
+        minWidth: 50,
+        display: "flex",
+        align: "left",
+        headerAlign: "left",
+      },
+      {
+        field: "event",
+        headerName: "Evento",
+        flex: 1,
+        minWidth: 150,
+        display: "flex",
+        valueGetter: (value, row) => {
+          return row.event.eventType.name;
+        },
+      },
+      {
+        field: "status",
+        headerName: "Estado",
+        minWidth: 160,
+        display: "flex",
+        valueGetter: (value, row) => {
+          return row.event.status ? "Encendido" : "Apagado";
+        },
+      },
+      {
+        field: "triggered",
+        headerName: "Accionado en",
+        minWidth: 160,
+        display: "flex",
+        renderCell: function render({ value }) {
+          return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateField
+                value={dayjs.tz(value, "America/Lima")}
+                format="MM/DD/YYYY hh:mm:ss"
+              />
+            </LocalizationProvider>
+          );
+        },
+      },
+      {
+        field: "actions",
+        headerName: "Acciones",
+        align: "center",
+        headerAlign: "center",
+        minWidth: 250,
+        sortable: false,
+        display: "flex",
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        renderCell: function render({ row }) {
+          return (
+            <>
+              {permissionPaths.includes("/device_histories/show") ||
+              permissionPaths.includes("/device_histories") ||
+              permissionPaths.includes("/superadmin") ? (
+                <Link
+                  to={`/device_histories/show/${row.id}`}
+                  style={{
+                    color: "#6e70ff",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 5,
+                    fontWeight: "bold",
+                  }}
+                >
+                  <Visibility />
+                  Ver historia
+                </Link>
+              ) : null}
+            </>
+          );
+        },
+      },
+    ],
+    [location.pathname, permissionPaths]
+  );
+
   useEffect(() => {
     const record = data?.data.data;
     setRecordData(record);
@@ -136,13 +242,23 @@ export const DeviceShow = () => {
       setPermissionPaths(paths);
     }
     if (record) {
-      console.log(record.users);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      dataGridProps.rows = record.users.map((row: any) => ({ ...row.user }));
+      // Asignamos el valor para users
+      setUsersDataGrid({
+        ...dataGridProps,
+        rows: record.users.map((row: any) => ({
+          ...row.user,
+        })),
+      });
+
+      setHistoriesDataGrid({
+        ...dataGridProps,
+        rows: record.DeviceHistory,
+      });
+
       dataGridProps.loading = false;
-      setUsersDataGrid(dataGridProps);
       console.log(record);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, location.pathname, permissionsData]);
 
@@ -268,17 +384,50 @@ export const DeviceShow = () => {
         </Typography>
         <DateField value={recordData ? recordData.updatedAt : "-"} />
       </Stack>
-      <Typography
-        my={4}
-        alignSelf="center"
-        variant="h5"
-        fontWeight="bold"
-        align="center"
-      >
-        Usuarios con este dispositivo
-      </Typography>
 
-      <DataGrid {...usersDatagrid} columns={columns} />
+      <FormControl fullWidth style={{ marginTop: 25 }}>
+        <InputLabel id="demo-simple-select-label">Ver</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={view}
+          label="Age"
+          onChange={(e: SelectChangeEvent) => {
+            setView(e.target.value as ViewInterface);
+          }}
+        >
+          <MenuItem value="users">Usuarios</MenuItem>
+          <MenuItem value="histories">Historias</MenuItem>
+        </Select>
+      </FormControl>
+
+      {view == "users" ? (
+        <>
+          <Typography
+            my={4}
+            alignSelf="center"
+            variant="h5"
+            fontWeight="bold"
+            align="center"
+          >
+            Usuarios con este dispositivo
+          </Typography>
+          <DataGrid {...usersDatagrid} columns={userColumns} />
+        </>
+      ) : (
+        <>
+          <Typography
+            my={4}
+            alignSelf="center"
+            variant="h5"
+            fontWeight="bold"
+            align="center"
+          >
+            Historial del dispositivo
+          </Typography>
+          <DataGrid {...historiesDatagrid} columns={historyColumns} />
+        </>
+      )}
 
       {recordData ? (
         <DeassignDevice

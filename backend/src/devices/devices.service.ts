@@ -83,7 +83,20 @@ export class DevicesService {
           },
         },
         //TODO: Array de historial del dispositivo
-        DeviceHistory: true,
+        DeviceHistory: {
+          include: {
+            device: {
+              include: {
+                model: true,
+              },
+            },
+            event: {
+              include: {
+                eventType: true,
+              },
+            },
+          },
+        },
       },
     });
 
